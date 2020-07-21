@@ -7,10 +7,18 @@ package org.vaadin.erik.game.entity;
  * @since 11/07/2020
  */
 public class PlayerCommand {
+    private String uuid;
 
     private long order;
 
     private Direction direction;
+
+    /**
+     * The unique identifier of the player
+     */
+    public String getUUID() {
+        return uuid;
+    }
 
     /**
      * The order of this command according to the client. The server will notify the client of the last order to be

@@ -13,6 +13,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <vaadin.version>17.0.0.alpha4</vaadin.version>
+        <teavm.version>0.7.0-dev-1128</teavm.version>
     </properties>
 
     <parent>
@@ -47,6 +48,10 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>teavm-dev</id>
+            <url>https://dl.bintray.com/konsoletyper/teavm</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -63,6 +68,10 @@
             <url>
                 https://maven.vaadin.com/vaadin-prereleases/
             </url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>teavm-dev</id>
+            <url>https://dl.bintray.com/konsoletyper/teavm</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -109,6 +118,19 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- Used to enable autowiring into the web socket handler service(s) -->
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-spring</artifactId>
+            <version>2.4.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.teavm</groupId>
+            <artifactId>teavm-jso-impl</artifactId>
+            <version>${teavm.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -139,6 +161,42 @@
                         <goals>
                             <goal>prepare-frontend</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+
+            -->
+            <plugin>
+                <groupId>org.teavm</groupId>
+                <artifactId>teavm-maven-plugin</artifactId>
+                <version>${teavm.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.teavm</groupId>
+                        <artifactId>teavm-classlib</artifactId>
+                        <version>${teavm.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <mainClass>org.vaadin.erik.game.client.GameClient</mainClass>
+                            <targetDirectory>${project.basedir}/src/main/resources/META-INF/resources/teavm</targetDirectory>
+                            <targetFileName>engine.js</targetFileName>
+                            <optimizationLevel>SIMPLE</optimizationLevel>
+                            <minifying>false</minifying>
+                            <strict>true</strict>
+                            <sourceMapsGenerated>true</sourceMapsGenerated>
+                            <!-- Copy Java source files to resources during debug,
+                                 required for source maps to work -->
+                            <sourceFilesCopied>true</sourceFilesCopied>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -179,6 +237,33 @@
                                     <goal>build-frontend</goal>
                                 </goals>
                                 <phase>compile</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Same plugin is run on compile, but it is configured differently for production -->
+                    <plugin>
+                        <groupId>org.teavm</groupId>
+                        <artifactId>teavm-maven-plugin</artifactId>
+                        <version>${teavm.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.teavm</groupId>
+                                <artifactId>teavm-classlib</artifactId>
+                                <version>${teavm.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <targetDirectory>${project.basedir}/src/main/resources/META-INF/resources/teavm</targetDirectory>
+                                    <targetFileName>engine.js</targetFileName>
+                                    <optimizationLevel>FULL</optimizationLevel>
+                                    <classFiles>${project.build.outputDirectory}/org/vaadin/erik/game/engine</classFiles>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

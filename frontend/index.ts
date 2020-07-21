@@ -16,6 +16,13 @@ const routes = [
             await import ('./views/main/main-view');
         }
     },
+    {
+        path: 'tilemap',
+        component: 'tilemap-generator',
+        action: async() => {
+            await import ('./views/main/tilemap-generator');
+        }
+    },
     ...serverSideRoutes
 ];
 

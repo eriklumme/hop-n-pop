@@ -1,13 +1,13 @@
-import {css, customElement, html, LitElement, query} from 'lit-element';
-import Game from './game';
+import {css, customElement, html, LitElement, /*query*/} from 'lit-element';
+//import Game from './game';
 
 @customElement('main-view')
 export class MainView extends LitElement {
 
-    private game: Game | undefined;
+    //private game: Game | undefined;
 
-    @query("#canvas")
-    private canvas: HTMLCanvasElement | undefined;
+    //@query("#canvas")
+    //private canvas: HTMLCanvasElement | undefined;
 
     static get styles() {
         return [
@@ -29,7 +29,7 @@ export class MainView extends LitElement {
 
     constructor() {
         super();
-
+/*
         document.addEventListener("keydown", e => {
             let direction;
             switch (e.code) {
@@ -50,9 +50,15 @@ export class MainView extends LitElement {
                 this.game!.move(direction);
             }
         });
+        */
     }
 
     protected firstUpdated(): void {
-        this.game = new Game(this.canvas!);
+        window.main();
+        //this.game = new Game(this.canvas!);
+    }
+
+    createRenderRoot() {
+        return this;
     }
 }
