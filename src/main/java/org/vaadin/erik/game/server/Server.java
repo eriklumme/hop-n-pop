@@ -4,8 +4,8 @@ import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.vaadin.erik.game.TileMap;
-import org.vaadin.erik.game.entity.Player;
+import org.vaadin.erik.game.tiles.TileMap;
+import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.entity.PlayerCommand;
 import org.vaadin.erik.game.shared.GameEngine;
 import org.vaadin.erik.game.ticker.Ticker;
@@ -25,6 +25,7 @@ public class Server implements TickerTask {
     private static final Logger logger = LogManager.getLogger(Server.class);
 
     private Map<String, Player> players = new HashMap<>();
+    private Map<Player, PlayerCommand> queuedCommands = new HashMap<>();
     private Set<GameSnapshotListener> gameSnapshotListeners = new HashSet<>();
 
     private final Ticker ticker;
@@ -59,15 +60,14 @@ public class Server implements TickerTask {
             return;
         }
 
-        GameEngine.handleDirection(player, playerCommand.getDirection());
-
-        TileMap.getGroundIntersectionPoint(null, null);
+        queuedCommands.put(player, playerCommand);
     }
 
     @Override
     public void tick(double delta) {
-        players.values().forEach(player -> GameEngine.applyPhysics(player, delta));
+        players.values().forEach(player -> GameEngine.applyPhysics(player, queuedCommands.get(player), delta));
         gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players.values()));
+        queuedCommands.clear();
     }
 
     public Registration addGameSnapshotListener(GameSnapshotListener listener) {

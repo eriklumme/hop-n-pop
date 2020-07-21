@@ -1,10 +1,13 @@
-package org.vaadin.erik.game;
+package org.vaadin.erik.game.tiles;
 
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.vaadin.erik.game.entity.Point;
+import org.vaadin.erik.game.shared.Constants;
+import org.vaadin.erik.game.shared.Player;
+import org.vaadin.erik.game.shared.TileType;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,7 +19,7 @@ public class TileMap {
 
     private static final Logger logger = LogManager.getLogger(TileMap.class);
 
-    private static final int[][] tiles;
+    private static final Tile[][] tiles;
 
     static {
         try {
@@ -28,12 +31,15 @@ public class TileMap {
                     .lines().collect(Collectors.joining());
             JsonArray rows = Json.parse(data).getArray("tiles");
 
-            tiles = new int[rows.length()][rows.getArray(0).length()];
+            tiles = new Tile[rows.length()][rows.getArray(0).length()];
 
             for (int rowIndex = 0; rowIndex < rows.length(); rowIndex++) {
                 JsonArray columns = rows.getArray(rowIndex);
                 for(int columnIndex = 0; columnIndex < columns.length(); columnIndex++) {
-                    tiles[rowIndex][columnIndex] = (int) columns.getNumber(columnIndex);
+                    TileType tileType = TileType.values()[(int) columns.getNumber(columnIndex)];
+                    int x = columnIndex * Constants.BLOCK_SIZE;
+                    int y = rowIndex * Constants.BLOCK_SIZE;
+                    tiles[rowIndex][columnIndex] = new Tile(new Point(x, y), tileType);
                 }
             }
 
@@ -44,15 +50,11 @@ public class TileMap {
         }
     }
 
-    /**
-     * Calculates the point at which the line of points from-to intersects with the ground. Returns null if there
-     * is no intersection.
-     *
-     * @param from  The point from which the movement is made.
-     * @param to    The point to where the movement is made.
-     * @return      The point where the movement intersects the ground, or null if no intersection is made
-     */
-    public static Point getGroundIntersectionPoint(Point from, Point to) {
-        return null;
+    public static Tile[] getIntersectingTiles(Player player) {
+        // We can't intersect more than four tiles at a time
+        Tile[] intersectingTiles = new Tile[4];
+
+        // TODO
+        return intersectingTiles;
     }
 }

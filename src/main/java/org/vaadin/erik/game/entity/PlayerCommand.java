@@ -1,5 +1,7 @@
 package org.vaadin.erik.game.entity;
 
+import org.vaadin.erik.game.shared.Direction;
+
 /**
  * A class representing a command issued by a player, such as keyboard input.
  *

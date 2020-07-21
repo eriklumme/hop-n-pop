@@ -11,7 +11,7 @@ import org.atmosphere.websocket.WebSocketHandlerAdapter;
 import org.vaadin.erik.game.server.GameSnapshotListener;
 import org.vaadin.erik.game.server.Server;
 import org.vaadin.erik.game.entity.Action;
-import org.vaadin.erik.game.entity.Player;
+import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.entity.PlayerCommand;
 
 import java.io.IOException;

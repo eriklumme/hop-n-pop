@@ -1,6 +1,6 @@
 package org.vaadin.erik.game.server;
 
-import org.vaadin.erik.game.entity.Player;
+import org.vaadin.erik.game.shared.Player;
 
 import java.util.Collection;
 

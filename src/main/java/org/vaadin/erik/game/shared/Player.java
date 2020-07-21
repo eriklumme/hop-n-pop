@@ -1,4 +1,7 @@
-package org.vaadin.erik.game.entity;
+package org.vaadin.erik.game.shared;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.h2.schema.Constant;
 
 import java.util.UUID;
 
@@ -9,6 +12,9 @@ public class Player {
     private double y;
     private double velocityX;
     private double velocityY;
+
+    @JsonIgnore
+    private boolean onGround;
 
     public Player() {
         uuid = UUID.randomUUID().toString();
@@ -48,5 +54,21 @@ public class Player {
 
     public void setVelocityY(double velocityY) {
         this.velocityY = velocityY;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
+    }
+
+    public double getWidth() {
+        return Constants.BLOCK_SIZE;
+    }
+
+    public double getHeight() {
+        return Constants.BLOCK_SIZE;
     }
 }

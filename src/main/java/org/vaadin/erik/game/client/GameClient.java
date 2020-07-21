@@ -7,7 +7,7 @@ import org.vaadin.erik.game.client.communication.Communicator;
 import org.vaadin.erik.game.client.communication.GameSnapshot;
 import org.vaadin.erik.game.client.communication.MessageEvent;
 import org.vaadin.erik.game.entity.Action;
-import org.vaadin.erik.game.entity.Direction;
+import org.vaadin.erik.game.shared.Direction;
 
 /**
  * The entry point for the game client running in the browser. This will be compiled to JavaScript or WebAssembly

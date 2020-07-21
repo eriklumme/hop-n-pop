@@ -2,7 +2,7 @@ package org.vaadin.erik.game.client.communication;
 
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSObjects;
-import org.vaadin.erik.game.entity.Direction;
+import org.vaadin.erik.game.shared.Direction;
 
 /**
  * Wrapper around the {@link WebSocket} class handling communication with the server.
