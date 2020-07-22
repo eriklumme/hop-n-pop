@@ -1,13 +1,7 @@
-import {css, customElement, html, LitElement, /*query*/} from 'lit-element';
-//import Game from './game';
+import {css, customElement, html, LitElement} from 'lit-element';
 
 @customElement('main-view')
 export class MainView extends LitElement {
-
-    //private game: Game | undefined;
-
-    //@query("#canvas")
-    //private canvas: HTMLCanvasElement | undefined;
 
     static get styles() {
         return [
@@ -27,35 +21,19 @@ export class MainView extends LitElement {
     `;
     }
 
-    constructor() {
-        super();
-/*
-        document.addEventListener("keydown", e => {
-            let direction;
-            switch (e.code) {
-                case 'ArrowUp':
-                    direction = 'UP';
-                    break;
-                case 'ArrowDown':
-                    direction = 'DOWN';
-                    break;
-                case 'ArrowLeft':
-                    direction = 'LEFT';
-                    break;
-                case 'ArrowRight':
-                    direction = 'RIGHT';
-                    break;
-            }
-            if (direction) {
-                this.game!.move(direction);
-            }
-        });
-        */
+    private static async loadTileMap() {
+        try {
+            let response = await fetch("tilemap.json");
+            let data = await response.json();
+            window.tileMapData = data;
+        } catch (e) {
+            console.error("Error loading tile map: " + e);
+        }
     }
 
     protected firstUpdated(): void {
-        window.main();
-        //this.game = new Game(this.canvas!);
+        MainView.loadTileMap()
+            .then(_ => window.main());
     }
 
     createRenderRoot() {

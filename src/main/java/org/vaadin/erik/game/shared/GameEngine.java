@@ -1,10 +1,16 @@
 package org.vaadin.erik.game.shared;
 
+import org.vaadin.erik.game.entity.Action;
 import org.vaadin.erik.game.entity.PlayerCommand;
+import org.vaadin.erik.game.shared.data.Event;
+import org.vaadin.erik.game.tiles.TileMap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameEngine {
 
-    private static final float GRAVITY = -5;
+    private static final float GRAVITY = -500;
 
     private static final float JUMP_VELOCITY = 30;
 
@@ -19,28 +25,32 @@ public class GameEngine {
      * @param player    The player to update
      * @param delta     The time in milliseconds since the last update
      */
-    public static void applyPhysics(Player player, PlayerCommand command, double delta) {
+    public static List<Event> applyPhysics(Player player, PlayerCommand command, double delta) {
+        List<Event> events = new ArrayList<>();
+
         // Our units are in pixels per second
         delta /= 1000;
 
-        // 1. If the player is in the air, apply gravity
+        if (!player.isInGame()) {
+            player.setInGame(true);
+            events.add(new Event(Action.SPAWN, player));
+        }
+
+        // If the player is in the air, apply gravity
         applyGravity(player, delta);
 
-        // 2. Apply movement commands
+        // Apply movement commands
         if (command != null) {
             handleDirection(player, command.getDirection(), delta);
         }
 
-        // 3. Update the player's position
+        // Update the player's position
         updatePosition(player, delta);
 
-        // 4. Check for ground collision and correct position
-        handleGroundCollision(player);
+        // Check and correct for tile collision
+        handleTileCollision(player);
 
-        double newY = player.getY() + player.getVelocityY() * delta;
-        // TODO: Relative numbers? Like interpolated -1 to 1
-        newY = Math.min(newY, 512 - 20);
-        player.setY(newY);
+        return events;
     }
 
     private static void applyGravity(Player player, double delta) {
@@ -70,14 +80,34 @@ public class GameEngine {
         player.setY(player.getY() + delta * player.getVelocityY());
     }
 
-    private static void handleGroundCollision(Player player) {
+    private static void handleTileCollision(Player player) {
+        player.setTileCollisions(TileMap.getIntersectingTiles(player));
 
-    }
+        player.setOnGround(false);
 
-    /**
-     * Updates whether or not the player is standing on solid ground
-     */
-    public static void updateGroundState(Player player) {
+        // TODO: only reference to getTileCollisions()?
+        // TODO: improve direction detection to depend on player's previous position?
+        for (TileCollision collision: player.getTileCollisions()) {
+            switch (collision.getFromDirection()) {
 
+                case UP:
+                    player.setY(collision.getTile().getY() - player.getHeight());
+                    player.setVelocityY(0);
+                    player.setOnGround(true);
+                    break;
+                case DOWN:
+                    player.setY(collision.getTile().getY() + collision.getTile().getHeight());
+                    player.setVelocityY(0);
+                    break;
+                case LEFT:
+                    player.setX(collision.getTile().getX() + collision.getTile().getWidth());
+                    player.setVelocityX(0);
+                    break;
+                case RIGHT:
+                    player.setX(collision.getTile().getX() - player.getWidth());
+                    player.setVelocityX(0);
+                    break;
+            }
+        }
     }
 }

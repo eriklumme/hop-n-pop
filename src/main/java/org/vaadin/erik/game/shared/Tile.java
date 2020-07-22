@@ -1,10 +1,6 @@
-package org.vaadin.erik.game.tiles;
+package org.vaadin.erik.game.shared;
 
-import org.vaadin.erik.game.entity.Point;
-import org.vaadin.erik.game.shared.Constants;
-import org.vaadin.erik.game.shared.TileType;
-
-public class Tile {
+public class Tile implements HasPosition {
 
     private final Point topLeftCorner;
     private final TileType tileType;
@@ -30,11 +26,11 @@ public class Tile {
         return topLeftCorner.getY();
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return Constants.BLOCK_SIZE;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return Constants.BLOCK_SIZE;
     }
 }

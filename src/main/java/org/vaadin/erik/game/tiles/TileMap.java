@@ -4,15 +4,17 @@ import elemental.json.Json;
 import elemental.json.JsonArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.vaadin.erik.game.entity.Point;
-import org.vaadin.erik.game.shared.Constants;
-import org.vaadin.erik.game.shared.Player;
-import org.vaadin.erik.game.shared.TileType;
+import org.vaadin.erik.game.shared.Point;
+import org.vaadin.erik.game.shared.*;
+import org.vaadin.erik.game.shared.GameMath;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TileMap {
@@ -26,7 +28,7 @@ public class TileMap {
 
             long time = System.nanoTime();
 
-            InputStream inputStream = TileMap.class.getResourceAsStream("/tilemap.json");
+            InputStream inputStream = TileMap.class.getResourceAsStream("/META-INF/resources/tilemap.json");
             String data = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining());
             JsonArray rows = Json.parse(data).getArray("tiles");
@@ -50,11 +52,24 @@ public class TileMap {
         }
     }
 
-    public static Tile[] getIntersectingTiles(Player player) {
-        // We can't intersect more than four tiles at a time
-        Tile[] intersectingTiles = new Tile[4];
+    public static Collection<TileCollision> getIntersectingTiles(Player player) {
+        List<TileCollision> intersectingTiles = new ArrayList<>(4);
 
-        // TODO
+        int minXIndex = (int) player.getX() / Constants.BLOCK_SIZE;
+        int minYIndex = (int) player.getY() / Constants.BLOCK_SIZE;
+
+        for (int y = minYIndex; y < Math.min(minYIndex + 2, tiles.length); y++) {
+            for (int x = minXIndex; x < Math.min(tiles[0].length, minXIndex + 2); x++) {
+                Tile tile = tiles[y][x];
+                if (tile.getTileType() == TileType.GROUND && GameMath.areIntersecting(player, tile)) {
+                    Direction collisionDirection = GameMath.getCollisionDirection(player, tile);
+                    intersectingTiles.add(new TileCollision(tile, collisionDirection));
+                }
+            }
+        }
+
         return intersectingTiles;
     }
+
+
 }

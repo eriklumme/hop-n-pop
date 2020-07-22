@@ -4,17 +4,14 @@ import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.vaadin.erik.game.tiles.TileMap;
 import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.entity.PlayerCommand;
 import org.vaadin.erik.game.shared.GameEngine;
+import org.vaadin.erik.game.shared.data.Event;
 import org.vaadin.erik.game.ticker.Ticker;
 import org.vaadin.erik.game.ticker.TickerTask;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The server keeps track of where players are
@@ -42,8 +39,6 @@ public class Server implements TickerTask {
 
     public Player spawn() {
         Player player = new Player();
-        player.setX(50);
-        player.setY(50);
         players.put(player.getUUID(), player);
         return player;
     }
@@ -65,8 +60,12 @@ public class Server implements TickerTask {
 
     @Override
     public void tick(double delta) {
-        players.values().forEach(player -> GameEngine.applyPhysics(player, queuedCommands.get(player), delta));
-        gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players.values()));
+        List<Event> events = new ArrayList<>();
+        players.values().forEach(player -> {
+            List<Event> playerEvents = GameEngine.applyPhysics(player, queuedCommands.get(player), delta);
+            events.addAll(playerEvents);
+        });
+        gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players.values(), events));
         queuedCommands.clear();
     }
 

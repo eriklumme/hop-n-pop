@@ -1,13 +1,19 @@
 package org.vaadin.erik.game.client;
 
+import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSObjects;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.json.JSON;
 import org.vaadin.erik.game.client.communication.Communicator;
-import org.vaadin.erik.game.client.communication.GameSnapshot;
 import org.vaadin.erik.game.client.communication.MessageEvent;
-import org.vaadin.erik.game.entity.Action;
+import org.vaadin.erik.game.client.communication.json.GameSnapshotJson;
+import org.vaadin.erik.game.client.communication.json.PlayerJson;
+import org.vaadin.erik.game.client.communication.json.RegistrationMessageJson;
+import org.vaadin.erik.game.client.communication.json.TileCollisionJson;
+import org.vaadin.erik.game.client.tilemap.TileMap;
 import org.vaadin.erik.game.shared.Direction;
+import org.vaadin.erik.game.shared.TileCollision;
 
 /**
  * The entry point for the game client running in the browser. This will be compiled to JavaScript or WebAssembly
@@ -22,12 +28,14 @@ public class GameClient {
     private final HTMLDocument document = Window.current().getDocument();
     private final Communicator communicator;
     private final GameCanvas gameCanvas;
+    private final TileMap tileMap;
 
     private String playerUuid;
 
     private GameClient() {
         communicator = new Communicator(this::onMessageReceived);
         gameCanvas = new GameCanvas();
+        tileMap = new TileMap();
     }
 
     private void start() {
@@ -54,21 +62,26 @@ public class GameClient {
     private void onMessageReceived(MessageEvent event) {
         Logger.warn("Message received in the TeaVM GameClient");
 
-        GameSnapshot snapshot = (GameSnapshot) JSON.parse(event.getResponseBody());
-        if (snapshot.hasAction()) {
-            Action action = Action.values()[snapshot.getAction()];
-            switch (action) {
-                case SPAWN:
-                    Logger.warn("Player with UUID [" + snapshot.getUuid() + "] has spawned");
-                    playerUuid = snapshot.getUuid();
-                    break;
-                case KILL:
-                    break;
-                case DIE:
-                    break;
+        JSObject object = JSON.parse(event.getResponseBody());
+
+        if (JSObjects.hasProperty(object, "uuid")) {
+            playerUuid = ((RegistrationMessageJson) object).getUuid();
+            return;
+        }
+
+        GameSnapshotJson snapshot = (GameSnapshotJson) JSON.parse(event.getResponseBody());
+
+        gameCanvas.clear();
+        gameCanvas.drawTileMap(tileMap);
+
+        for (int i = 0; i < snapshot.getPlayers().getLength(); i++) {
+            PlayerJson player = snapshot.getPlayers().get(i);
+            gameCanvas.drawPlayer(player.getX().intValue(), player.getY().intValue());
+
+            for (int j = 0; j < player.getTileCollisions().getLength(); j++) {
+                TileCollisionJson collision = player.getTileCollisions().get(j);
+                gameCanvas.drawCollision(collision.getTile(), collision.getFromDirection());
             }
         }
-        gameCanvas.clear();
-        gameCanvas.drawPlayer(snapshot.getX(), snapshot.getY());
     }
 }

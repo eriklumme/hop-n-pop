@@ -1,20 +1,20 @@
 package org.vaadin.erik.game.shared;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.h2.schema.Constant;
-
+import java.util.Collection;
 import java.util.UUID;
 
-public class Player {
+public class Player implements HasPosition {
 
-    private String uuid;
+    private final String uuid;
     private double x;
     private double y;
     private double velocityX;
     private double velocityY;
-
-    @JsonIgnore
     private boolean onGround;
+
+    private boolean isInGame = false;
+
+    private Collection<TileCollision> tileCollisions;
 
     public Player() {
         uuid = UUID.randomUUID().toString();
@@ -64,11 +64,34 @@ public class Player {
         this.onGround = onGround;
     }
 
+    public Collection<TileCollision> getTileCollisions() {
+        return tileCollisions;
+    }
+
+    public void setTileCollisions(Collection<TileCollision> tileCollisions) {
+        this.tileCollisions = tileCollisions;
+    }
+
     public double getWidth() {
         return Constants.BLOCK_SIZE;
     }
 
     public double getHeight() {
         return Constants.BLOCK_SIZE;
+    }
+
+    /**
+     * Whether or not the player is currently in the game.
+     *
+     * There are two situations where a player is not in the game:
+     * - The player has not yet spawned for the first time
+     * - The player was killed, and will spawn on the next tick
+     */
+    public boolean isInGame() {
+        return isInGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        isInGame = inGame;
     }
 }

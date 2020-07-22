@@ -1,8 +1,7 @@
 package org.vaadin.erik.game.communication;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import elemental.json.Json;
-import elemental.json.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atmosphere.config.service.WebSocketHandlerService;
@@ -10,9 +9,11 @@ import org.atmosphere.websocket.WebSocket;
 import org.atmosphere.websocket.WebSocketHandlerAdapter;
 import org.vaadin.erik.game.server.GameSnapshotListener;
 import org.vaadin.erik.game.server.Server;
-import org.vaadin.erik.game.entity.Action;
 import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.entity.PlayerCommand;
+import org.vaadin.erik.game.shared.communication.GameSnapshot;
+import org.vaadin.erik.game.shared.communication.RegistrationMessage;
+import org.vaadin.erik.game.shared.data.Event;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -44,9 +45,9 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
         Player player = server.spawn();
         socketToPlayer.put(webSocket, player);
 
-        JsonObject message = createReturnMessage(player);
-        message.put("action", Action.SPAWN.ordinal());
-        webSocket.write(message.toString());
+        RegistrationMessage registrationMessage = new RegistrationMessage(player.getUUID());
+        String message = writeJson(registrationMessage);
+        webSocket.write(message);
     }
 
     @Override
@@ -70,30 +71,28 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
         socketToPlayer.remove(webSocket);
     }
 
-    private JsonObject createReturnMessage(Player player) {
-        JsonObject message = Json.createObject();
-        message.put("x", player.getX());
-        message.put("y", player.getY());
-        message.put("uuid", player.getUUID());
-        return message;
-    }
+    // TODO: Jackson encoder as
+    //  https://github.com/Atmosphere/atmosphere-samples/blob/master/samples/spring-boot-sample-atmosphere/src/main/java/org/atmosphere/samples/springboot/ChatService.java
 
     @Override
-    public void onSnapshotPosted(Collection<Player> players) {
-        // TODO: Write all players
-        Player first = players.stream().findFirst().orElse(null);
-        if (first == null) {
+    public void onSnapshotPosted(Collection<Player> players, Collection<Event> events) {
+        if (players.isEmpty()) {
             return;
         }
-        JsonObject object = createReturnMessage(first);
+        GameSnapshot gameSnapshot = new GameSnapshot(players, events);
+        String message = null;
         try {
+            message = writeJson(gameSnapshot);
+            // TODO: Broadcast
             for(WebSocket socket: socketToPlayer.keySet()) {
-                 socket.write(object.toString());
+                 socket.write(message);
             }
         } catch (IOException e) {
-            logger.error("Error writing WebSocket message [" + object.toString() + "]", e);
+            logger.error("Error writing WebSocket message [" + message + "]", e);
         }
     }
 
-    // TODO: Jackson encoder as https://github.com/Atmosphere/atmosphere-samples/blob/master/samples/spring-boot-sample-atmosphere/src/main/java/org/atmosphere/samples/springboot/ChatService.java
+    private String writeJson(Object object) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(object);
+    }
 }

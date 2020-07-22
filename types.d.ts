@@ -11,4 +11,5 @@ declare module '*.css' {
 interface Window {
     vaadinPush: any;
     main: any;
+    tileMapData: any;
 }

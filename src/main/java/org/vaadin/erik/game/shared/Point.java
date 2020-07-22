@@ -1,4 +1,4 @@
-package org.vaadin.erik.game.entity;
+package org.vaadin.erik.game.shared;
 
 public class Point {
 
