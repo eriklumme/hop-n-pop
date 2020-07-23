@@ -29,6 +29,14 @@ public class Player implements HasPosition {
     }
 
     public void setX(double x) {
+        double maxX = Constants.GAME_WIDTH - getWidth();
+        if (x < 0) {
+            x = 0;
+            velocityX = 0;
+        } else if (x > maxX) {
+            x = maxX;
+            velocityX = 0;
+        }
         this.x = x;
     }
 
@@ -37,6 +45,14 @@ public class Player implements HasPosition {
     }
 
     public void setY(double y) {
+        double maxY = Constants.GAME_HEIGHT - getHeight();
+        if (y < 0) {
+            y = 0;
+            velocityY = 0;
+        } else if (y > maxY) {
+            y = maxY;
+            velocityY = 0;
+        }
         this.y = y;
     }
 
@@ -45,7 +61,7 @@ public class Player implements HasPosition {
     }
 
     public void setVelocityX(double velocityX) {
-        this.velocityX = velocityX;
+        this.velocityX = Math.min(velocityX, Constants.MAX_VELOCITY);
     }
 
     public double getVelocityY() {
@@ -53,7 +69,7 @@ public class Player implements HasPosition {
     }
 
     public void setVelocityY(double velocityY) {
-        this.velocityY = velocityY;
+        this.velocityY = Math.min(velocityY, Constants.MAX_VELOCITY);
     }
 
     public boolean isOnGround() {

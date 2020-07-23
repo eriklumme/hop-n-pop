@@ -10,12 +10,11 @@ import java.util.List;
 
 public class GameEngine {
 
-    private static final float GRAVITY = -500;
+    private static final float GRAVITY_ACCELERATION = 500;
 
-    private static final float JUMP_VELOCITY = 30;
+    private static final float RUN_ACCELERATION = 3000;
 
-    private static final float RUN_VELOCITY = 5;
-
+    private static final float JUMP_VELOCITY = -500;
 
     /**
      * Applies physics, which is more or less gravity, to the player.
@@ -55,7 +54,7 @@ public class GameEngine {
 
     private static void applyGravity(Player player, double delta) {
         if (!player.isOnGround()) {
-            player.setVelocityY(player.getVelocityY() - delta* GRAVITY);
+            player.setVelocityY(player.getVelocityY() + delta * GRAVITY_ACCELERATION);
         }
     }
 
@@ -67,10 +66,10 @@ public class GameEngine {
                 }
                 break;
             case LEFT:
-                player.setVelocityX(player.getVelocityX() -RUN_VELOCITY * delta);
+                player.setVelocityX(player.getVelocityX() - RUN_ACCELERATION * delta);
                 break;
             case RIGHT:
-                player.setVelocityX(player.getVelocityX() + RUN_VELOCITY * delta);
+                player.setVelocityX(player.getVelocityX() + RUN_ACCELERATION * delta);
                 break;
         }
     }

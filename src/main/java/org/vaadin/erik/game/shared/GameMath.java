@@ -19,7 +19,7 @@ public class GameMath {
         double distanceX =  centerA.getX() - centerB.getX();
         double distanceY = centerA.getY() - centerB.getY();
 
-        if (Math.abs(distanceX) < Math.abs(distanceY)) {
+        if (Math.abs(distanceX) > Math.abs(distanceY)) {
             return distanceX > 0 ? Direction.RIGHT : Direction.LEFT;
         }
         return distanceY > 0 ? Direction.DOWN : Direction.UP;
