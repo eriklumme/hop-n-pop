@@ -27,6 +27,9 @@ public class Server implements TickerTask {
 
     private final Ticker ticker;
 
+    private long currentTime = 0;
+    private int i = 0;
+
     public Server() {
         ticker = new Ticker(this);
         start();
@@ -60,6 +63,11 @@ public class Server implements TickerTask {
 
     @Override
     public void tick(double delta) {
+        if (i++ < 50) {
+            long time = System.currentTimeMillis() - currentTime;
+            currentTime = System.currentTimeMillis();
+            System.out.println("Executing tick at " + System.currentTimeMillis() + " after " + time + " ms with delta " + delta);
+        }
         List<Event> events = new ArrayList<>();
         players.values().forEach(player -> {
             List<Event> playerEvents = GameEngine.applyPhysics(player, queuedCommands.get(player), delta);

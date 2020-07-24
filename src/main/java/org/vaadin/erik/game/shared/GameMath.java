@@ -24,4 +24,13 @@ public class GameMath {
         }
         return distanceY > 0 ? Direction.DOWN : Direction.UP;
     }
+
+    /**
+     * Limits the _absolute value_ of the first variable to the limit given.
+     */
+    public static double signedLimited(double value, double limit) {
+        double sign = Math.signum(value);
+        double result = Math.min(Math.abs(value), limit);
+        return sign * result;
+    }
 }

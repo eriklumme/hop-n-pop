@@ -1,8 +1,10 @@
 package org.vaadin.erik.game.client.communication;
 
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSArray;
+import org.teavm.jso.core.JSNumber;
 import org.teavm.jso.core.JSObjects;
-import org.vaadin.erik.game.shared.Direction;
+import org.vaadin.erik.game.client.Logger;
 
 /**
  * Wrapper around the {@link WebSocket} class handling communication with the server.
@@ -21,11 +23,13 @@ public class Communicator {
                 onMessageHandler);
     }
 
-    public void sendPlayerCommand(String uuid, Direction direction) {
+    public void sendPlayerCommand(String uuid, JSArray<JSNumber> directions) {
         PlayerCommand playerCommand = JSObjects.create();
-        playerCommand.setDirection(direction.ordinal());
+        playerCommand.setDirections(directions);
         playerCommand.setOrder(order++);
         playerCommand.setUuid(uuid);
+
+        Logger.warn("client.Communicator: Sending player command");
         webSocket.sendMessage(playerCommand);
     }
 }

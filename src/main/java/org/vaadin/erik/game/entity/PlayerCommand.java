@@ -2,6 +2,8 @@ package org.vaadin.erik.game.entity;
 
 import org.vaadin.erik.game.shared.Direction;
 
+import java.util.Arrays;
+
 /**
  * A class representing a command issued by a player, such as keyboard input.
  *
@@ -13,7 +15,7 @@ public class PlayerCommand {
 
     private long order;
 
-    private Direction direction;
+    private Direction[] directions;
 
     /**
      * The unique identifier of the player
@@ -31,14 +33,14 @@ public class PlayerCommand {
     }
 
     /**
-     * The direction the player wishes to move in.
+     * The direction(s) the player wishes to move in.
      */
-    public Direction getDirection() {
-        return direction;
+    public Direction[] getDirections() {
+        return directions;
     }
 
     @Override
     public String toString() {
-        return String.format("%s [order=%d, direction=%s]", super.toString(), order, direction);
+        return String.format("%s [order=%d, directions=%s]", super.toString(), order, Arrays.toString(directions));
     }
 }

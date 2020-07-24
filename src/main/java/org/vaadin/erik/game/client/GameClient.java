@@ -15,6 +15,9 @@ import org.vaadin.erik.game.client.tilemap.TileMap;
 import org.vaadin.erik.game.shared.Direction;
 import org.vaadin.erik.game.shared.TileCollision;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * The entry point for the game client running in the browser. This will be compiled to JavaScript or WebAssembly
  * using TeaVM.
@@ -32,6 +35,8 @@ public class GameClient {
 
     private String playerUuid;
 
+    private Set<String> pressedButtons = new HashSet<>();
+
     private GameClient() {
         communicator = new Communicator(this::onMessageReceived);
         gameCanvas = new GameCanvas();
@@ -41,27 +46,25 @@ public class GameClient {
     private void start() {
         document.getBody().listenKeyDown(event -> {
             Logger.warn("Keydown!");
-            Direction direction = null;
-            switch (event.getCode()) {
-                case "ArrowUp":
-                    direction = Direction.UP;
-                    break;
-                case "ArrowLeft":
-                    direction = Direction.LEFT;
-                    break;
-                case "ArrowRight":
-                    direction = Direction.RIGHT;
-                    break;
-            }
-            if (direction != null) {
-                communicator.sendPlayerCommand(playerUuid, direction);
-            }
+            pressedButtons.add(event.getCode());
         });
+        document.getBody().listenKeyUp(event -> {
+            Logger.warn("Keyup!");
+            pressedButtons.remove(event.getCode());
+        });
+
+        new GameLoop(this, communicator).start();
+    }
+
+    Set<String> getPressedButtons() {
+        return pressedButtons;
+    }
+
+    String getPlayerUuid() {
+        return playerUuid;
     }
 
     private void onMessageReceived(MessageEvent event) {
-        Logger.warn("Message received in the TeaVM GameClient");
-
         JSObject object = JSON.parse(event.getResponseBody());
 
         if (JSObjects.hasProperty(object, "uuid")) {

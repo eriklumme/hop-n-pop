@@ -61,7 +61,7 @@ public class Player implements HasPosition {
     }
 
     public void setVelocityX(double velocityX) {
-        this.velocityX = Math.min(velocityX, Constants.MAX_VELOCITY);
+        this.velocityX = GameMath.signedLimited(velocityX, Constants.MAX_VELOCITY);
     }
 
     public double getVelocityY() {
@@ -69,7 +69,8 @@ public class Player implements HasPosition {
     }
 
     public void setVelocityY(double velocityY) {
-        this.velocityY = Math.min(velocityY, Constants.MAX_VELOCITY);
+        // No max velocity when jumping up
+        this.velocityY = velocityY < 0 ? velocityY : GameMath.signedLimited(velocityY, Constants.MAX_VELOCITY);
     }
 
     public boolean isOnGround() {
