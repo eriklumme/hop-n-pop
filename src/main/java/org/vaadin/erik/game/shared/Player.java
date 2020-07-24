@@ -1,16 +1,21 @@
 package org.vaadin.erik.game.shared;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.vaadin.erik.game.communication.Vector2DSerializer;
+
 import java.util.Collection;
 import java.util.UUID;
 
-public class Player implements HasPosition {
+public class Player implements GameObject {
 
     private final String uuid;
     private double x;
     private double y;
-    private double velocityX;
-    private double velocityY;
     private boolean onGround;
+
+    @JsonSerialize(using = Vector2DSerializer.class)
+    private Vector2D velocity = Vector2D.ZERO;
 
     private boolean isInGame = false;
 
@@ -24,53 +29,61 @@ public class Player implements HasPosition {
         return uuid;
     }
 
+    @Override
     public double getX() {
         return x;
     }
 
     public void setX(double x) {
         double maxX = Constants.GAME_WIDTH - getWidth();
-        if (x < 0) {
-            x = 0;
-            velocityX = 0;
-        } else if (x > maxX) {
-            x = maxX;
-            velocityX = 0;
+        if (x < 0 || x > maxX) {
+            x = x < 0 ? 0 : maxX;
+            velocity = new Vector2D(0, velocity.getY());
         }
         this.x = x;
     }
 
+    @Override
     public double getY() {
         return y;
     }
 
     public void setY(double y) {
         double maxY = Constants.GAME_HEIGHT - getHeight();
-        if (y < 0) {
-            y = 0;
-            velocityY = 0;
-        } else if (y > maxY) {
-            y = maxY;
-            velocityY = 0;
+        if (y < 0 || y > maxY) {
+            y = y < 0 ? 0 : maxY;
+            velocity = new Vector2D(velocity.getX(), 0);
         }
         this.y = y;
     }
 
-    public double getVelocityX() {
-        return velocityX;
+    @Override
+    public Vector2D getVelocity() {
+        return velocity;
     }
 
-    public void setVelocityX(double velocityX) {
-        this.velocityX = GameMath.signedLimited(velocityX, Constants.MAX_VELOCITY);
+    public void setVelocity(Vector2D velocity) {
+        double vx = GameMath.signedLimited(velocity.getX(), Constants.MAX_VELOCITY);
+        double vy = velocity.getY();
+        if (velocity.getY() > 0) {
+            // Vertical max velocity only applies when falling down
+            vy = GameMath.signedLimited(velocity.getY(), Constants.MAX_VELOCITY);
+        }
+        this.velocity = new Vector2D(vx, vy);
     }
 
-    public double getVelocityY() {
-        return velocityY;
+    public void addVelocity(Vector2D velocity) {
+        setVelocity(this.velocity.add(velocity));
     }
 
-    public void setVelocityY(double velocityY) {
-        // No max velocity when jumping up
-        this.velocityY = velocityY < 0 ? velocityY : GameMath.signedLimited(velocityY, Constants.MAX_VELOCITY);
+    @Override
+    public double getWidth() {
+        return Constants.BLOCK_SIZE;
+    }
+
+    @Override
+    public double getHeight() {
+        return Constants.BLOCK_SIZE;
     }
 
     public boolean isOnGround() {
@@ -87,14 +100,6 @@ public class Player implements HasPosition {
 
     public void setTileCollisions(Collection<TileCollision> tileCollisions) {
         this.tileCollisions = tileCollisions;
-    }
-
-    public double getWidth() {
-        return Constants.BLOCK_SIZE;
-    }
-
-    public double getHeight() {
-        return Constants.BLOCK_SIZE;
     }
 
     /**

@@ -6,11 +6,20 @@ import org.vaadin.erik.game.shared.TileType;
 
 public abstract class TileJson implements JSObject {
 
-    @JSProperty
-    public abstract PointJson getTopLeftCorner();
-
     @JSProperty("tileType")
     public abstract String getTileTypeName();
+
+    @JSProperty
+    public abstract double getX();
+
+    @JSProperty
+    public abstract double getY();
+
+    @JSProperty
+    public abstract double getWidth();
+
+    @JSProperty
+    public abstract double getHeight();
 
     public TileType getTileType() {
         return TileType.valueOf(getTileTypeName());

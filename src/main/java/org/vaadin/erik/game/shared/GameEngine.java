@@ -1,5 +1,6 @@
 package org.vaadin.erik.game.shared;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.vaadin.erik.game.entity.Action;
 import org.vaadin.erik.game.entity.PlayerCommand;
 import org.vaadin.erik.game.shared.data.Event;
@@ -62,15 +63,15 @@ public class GameEngine {
 
     private static void applyForces(Player player, Set<Direction> directions, double delta) {
         if (!player.isOnGround()) {
-            player.setVelocityY(player.getVelocityY() + delta * GRAVITY_ACCELERATION);
+            player.addVelocity(new Vector2D(0, delta * GRAVITY_ACCELERATION));
         }
 
         // In our world, the ground friction and air resistance is the same
         if (!directions.contains(Direction.LEFT) && !directions.contains(Direction.RIGHT)) {
             // Everyone knows friction doesn't apply if you're actively trying to move
-            double sign = Math.signum(player.getVelocityX());
-            double newVelocity = Math.abs(player.getVelocityX()) - (delta * FRICTION_DECELERATION);
-            player.setVelocityX(Math.max(newVelocity, 0) * sign);
+            double sign = Math.signum(player.getVelocity().getX());
+            double newVelocity = Math.abs(player.getVelocity().getX()) - (delta * FRICTION_DECELERATION);
+            player.setVelocity(new Vector2D(Math.max(newVelocity, 0) * sign, player.getVelocity().getY()));
         }
     }
 
@@ -80,21 +81,21 @@ public class GameEngine {
             switch (direction) {
                 case UP:
                     if (player.isOnGround()) {
-                        player.setVelocityY(JUMP_VELOCITY);
+                        player.setVelocity(new Vector2D(player.getVelocity().getX(), JUMP_VELOCITY));
                     }
                     break;
                 case LEFT:
                 case RIGHT:
                     double change = RUN_ACCELERATION * delta * direction.getSign();
-                    player.setVelocityX(player.getVelocityX() + change);
+                    player.addVelocity(new Vector2D(change, 0));
                     break;
             }
         }
     }
 
     private static void updatePosition(Player player, double delta) {
-        player.setX(player.getX() + delta * player.getVelocityX());
-        player.setY(player.getY() + delta * player.getVelocityY());
+        player.setX(player.getX() + delta * player.getVelocity().getX());
+        player.setY(player.getY() + delta * player.getVelocity().getY());
     }
 
     private static void handleTileCollision(Player player) {
@@ -109,20 +110,20 @@ public class GameEngine {
 
                 case UP:
                     player.setY(collision.getTile().getY() - player.getHeight());
-                    player.setVelocityY(0);
+                    player.setVelocity(new Vector2D(player.getVelocity().getX(), 0));
                     player.setOnGround(true);
                     break;
                 case DOWN:
                     player.setY(collision.getTile().getY() + collision.getTile().getHeight());
-                    player.setVelocityY(0);
+                    player.setVelocity(new Vector2D(player.getVelocity().getX(), 0));
                     break;
                 case LEFT:
                     player.setX(collision.getTile().getX() + collision.getTile().getWidth());
-                    player.setVelocityX(0);
+                    player.setVelocity(new Vector2D(0, player.getVelocity().getY()));
                     break;
                 case RIGHT:
                     player.setX(collision.getTile().getX() - player.getWidth());
-                    player.setVelocityX(0);
+                    player.setVelocity(new Vector2D(0, player.getVelocity().getY()));
                     break;
             }
         }

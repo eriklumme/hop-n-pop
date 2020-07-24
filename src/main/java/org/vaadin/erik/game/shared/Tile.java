@@ -1,6 +1,9 @@
 package org.vaadin.erik.game.shared;
 
-public class Tile implements HasPosition {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+public class Tile implements GameObject {
 
     private final Point topLeftCorner;
     private final TileType tileType;
@@ -10,27 +13,33 @@ public class Tile implements HasPosition {
         this.tileType = tileType;
     }
 
-    public Point getTopLeftCorner() {
-        return topLeftCorner;
-    }
-
     public TileType getTileType() {
         return tileType;
     }
 
+    @Override
     public double getX() {
         return topLeftCorner.getX();
     }
 
+    @Override
     public double getY() {
         return topLeftCorner.getY();
     }
 
+    @Override
     public double getWidth() {
         return Constants.BLOCK_SIZE;
     }
 
+    @Override
     public double getHeight() {
         return Constants.BLOCK_SIZE;
+    }
+
+    @Override
+    @JsonIgnore
+    public Vector2D getVelocity() {
+        return Vector2D.ZERO;
     }
 }

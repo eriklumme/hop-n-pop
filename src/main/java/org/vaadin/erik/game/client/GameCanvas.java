@@ -50,11 +50,10 @@ public class GameCanvas {
     }
 
     public void drawCollision(TileJson tileJson, Direction direction) {
-        PointJson point = tileJson.getTopLeftCorner();
-        double x = point.getX();
-        double y = point.getY();
-        double w = Constants.BLOCK_SIZE;
-        double h = Constants.BLOCK_SIZE;
+        double x = tileJson.getX();
+        double y = tileJson.getY();
+        double w = tileJson.getWidth();
+        double h = tileJson.getHeight();
         drawTile(x, y, w, h, "red");
 
         switch (direction) {

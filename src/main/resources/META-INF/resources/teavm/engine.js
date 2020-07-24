@@ -1199,20 +1199,19 @@ function ovegc_GameCanvas_drawTileMap($this, $tileMap) {
     }
 }
 function ovegc_GameCanvas_drawCollision($this, $tileJson, $direction) {
-    var $point, $x, $y, $w, $h, var$8, var$9;
+    var $x, $y, $w, $h, var$7, var$8;
     a: {
-        $point = $tileJson.topLeftCorner;
-        $x = $point.x;
-        $y = $point.y;
-        $w = 32.0;
-        $h = 32.0;
+        $x = $tileJson.x;
+        $y = $tileJson.y;
+        $w = $tileJson.width;
+        $h = $tileJson.height;
         $this.$drawTile($x, $y, $w, $h, $rt_s(4));
         ovegc_GameCanvas$1_$callClinit();
-        var$8 = ovegc_GameCanvas$1_$SwitchMap$org$vaadin$erik$game$shared$Direction;
+        var$7 = ovegc_GameCanvas$1_$SwitchMap$org$vaadin$erik$game$shared$Direction;
         $direction = $rt_nullCheck($direction);
-        var$9 = jl_Enum_ordinal($direction);
-        var$8 = $rt_nullCheck(var$8).data;
-        switch (var$8[$rt_checkBounds(var$9, var$8)]) {
+        var$8 = jl_Enum_ordinal($direction);
+        var$7 = $rt_nullCheck(var$7).data;
+        switch (var$7[$rt_checkBounds(var$8, var$7)]) {
             case 1:
                 break;
             case 2:
@@ -1373,7 +1372,10 @@ function jl_Enum_valueOf($enumType, $name) {
     }
     return $constant;
 }
-var ovegs_Direction = $rt_classWithoutFields(jl_Enum);
+function ovegs_Direction() {
+    jl_Enum.call(this);
+    this.$sign = 0.0;
+}
 var ovegs_Direction_UP = null;
 var ovegs_Direction_DOWN = null;
 var ovegs_Direction_LEFT = null;
@@ -1383,10 +1385,10 @@ function ovegs_Direction_$callClinit() {
     ovegs_Direction_$callClinit = $rt_eraseClinit(ovegs_Direction);
     ovegs_Direction__clinit_();
 }
-function ovegs_Direction__init_(var_0, var_1) {
-    var var_2 = new ovegs_Direction();
-    ovegs_Direction__init_0(var_2, var_0, var_1);
-    return var_2;
+function ovegs_Direction__init_(var_0, var_1, var_2) {
+    var var_3 = new ovegs_Direction();
+    ovegs_Direction__init_0(var_3, var_0, var_1, var_2);
+    return var_3;
 }
 function ovegs_Direction_values() {
     ovegs_Direction_$callClinit();
@@ -1396,15 +1398,16 @@ function ovegs_Direction_valueOf($name) {
     ovegs_Direction_$callClinit();
     return jl_Enum_valueOf($rt_cls(ovegs_Direction), $name);
 }
-function ovegs_Direction__init_0($this, var$1, var$2) {
+function ovegs_Direction__init_0($this, var$1, var$2, $sign) {
     ovegs_Direction_$callClinit();
     jl_Enum__init_($this, var$1, var$2);
+    $this.$sign = $sign;
 }
 function ovegs_Direction__clinit_() {
-    ovegs_Direction_UP = ovegs_Direction__init_($rt_s(10), 0);
-    ovegs_Direction_DOWN = ovegs_Direction__init_($rt_s(11), 1);
-    ovegs_Direction_LEFT = ovegs_Direction__init_($rt_s(12), 2);
-    ovegs_Direction_RIGHT = ovegs_Direction__init_($rt_s(13), 3);
+    ovegs_Direction_UP = ovegs_Direction__init_($rt_s(10), 0, (-1.0));
+    ovegs_Direction_DOWN = ovegs_Direction__init_($rt_s(11), 1, 1.0);
+    ovegs_Direction_LEFT = ovegs_Direction__init_($rt_s(12), 2, (-1.0));
+    ovegs_Direction_RIGHT = ovegs_Direction__init_($rt_s(13), 3, 1.0);
     ovegs_Direction_$VALUES = $rt_createArrayFromData(ovegs_Direction, [ovegs_Direction_UP, ovegs_Direction_DOWN, ovegs_Direction_LEFT, ovegs_Direction_RIGHT]);
 }
 var otjb_TimerHandler = $rt_classWithoutFields(0);
@@ -1624,7 +1627,7 @@ function otjde_KeyboardEventTarget_listenKeyUp$static($this, $listener) {
 }
 var otjb_WindowEventTarget = $rt_classWithoutFields(0);
 var ovegct_TileMapService = $rt_classWithoutFields();
-var ovegs_HasPosition = $rt_classWithoutFields(0);
+var ovegs_GameObject = $rt_classWithoutFields(0);
 function ovegs_Tile() {
     var a = this; jl_Object.call(a);
     a.$topLeftCorner = null;
@@ -3112,14 +3115,14 @@ jl_Number, 0, jl_Object, [ji_Serializable], 1, 3, 0, 0, 0,
 jl_Comparable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_Integer, 0, jl_Number, [jl_Comparable], 0, 3, 0, jl_Integer_$callClinit, 0,
 jl_CloneNotSupportedException, 0, jl_Exception, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_CloneNotSupportedException__init_0)],
-ovegc_GameLoop$loop$lambda$_2_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame$exported$0)],
-ovegc_GameLoop$loop$lambda$_2_1, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame$exported$0)],
+ovegc_GameLoop$loop$lambda$_2_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame$exported$0)],
+ovegc_GameLoop$loop$lambda$_2_1, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame$exported$0)],
 jl_Character, 0, jl_Object, [jl_Comparable], 0, 3, 0, jl_Character_$callClinit, 0,
 ju_Map, 0, jl_Object, [], 3, 3, 0, 0, 0,
 otjc_JSArrayReader, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
 otjc_JSArray, 0, jl_Object, [otjc_JSArrayReader], 1, 3, 0, 0, ["$get$exported$0", $rt_wrapFunction1(otjc_JSArray_get$exported$0), "$getLength$exported$1", $rt_wrapFunction0(otjc_JSArray_getLength$exported$1)],
 otjc_JSNumber, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
-ovegcc_Communicator, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_14", $rt_wrapFunction1(ovegcc_Communicator__init_0), "$sendPlayerCommand", $rt_wrapFunction2(ovegcc_Communicator_sendPlayerCommand)],
+ovegcc_Communicator, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction1(ovegcc_Communicator__init_0), "$sendPlayerCommand", $rt_wrapFunction2(ovegcc_Communicator_sendPlayerCommand)],
 otjde_EventTarget, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
 otjde_GamepadEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 jl_CharSequence, 0, jl_Object, [], 3, 3, 0, 0, 0,
@@ -3135,7 +3138,7 @@ juf_Function, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ovegc_GameLoop$handleButtonPresses$lambda$_3_0, 0, jl_Object, [juf_Function], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegc_GameLoop$handleButtonPresses$lambda$_3_0__init_0), "$apply2", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_0_apply), "$apply", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_0_apply0)],
 juf_IntFunction, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ovegc_GameLoop$handleButtonPresses$lambda$_3_1, 0, jl_Object, [juf_IntFunction], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegc_GameLoop$handleButtonPresses$lambda$_3_1__init_0), "$apply1", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_1_apply), "$apply0", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_1_apply0)],
-ovegc_GameLoop$start$lambda$_1_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame$exported$0)],
+ovegc_GameLoop$start$lambda$_1_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame$exported$0)],
 jl_AutoCloseable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jus_BaseStream, 0, jl_Object, [jl_AutoCloseable], 3, 3, 0, 0, 0,
 jus_Stream, 0, jl_Object, [jus_BaseStream], 3, 3, 0, 0, 0,
@@ -3143,7 +3146,7 @@ ovegcc_WebSocket, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
 jl_Enum, 0, jl_Object, [jl_Comparable, ji_Serializable], 1, 3, 0, 0, ["$_init_4", $rt_wrapFunction2(jl_Enum__init_), "$name0", $rt_wrapFunction0(jl_Enum_name), "$ordinal", $rt_wrapFunction0(jl_Enum_ordinal), "$equals", $rt_wrapFunction1(jl_Enum_equals), "$hashCode", $rt_wrapFunction0(jl_Enum_hashCode)],
 ovegs_Direction, "Direction", 6, jl_Enum, [], 12, 3, 0, ovegs_Direction_$callClinit, 0,
 otjb_TimerHandler, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_0), "$_init_5", $rt_wrapFunction1(jl_AbstractStringBuilder__init_2), "$append1", $rt_wrapFunction1(jl_AbstractStringBuilder_append), "$insert", $rt_wrapFunction2(jl_AbstractStringBuilder_insert), "$append2", $rt_wrapFunction1(jl_AbstractStringBuilder_append0), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert0), "$ensureCapacity", $rt_wrapFunction1(jl_AbstractStringBuilder_ensureCapacity),
+jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_0), "$_init_6", $rt_wrapFunction1(jl_AbstractStringBuilder__init_2), "$append1", $rt_wrapFunction1(jl_AbstractStringBuilder_append), "$insert", $rt_wrapFunction2(jl_AbstractStringBuilder_insert), "$append2", $rt_wrapFunction1(jl_AbstractStringBuilder_append0), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert0), "$ensureCapacity", $rt_wrapFunction1(jl_AbstractStringBuilder_ensureCapacity),
 "$toString", $rt_wrapFunction0(jl_AbstractStringBuilder_toString)],
 jl_Appendable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_StringBuilder, 0, jl_AbstractStringBuilder, [jl_Appendable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_StringBuilder__init_0), "$append", $rt_wrapFunction1(jl_StringBuilder_append), "$append0", $rt_wrapFunction1(jl_StringBuilder_append0), "$insert1", $rt_wrapFunction2(jl_StringBuilder_insert), "$insert2", $rt_wrapFunction2(jl_StringBuilder_insert0), "$toString", $rt_wrapFunction0(jl_StringBuilder_toString), "$ensureCapacity", $rt_wrapFunction1(jl_StringBuilder_ensureCapacity), "$insert0", $rt_wrapFunction2(jl_StringBuilder_insert1),
@@ -3152,31 +3155,31 @@ ju_ConcurrentModificationException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_
 jlr_AnnotatedElement, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ju_AbstractCollection, 0, jl_Object, [ju_Collection], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractCollection__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)]]);
 $rt_metadata([ju_AbstractSet, 0, ju_AbstractCollection, [ju_Set], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractSet__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
-ju_HashMap$1, 0, ju_AbstractSet, [], 0, 0, 0, 0, ["$_init_7", $rt_wrapFunction1(ju_HashMap$1__init_0), "$iterator0", $rt_wrapFunction0(ju_HashMap$1_iterator)],
+ju_HashMap$1, 0, ju_AbstractSet, [], 0, 0, 0, 0, ["$_init_8", $rt_wrapFunction1(ju_HashMap$1__init_0), "$iterator0", $rt_wrapFunction0(ju_HashMap$1_iterator)],
 jusi_SimpleStreamImpl, 0, jl_Object, [jus_Stream], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jusi_SimpleStreamImpl__init_), "$map", $rt_wrapFunction1(jusi_SimpleStreamImpl_map), "$toArray", $rt_wrapFunction1(jusi_SimpleStreamImpl_toArray)],
-jusi_WrappingStreamImpl, 0, jusi_SimpleStreamImpl, [], 1, 3, 0, 0, ["$_init_20", $rt_wrapFunction1(jusi_WrappingStreamImpl__init_), "$next", $rt_wrapFunction1(jusi_WrappingStreamImpl_next), "$estimateSize", $rt_wrapFunction0(jusi_WrappingStreamImpl_estimateSize)],
+jusi_WrappingStreamImpl, 0, jusi_SimpleStreamImpl, [], 1, 3, 0, 0, ["$_init_21", $rt_wrapFunction1(jusi_WrappingStreamImpl__init_), "$next", $rt_wrapFunction1(jusi_WrappingStreamImpl_next), "$estimateSize", $rt_wrapFunction0(jusi_WrappingStreamImpl_estimateSize)],
 otjde_FocusEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 otjde_MouseEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 otjde_KeyboardEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 otjb_WindowEventTarget, 0, jl_Object, [otjde_EventTarget, otjde_FocusEventTarget, otjde_MouseEventTarget, otjde_KeyboardEventTarget, otjde_LoadEventTarget, otjde_GamepadEventTarget], 3, 3, 0, 0, 0,
 ovegct_TileMapService, 0, jl_Object, [], 1, 3, 0, 0, 0,
-ovegs_HasPosition, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ovegs_Tile, 0, jl_Object, [ovegs_HasPosition], 0, 3, 0, 0, ["$_init_22", $rt_wrapFunction2(ovegs_Tile__init_0), "$getTileType", $rt_wrapFunction0(ovegs_Tile_getTileType), "$getX", $rt_wrapFunction0(ovegs_Tile_getX), "$getY", $rt_wrapFunction0(ovegs_Tile_getY), "$getWidth", $rt_wrapFunction0(ovegs_Tile_getWidth), "$getHeight", $rt_wrapFunction0(ovegs_Tile_getHeight)],
+ovegs_GameObject, 0, jl_Object, [], 3, 3, 0, 0, 0,
+ovegs_Tile, 0, jl_Object, [ovegs_GameObject], 0, 3, 0, 0, ["$_init_23", $rt_wrapFunction2(ovegs_Tile__init_0), "$getTileType", $rt_wrapFunction0(ovegs_Tile_getTileType), "$getX", $rt_wrapFunction0(ovegs_Tile_getX), "$getY", $rt_wrapFunction0(ovegs_Tile_getY), "$getWidth", $rt_wrapFunction0(ovegs_Tile_getWidth), "$getHeight", $rt_wrapFunction0(ovegs_Tile_getHeight)],
 ju_List, 0, jl_Object, [ju_Collection], 3, 3, 0, 0, ["$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
 ju_AbstractList, 0, ju_AbstractCollection, [ju_List], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractList__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
 jl_Cloneable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ju_RandomAccess, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ju_ArrayList, 0, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayList__init_0), "$_init_5", $rt_wrapFunction1(ju_ArrayList__init_2), "$ensureCapacity", $rt_wrapFunction1(ju_ArrayList_ensureCapacity), "$get0", $rt_wrapFunction1(ju_ArrayList_get), "$size", $rt_wrapFunction0(ju_ArrayList_size), "$add", $rt_wrapFunction1(ju_ArrayList_add)],
+ju_ArrayList, 0, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayList__init_0), "$_init_6", $rt_wrapFunction1(ju_ArrayList__init_2), "$ensureCapacity", $rt_wrapFunction1(ju_ArrayList_ensureCapacity), "$get0", $rt_wrapFunction1(ju_ArrayList_get), "$size", $rt_wrapFunction0(ju_ArrayList_size), "$add", $rt_wrapFunction1(ju_ArrayList_add)],
 otjb_StorageProvider, 0, jl_Object, [], 3, 3, 0, 0, 0,
 otjb_Window, 0, jl_Object, [otj_JSObject, otjb_WindowEventTarget, otjb_StorageProvider, otjc_JSArrayReader], 1, 3, 0, 0, ["$addEventListener$exported$0", $rt_wrapFunction2(otjb_Window_addEventListener$exported$0), "$removeEventListener$exported$1", $rt_wrapFunction2(otjb_Window_removeEventListener$exported$1), "$get$exported$2", $rt_wrapFunction1(otjb_Window_get$exported$2), "$removeEventListener$exported$3", $rt_wrapFunction3(otjb_Window_removeEventListener$exported$3), "$dispatchEvent$exported$4", $rt_wrapFunction1(otjb_Window_dispatchEvent$exported$4),
 "$getLength$exported$5", $rt_wrapFunction0(otjb_Window_getLength$exported$5), "$addEventListener$exported$6", $rt_wrapFunction3(otjb_Window_addEventListener$exported$6)],
 ovegcc_OnMessageHandler, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-ovegc_GameClient$_init_$lambda$_1_0, 0, jl_Object, [ovegcc_OnMessageHandler], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0__init_0), "$onMessage", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage), "$onMessage$exported$0", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage$exported$0)],
-jl_String, 0, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 0, 3, 0, jl_String_$callClinit, ["$_init_11", $rt_wrapFunction1(jl_String__init_1), "$_init_6", $rt_wrapFunction3(jl_String__init_2), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length0", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$toString", $rt_wrapFunction0(jl_String_toString), "$equals", $rt_wrapFunction1(jl_String_equals), "$hashCode", $rt_wrapFunction0(jl_String_hashCode)],
+ovegc_GameClient$_init_$lambda$_1_0, 0, jl_Object, [ovegcc_OnMessageHandler], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0__init_0), "$onMessage", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage), "$onMessage$exported$0", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage$exported$0)],
+jl_String, 0, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 0, 3, 0, jl_String_$callClinit, ["$_init_12", $rt_wrapFunction1(jl_String__init_1), "$_init_7", $rt_wrapFunction3(jl_String__init_2), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length0", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$toString", $rt_wrapFunction0(jl_String_toString), "$equals", $rt_wrapFunction1(jl_String_equals), "$hashCode", $rt_wrapFunction0(jl_String_hashCode)],
 juf_Predicate, 0, jl_Object, [], 3, 3, 0, 0, 0,
-jusi_SimpleStreamImpl$ArrayFillingConsumer, 0, jl_Object, [juf_Predicate], 0, 0, 0, 0, ["$_init_9", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer_test)],
+jusi_SimpleStreamImpl$ArrayFillingConsumer, 0, jl_Object, [juf_Predicate], 0, 0, 0, 0, ["$_init_10", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer_test)],
 jl_NegativeArraySizeException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NegativeArraySizeException__init_0)],
-jusi_MappingStreamImpl$wrap$lambda$_1_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_21", $rt_wrapFunction2(jusi_MappingStreamImpl$wrap$lambda$_1_0__init_0), "$test", $rt_wrapFunction1(jusi_MappingStreamImpl$wrap$lambda$_1_0_test)],
+jusi_MappingStreamImpl$wrap$lambda$_1_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_22", $rt_wrapFunction2(jusi_MappingStreamImpl$wrap$lambda$_1_0__init_0), "$test", $rt_wrapFunction1(jusi_MappingStreamImpl$wrap$lambda$_1_0_test)],
 ju_Map$Entry, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_IncompatibleClassChangeError, 0, jl_LinkageError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_IncompatibleClassChangeError__init_0)],
 jl_NoSuchMethodError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchMethodError__init_0)],
@@ -3184,8 +3187,8 @@ jl_ArrayIndexOutOfBoundsException, 0, jl_IndexOutOfBoundsException, [], 0, 3, 0,
 ovegs_TileType, 0, jl_Enum, [], 12, 3, 0, ovegs_TileType_$callClinit, 0,
 jlr_Array, 0, jl_Object, [], 4, 3, 0, 0, 0,
 juf_Consumer, 0, jl_Object, [], 3, 3, 0, 0, 0,
-jusi_StreamOverSpliterator$AdapterAction, 0, jl_Object, [juf_Consumer], 0, 0, 0, 0, ["$_init_12", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction__init_0), "$accept", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction_accept)],
-ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, 0, ["$_init_7", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_0), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
+jusi_StreamOverSpliterator$AdapterAction, 0, jl_Object, [juf_Consumer], 0, 0, 0, 0, ["$_init_13", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction__init_0), "$accept", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction_accept)],
+ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, 0, ["$_init_8", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_0), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
 ovegcc_WebSocket$sendMessage$static$lambda$_7_0, 0, jl_Object, [otjb_TimerHandler], 0, 3, 0, 0, ["$_init_3", $rt_wrapFunction2(ovegcc_WebSocket$sendMessage$static$lambda$_7_0__init_0), "$onTimer", $rt_wrapFunction0(ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer), "$onTimer$exported$0", $rt_wrapFunction0(ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer$exported$0)],
 jl_NullPointerException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NullPointerException__init_1), "$_init_", $rt_wrapFunction0(jl_NullPointerException__init_2)],
 jl_NoSuchFieldError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchFieldError__init_0)],
@@ -3195,32 +3198,32 @@ otjc_JSObjects, 0, jl_Object, [], 4, 3, 0, 0, 0,
 otji_JS, 0, jl_Object, [], 4, 0, 0, 0, 0,
 ju_Objects, 0, jl_Object, [], 4, 3, 0, 0, 0,
 jusi_StreamOverSpliterator, 0, jusi_SimpleStreamImpl, [], 0, 3, 0, 0, ["$_init_2", $rt_wrapFunction1(jusi_StreamOverSpliterator__init_0), "$next", $rt_wrapFunction1(jusi_StreamOverSpliterator_next), "$estimateSize", $rt_wrapFunction0(jusi_StreamOverSpliterator_estimateSize)],
-ju_MapEntry, 0, jl_Object, [ju_Map$Entry, jl_Cloneable], 0, 0, 0, 0, ["$_init_13", $rt_wrapFunction2(ju_MapEntry__init_0)],
-ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_19", $rt_wrapFunction2(ju_HashMap$HashEntry__init_0)],
+ju_MapEntry, 0, jl_Object, [ju_Map$Entry, jl_Cloneable], 0, 0, 0, 0, ["$_init_14", $rt_wrapFunction2(ju_MapEntry__init_0)],
+ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_20", $rt_wrapFunction2(ju_HashMap$HashEntry__init_0)],
 ovegc_GameCanvas$1, 0, jl_Object, [], 32, 0, 0, ovegc_GameCanvas$1_$callClinit, 0,
 jlr_Type, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ju_Spliterator, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jusi_SpliteratorOverCollection, 0, jl_Object, [ju_Spliterator], 0, 3, 0, 0, ["$_init_1", $rt_wrapFunction1(jusi_SpliteratorOverCollection__init_0), "$tryAdvance", $rt_wrapFunction1(jusi_SpliteratorOverCollection_tryAdvance), "$estimateSize0", $rt_wrapFunction0(jusi_SpliteratorOverCollection_estimateSize)],
 ovegc_GameClient, 0, jl_Object, [], 0, 3, 0, 0, ["$getPressedButtons", $rt_wrapFunction0(ovegc_GameClient_getPressedButtons), "$getPlayerUuid", $rt_wrapFunction0(ovegc_GameClient_getPlayerUuid)]]);
 $rt_metadata([ju_Iterator, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ju_HashMap$KeyIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, 0, ["$_init_7", $rt_wrapFunction1(ju_HashMap$KeyIterator__init_0), "$next1", $rt_wrapFunction0(ju_HashMap$KeyIterator_next)],
+ju_HashMap$KeyIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, 0, ["$_init_8", $rt_wrapFunction1(ju_HashMap$KeyIterator__init_0), "$next1", $rt_wrapFunction0(ju_HashMap$KeyIterator_next)],
 otjde_EventListener, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-ovegc_GameLoop, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction2(ovegc_GameLoop__init_0), "$start", $rt_wrapFunction0(ovegc_GameLoop_start)],
+ovegc_GameLoop, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction2(ovegc_GameLoop__init_0), "$start", $rt_wrapFunction0(ovegc_GameLoop_start)],
 ovegccj_TileCollisionJson, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
 ju_AbstractMap, 0, jl_Object, [ju_Map], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractMap__init_)],
-ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_0), "$_init_5", $rt_wrapFunction1(ju_HashMap__init_2), "$_init_18", $rt_wrapFunction2(ju_HashMap__init_4), "$findNonNullKeyEntry", $rt_wrapFunction3(ju_HashMap_findNonNullKeyEntry), "$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$isEmpty", $rt_wrapFunction0(ju_HashMap_isEmpty), "$keySet", $rt_wrapFunction0(ju_HashMap_keySet),
+ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_0), "$_init_6", $rt_wrapFunction1(ju_HashMap__init_2), "$_init_19", $rt_wrapFunction2(ju_HashMap__init_4), "$findNonNullKeyEntry", $rt_wrapFunction3(ju_HashMap_findNonNullKeyEntry), "$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$isEmpty", $rt_wrapFunction0(ju_HashMap_isEmpty), "$keySet", $rt_wrapFunction0(ju_HashMap_keySet),
 "$put", $rt_wrapFunction2(ju_HashMap_put), "$putImpl", $rt_wrapFunction2(ju_HashMap_putImpl), "$createHashedEntry", $rt_wrapFunction3(ju_HashMap_createHashedEntry), "$rehash0", $rt_wrapFunction1(ju_HashMap_rehash), "$rehash", $rt_wrapFunction0(ju_HashMap_rehash0), "$remove0", $rt_wrapFunction1(ju_HashMap_remove), "$removeEntry", $rt_wrapFunction1(ju_HashMap_removeEntry), "$size", $rt_wrapFunction0(ju_HashMap_size)],
-jusi_MappingStreamImpl, 0, jusi_WrappingStreamImpl, [], 0, 3, 0, 0, ["$_init_8", $rt_wrapFunction2(jusi_MappingStreamImpl__init_0), "$wrap", $rt_wrapFunction1(jusi_MappingStreamImpl_wrap)],
-ovegc_GameClient$start$lambda$_2_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1__init_0), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent$exported$0)],
-ovegc_GameClient$start$lambda$_2_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0__init_0), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent$exported$0)],
-ju_HashSet, 0, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_0), "$_init_7", $rt_wrapFunction1(ju_HashSet__init_2), "$add", $rt_wrapFunction1(ju_HashSet_add), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator0", $rt_wrapFunction0(ju_HashSet_iterator), "$remove", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
+jusi_MappingStreamImpl, 0, jusi_WrappingStreamImpl, [], 0, 3, 0, 0, ["$_init_9", $rt_wrapFunction2(jusi_MappingStreamImpl__init_0), "$wrap", $rt_wrapFunction1(jusi_MappingStreamImpl_wrap)],
+ovegc_GameClient$start$lambda$_2_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1__init_0), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent$exported$0)],
+ovegc_GameClient$start$lambda$_2_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0__init_0), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent$exported$0)],
+ju_HashSet, 0, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_0), "$_init_8", $rt_wrapFunction1(ju_HashSet__init_2), "$add", $rt_wrapFunction1(ju_HashSet_add), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator0", $rt_wrapFunction0(ju_HashSet_iterator), "$remove", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
 otp_Platform, 0, jl_Object, [], 4, 3, 0, 0, 0,
 ovegc_Logger, 0, jl_Object, [], 0, 3, 0, 0, 0,
 jl_NoClassDefFoundError, 0, jl_LinkageError, [], 0, 3, 0, 0, 0,
 ju_NoSuchElementException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_NoSuchElementException__init_0)],
 jl_IllegalArgumentException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_IllegalArgumentException__init_1), "$_init_0", $rt_wrapFunction1(jl_IllegalArgumentException__init_2)],
-jusi_SimpleStreamImpl$toArray$lambda$_19_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_10", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0_test)],
-ovegs_Point, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_23", $rt_wrapFunction2(ovegs_Point__init_0), "$getX", $rt_wrapFunction0(ovegs_Point_getX), "$getY", $rt_wrapFunction0(ovegs_Point_getY)],
+jusi_SimpleStreamImpl$toArray$lambda$_19_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_11", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0_test)],
+ovegs_Point, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_24", $rt_wrapFunction2(ovegs_Point__init_0), "$getX", $rt_wrapFunction0(ovegs_Point_getX), "$getY", $rt_wrapFunction0(ovegs_Point_getY)],
 ovegct_TileMap, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegct_TileMap__init_0), "$getTiles", $rt_wrapFunction0(ovegct_TileMap_getTiles)],
 ju_Comparator, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_String$_clinit_$lambda$_82_0, 0, jl_Object, [ju_Comparator], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_String$_clinit_$lambda$_82_0__init_0)],

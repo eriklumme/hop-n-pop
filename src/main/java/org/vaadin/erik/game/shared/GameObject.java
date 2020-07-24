@@ -1,6 +1,8 @@
 package org.vaadin.erik.game.shared;
 
-public interface HasPosition {
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+public interface GameObject {
 
     double getX();
 
@@ -9,4 +11,6 @@ public interface HasPosition {
     double getWidth();
 
     double getHeight();
+
+    Vector2D getVelocity();
 }
