@@ -4,6 +4,7 @@ import org.teavm.jso.browser.Window;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLDocument;
+import org.vaadin.erik.game.client.communication.json.GameObjectJson;
 import org.vaadin.erik.game.client.communication.json.PointJson;
 import org.vaadin.erik.game.client.communication.json.TileJson;
 import org.vaadin.erik.game.client.tilemap.TileMap;
@@ -49,7 +50,7 @@ public class GameCanvas {
         }
     }
 
-    public void drawCollision(TileJson tileJson, Direction direction) {
+    public void drawCollision(GameObjectJson tileJson, Direction direction) {
         double x = tileJson.getX();
         double y = tileJson.getY();
         double w = tileJson.getWidth();

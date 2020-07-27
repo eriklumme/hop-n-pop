@@ -8,7 +8,8 @@ export class MainView extends LitElement {
             // CSSModule('lumo-typography lumo-styles'),
             css`
         :host {
-          display: block;
+          display: flex;
+          flex-flow: column;
           height: 100%;
         }
       `,
@@ -18,6 +19,7 @@ export class MainView extends LitElement {
     render() {
         return html`
       <canvas width="768" height="512" style="border: 1px solid red" id="canvas"></canvas>
+      <input type="number" id="slowdown" />
     `;
     }
 

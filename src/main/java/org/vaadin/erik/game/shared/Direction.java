@@ -7,7 +7,7 @@ package org.vaadin.erik.game.shared;
  * @since 11/07/2020
  */
 public enum Direction {
-    UP(-1), DOWN(1), LEFT(-1), RIGHT(1);
+    UP(-1), DOWN(1), LEFT(-1), RIGHT(1), NONE(0);
 
     private final double sign;
 
@@ -17,5 +17,19 @@ public enum Direction {
 
     public double getSign() {
         return sign;
+    }
+
+    public static Direction getOpposite(Direction direction) {
+        return direction.getSign() == -1 ?
+                (direction == Direction.UP ? DOWN : RIGHT) :
+                (direction == Direction.RIGHT ? LEFT : UP);
+    }
+
+    public static Direction getHorizontal(double from, double to) {
+        return from == to ? NONE : from < to ? RIGHT : LEFT;
+    }
+
+    public static Direction getVertical(double from, double to) {
+        return from == to ? NONE : from < to ? DOWN : UP;
     }
 }

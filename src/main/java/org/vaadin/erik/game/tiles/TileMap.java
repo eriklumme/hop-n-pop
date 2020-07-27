@@ -52,8 +52,8 @@ public class TileMap {
         }
     }
 
-    public static Collection<TileCollision> getIntersectingTiles(Player player) {
-        List<TileCollision> intersectingTiles = new ArrayList<>(4);
+    public static void updateCollisions(Player player) {
+        List<Collision> collisions = new ArrayList<>(2);
 
         int minXIndex = (int) player.getX() / Constants.BLOCK_SIZE;
         int minYIndex = (int) player.getY() / Constants.BLOCK_SIZE;
@@ -62,14 +62,19 @@ public class TileMap {
             for (int x = minXIndex; x < Math.min(tiles[0].length, minXIndex + 2); x++) {
                 Tile tile = tiles[y][x];
                 if (tile.getTileType() == TileType.GROUND && GameMath.areIntersecting(player, tile)) {
-                    Direction collisionDirection = GameMath.getCollisionDirection(player, tile);
-                    intersectingTiles.add(new TileCollision(tile, collisionDirection));
+                    collisions.add(GameMath.getCollisionDetails(player, tile, getExistingCollision(player, tile)));
                 }
             }
         }
-
-        return intersectingTiles;
+        player.setCollisions(collisions);
     }
 
-
+    private static Collision getExistingCollision(Player player, Tile tile) {
+        for (Collision collision: player.getCollisions()) {
+            if (collision.getTarget() == tile) {
+                return collision;
+            }
+        }
+        return null;
+    }
 }

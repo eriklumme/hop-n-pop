@@ -29,5 +29,5 @@ public interface PlayerJson extends JSObject {
     boolean isIsInGame();
 
     @JSProperty
-    JSArray<TileCollisionJson> getTileCollisions();
+    JSArray<CollisionJson> getCollisions();
 }

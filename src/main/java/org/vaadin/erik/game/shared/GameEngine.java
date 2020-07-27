@@ -1,14 +1,19 @@
 package org.vaadin.erik.game.shared;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.vaadin.erik.game.entity.Action;
 import org.vaadin.erik.game.entity.PlayerCommand;
+import org.vaadin.erik.game.server.Server;
 import org.vaadin.erik.game.shared.data.Event;
 import org.vaadin.erik.game.tiles.TileMap;
 
 import java.util.*;
 
 public class GameEngine {
+
+    private static final Logger logger = LogManager.getLogger(GameEngine.class);
 
     private static final float GRAVITY_ACCELERATION = 3000;
 
@@ -94,37 +99,41 @@ public class GameEngine {
     }
 
     private static void updatePosition(Player player, double delta) {
+        player.setPreviousPosition(new Point(player.getX(), player.getY()));
         player.setX(player.getX() + delta * player.getVelocity().getX());
         player.setY(player.getY() + delta * player.getVelocity().getY());
     }
 
     private static void handleTileCollision(Player player) {
-        player.setTileCollisions(TileMap.getIntersectingTiles(player));
+        TileMap.updateCollisions(player);
 
         player.setOnGround(false);
 
-        // TODO: only reference to getTileCollisions()?
-        // TODO: improve direction detection to depend on player's previous position?
-        for (TileCollision collision: player.getTileCollisions()) {
-            switch (collision.getFromDirection()) {
-
-                case UP:
-                    player.setY(collision.getTile().getY() - player.getHeight());
-                    player.setVelocity(new Vector2D(player.getVelocity().getX(), 0));
-                    player.setOnGround(true);
-                    break;
+        for (Collision collision: player.getCollisions()) {
+            switch (collision.getSourceCollisionSide()) {
                 case DOWN:
-                    player.setY(collision.getTile().getY() + collision.getTile().getHeight());
+                    player.setOnGround(true);
+                case UP:
                     player.setVelocity(new Vector2D(player.getVelocity().getX(), 0));
+                    if (Server.DEBUG_GAME_STATE) {
+                        logger.info("Resetting y velocity for player {} due to collision", player.getUUID());
+                    }
                     break;
                 case LEFT:
-                    player.setX(collision.getTile().getX() + collision.getTile().getWidth());
-                    player.setVelocity(new Vector2D(0, player.getVelocity().getY()));
-                    break;
                 case RIGHT:
-                    player.setX(collision.getTile().getX() - player.getWidth());
                     player.setVelocity(new Vector2D(0, player.getVelocity().getY()));
+                    if (Server.DEBUG_GAME_STATE) {
+                        logger.info("Resetting x velocity for player {} due to collision", player.getUUID());
+                    }
                     break;
+            }
+            player.setX(collision.getSourceCollisionPoint().getX());
+            player.setY(collision.getSourceCollisionPoint().getY());
+            if (Server.DEBUG_GAME_STATE) {
+                logger.info("Player collided, resetting to position {}x {}y for player {}",
+                        collision.getSourceCollisionPoint().getX(),
+                        collision.getSourceCollisionPoint().getY(),
+                        player.getUUID());
             }
         }
     }

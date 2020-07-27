@@ -7,13 +7,8 @@ import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.json.JSON;
 import org.vaadin.erik.game.client.communication.Communicator;
 import org.vaadin.erik.game.client.communication.MessageEvent;
-import org.vaadin.erik.game.client.communication.json.GameSnapshotJson;
-import org.vaadin.erik.game.client.communication.json.PlayerJson;
-import org.vaadin.erik.game.client.communication.json.RegistrationMessageJson;
-import org.vaadin.erik.game.client.communication.json.TileCollisionJson;
+import org.vaadin.erik.game.client.communication.json.*;
 import org.vaadin.erik.game.client.tilemap.TileMap;
-import org.vaadin.erik.game.shared.Direction;
-import org.vaadin.erik.game.shared.TileCollision;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -81,9 +76,11 @@ public class GameClient {
             PlayerJson player = snapshot.getPlayers().get(i);
             gameCanvas.drawPlayer(player.getX().intValue(), player.getY().intValue());
 
-            for (int j = 0; j < player.getTileCollisions().getLength(); j++) {
-                TileCollisionJson collision = player.getTileCollisions().get(j);
-                gameCanvas.drawCollision(collision.getTile(), collision.getFromDirection());
+            for (int j = 0; j < player.getCollisions().getLength(); j++) {
+                CollisionJson collision = player.getCollisions().get(j);
+                if (collision.getTarget().isTile()) {
+                    gameCanvas.drawCollision(collision.getTarget(), collision.getTargetCollisionSide());
+                }
             }
         }
     }

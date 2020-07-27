@@ -9,12 +9,17 @@ public class Ticker {
     private static final int TICKS_PER_SECOND = 50;
     private static final double ONE_MILLION = 1000000;
 
-    private final Timer timer;
-    private final TimerTask timerTask;
+    private final TickerTask tickerTask;
+
+    private Timer timer;
+    private double slowdownFactor = 1;
 
     public Ticker(TickerTask tickerTask) {
-        this.timer = new Timer(THREAD_NAME);
-        this.timerTask = new TimerTask() {
+        this.tickerTask = tickerTask;
+    }
+
+    private TimerTask createTimerTask() {
+        return new TimerTask() {
 
             private long lastRunTimeNanos = -1;
 
@@ -28,16 +33,24 @@ public class Ticker {
                 double deltaMs = (timeNanos - lastRunTimeNanos) / ONE_MILLION;
                 lastRunTimeNanos = timeNanos;
 
-                tickerTask.tick(deltaMs);
+                tickerTask.tick(deltaMs / slowdownFactor);
             }
         };
     }
 
     public void start() {
-        timer.scheduleAtFixedRate(timerTask, 0, 1000/TICKS_PER_SECOND);
+        timer = new Timer(THREAD_NAME);
+        TimerTask timerTask = createTimerTask();
+        timer.scheduleAtFixedRate(timerTask, 0, (long) (1000 / TICKS_PER_SECOND * slowdownFactor));
     }
 
     public void stop() {
         timer.cancel();
+    }
+
+    public void setSlowdownFactor(double slowdownFactor) {
+        this.slowdownFactor = slowdownFactor;
+        stop();
+        start();
     }
 }

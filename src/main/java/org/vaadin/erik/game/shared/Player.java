@@ -5,11 +5,13 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.vaadin.erik.game.communication.Vector2DSerializer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 
 public class Player implements GameObject {
 
     private final String uuid;
+    private Point previousPosition;
     private double x;
     private double y;
     private boolean onGround;
@@ -19,7 +21,7 @@ public class Player implements GameObject {
 
     private boolean isInGame = false;
 
-    private Collection<TileCollision> tileCollisions;
+    private Collection<Collision> collisions;
 
     public Player() {
         uuid = UUID.randomUUID().toString();
@@ -27,6 +29,15 @@ public class Player implements GameObject {
 
     public String getUUID() {
         return uuid;
+    }
+
+    @Override
+    public Point getPreviousPosition() {
+        return previousPosition != null ? previousPosition : new Point(getX(), getY());
+    }
+
+    public void setPreviousPosition(Point previousPosition) {
+        this.previousPosition = previousPosition;
     }
 
     @Override
@@ -94,12 +105,12 @@ public class Player implements GameObject {
         this.onGround = onGround;
     }
 
-    public Collection<TileCollision> getTileCollisions() {
-        return tileCollisions;
+    public Collection<Collision> getCollisions() {
+        return collisions != null ? collisions : Collections.emptyList();
     }
 
-    public void setTileCollisions(Collection<TileCollision> tileCollisions) {
-        this.tileCollisions = tileCollisions;
+    public void setCollisions(Collection<Collision> collisions) {
+        this.collisions = collisions;
     }
 
     /**

@@ -18,6 +18,12 @@ public class Tile implements GameObject {
     }
 
     @Override
+    @JsonIgnore
+    public Point getPreviousPosition() {
+        return new Point(getX(), getY());
+    }
+
+    @Override
     public double getX() {
         return topLeftCorner.getX();
     }

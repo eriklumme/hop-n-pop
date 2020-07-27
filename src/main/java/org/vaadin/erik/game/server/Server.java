@@ -4,6 +4,7 @@ import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.vaadin.erik.game.entity.DebugMessage;
 import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.entity.PlayerCommand;
 import org.vaadin.erik.game.shared.GameEngine;
@@ -18,6 +19,8 @@ import java.util.*;
  */
 @Service
 public class Server implements TickerTask {
+
+    public static final boolean DEBUG_GAME_STATE = true;
 
     private static final Logger logger = LogManager.getLogger(Server.class);
 
@@ -51,6 +54,11 @@ public class Server implements TickerTask {
     }
 
     public void handleCommand(PlayerCommand playerCommand) {
+        if (playerCommand.getDebugMessage() != null) {
+            handleDebugMessage(playerCommand.getDebugMessage());
+            return;
+        }
+
         Player player = players.get(playerCommand.getUUID());
 
         if (player == null) {
@@ -59,6 +67,11 @@ public class Server implements TickerTask {
         }
 
         queuedCommands.put(player, playerCommand);
+    }
+
+    private void handleDebugMessage(DebugMessage debugMessage) {
+        logger.warn("Handling debug message");
+        ticker.setSlowdownFactor(debugMessage.getSlowdownFactor());
     }
 
     @Override

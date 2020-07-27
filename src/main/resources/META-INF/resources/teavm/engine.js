@@ -941,6 +941,35 @@ function ju_Arrays_copyOf0($original, $newLength) {
     }
     return $result;
 }
+function ju_Arrays_binarySearch($a, $key) {
+    $a = $rt_nullCheck($a);
+    return ju_Arrays_binarySearch0($a, 0, $a.data.length, $key);
+}
+function ju_Arrays_binarySearch0($a, $fromIndex, $toIndex, $key) {
+    var $u, $i, var$7, $e;
+    if ($fromIndex > $toIndex)
+        $rt_throw(jl_IllegalArgumentException__init_());
+    $u = $toIndex - 1 | 0;
+    while (true) {
+        $i = ($fromIndex + $u | 0) / 2 | 0;
+        $a = $rt_nullCheck($a);
+        var$7 = $a.data;
+        $i = $rt_checkBounds($i, var$7);
+        $e = var$7[$i];
+        if ($e == $key)
+            break;
+        if ($key >= $e) {
+            $fromIndex = $i + 1 | 0;
+            if ($fromIndex > $u)
+                return  -$i - 2 | 0;
+        } else {
+            $u = $i - 1 | 0;
+            if ($u < $fromIndex)
+                return  -$i - 1 | 0;
+        }
+    }
+    return $i;
+}
 var otj_JSObject = $rt_classWithoutFields(0);
 var otjb_AnimationFrameCallback = $rt_classWithoutFields(0);
 var ji_Serializable = $rt_classWithoutFields(0);
@@ -1017,6 +1046,24 @@ function ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame(var$0, var$1) {
 function ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame$exported$0(var$0, var$1) {
     var$0.$onAnimationFrame(var$1);
 }
+var jl_AbstractStringBuilder$Constants = $rt_classWithoutFields();
+var jl_AbstractStringBuilder$Constants_intPowersOfTen = null;
+var jl_AbstractStringBuilder$Constants_longPowersOfTen = null;
+var jl_AbstractStringBuilder$Constants_longLogPowersOfTen = null;
+var jl_AbstractStringBuilder$Constants_doubleAnalysisResult = null;
+var jl_AbstractStringBuilder$Constants_floatAnalysisResult = null;
+function jl_AbstractStringBuilder$Constants_$callClinit() {
+    jl_AbstractStringBuilder$Constants_$callClinit = $rt_eraseClinit(jl_AbstractStringBuilder$Constants);
+    jl_AbstractStringBuilder$Constants__clinit_();
+}
+function jl_AbstractStringBuilder$Constants__clinit_() {
+    jl_AbstractStringBuilder$Constants_intPowersOfTen = $rt_createIntArrayFromData([1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000]);
+    jl_AbstractStringBuilder$Constants_longPowersOfTen = $rt_createLongArrayFromData([Long_fromInt(1), Long_fromInt(10), Long_fromInt(100), Long_fromInt(1000), Long_fromInt(10000), Long_fromInt(100000), Long_fromInt(1000000), Long_fromInt(10000000), Long_fromInt(100000000), Long_fromInt(1000000000), new Long(1410065408, 2), new Long(1215752192, 23), new Long(3567587328, 232), new Long(1316134912, 2328), new Long(276447232, 23283), new Long(2764472320, 232830), new Long(1874919424, 2328306), new Long(1569325056, 23283064),
+    new Long(2808348672, 232830643)]);
+    jl_AbstractStringBuilder$Constants_longLogPowersOfTen = $rt_createLongArrayFromData([Long_fromInt(1), Long_fromInt(10), Long_fromInt(100), Long_fromInt(10000), Long_fromInt(100000000), new Long(1874919424, 2328306)]);
+    jl_AbstractStringBuilder$Constants_doubleAnalysisResult = otcit_DoubleAnalyzer$Result__init_();
+    jl_AbstractStringBuilder$Constants_floatAnalysisResult = otcit_FloatAnalyzer$Result__init_();
+}
 function ovegc_GameLoop$loop$lambda$_2_1() {
     jl_Object.call(this);
     this.$_00 = null;
@@ -1053,6 +1100,21 @@ function jl_Character__clinit_() {
     jl_Character_TYPE = $rt_cls($rt_charcls());
     jl_Character_characterCache = $rt_createArray(jl_Character, 128);
 }
+var jl_Long = $rt_classWithoutFields(jl_Number);
+var jl_Long_TYPE = null;
+function jl_Long_$callClinit() {
+    jl_Long_$callClinit = $rt_eraseClinit(jl_Long);
+    jl_Long__clinit_();
+}
+function jl_Long_divideUnsigned(var$1, var$2) {
+    return Long_udiv(var$1, var$2);
+}
+function jl_Long_remainderUnsigned(var$1, var$2) {
+    return Long_urem(var$1, var$2);
+}
+function jl_Long__clinit_() {
+    jl_Long_TYPE = $rt_cls($rt_longcls());
+}
 var ju_Map = $rt_classWithoutFields(0);
 var otjc_JSArrayReader = $rt_classWithoutFields(0);
 var otjc_JSArray = $rt_classWithoutFields();
@@ -1084,6 +1146,7 @@ function otjc_JSNumber_intValue$static($this) {
 function ovegcc_Communicator() {
     var a = this; jl_Object.call(a);
     a.$webSocket = null;
+    a.$slowdownInput = null;
     a.$order = 0;
 }
 function ovegcc_Communicator__init_(var_0) {
@@ -1092,12 +1155,16 @@ function ovegcc_Communicator__init_(var_0) {
     return var_1;
 }
 function ovegcc_Communicator__init_0($this, $onMessageHandler) {
-    var var$2;
+    var var$2, var$3;
     jl_Object__init_0($this);
     $this.$order = 0;
     var$2 = jl_StringBuilder__init_();
     var$2 = $rt_nullCheck($rt_nullCheck(var$2.$append($rt_str(window.location.href))).$append($rt_s(1))).$toString();
     $this.$webSocket = ovegcc_WebSocket_connect(var$2, $onMessageHandler);
+    $this.$slowdownInput = window.document.getElementById("slowdown");
+    var$2 = $this.$slowdownInput;
+    var$3 = ovegcc_Communicator$_init_$lambda$_0_0__init_($this);
+    var$2.addEventListener("change", otji_JS_function(var$3, "handleEvent"));
 }
 function ovegcc_Communicator_sendPlayerCommand($this, $uuid, $directions) {
     var $playerCommand, var$4, var$5, var$6;
@@ -1111,6 +1178,19 @@ function ovegcc_Communicator_sendPlayerCommand($this, $uuid, $directions) {
     $playerCommand.uuid = var$6;
     console.warn("client.Communicator: Sending player command");
     ovegcc_WebSocket_sendMessage$static($this.$webSocket, $playerCommand);
+}
+function ovegcc_Communicator_sendDebugCommand($this, $slowdownFactor) {
+    var $debugMessage, var$3, $playerCommand;
+    $debugMessage = otjc_JSObjects_create$js_body$_2();
+    var$3 = $slowdownFactor;
+    $debugMessage.slowdownFactor = var$3;
+    $playerCommand = otjc_JSObjects_create$js_body$_2();
+    $playerCommand.debugMessage = $debugMessage;
+    console.warn($rt_ustr($rt_nullCheck($rt_nullCheck((jl_StringBuilder__init_()).$append($rt_s(2))).$append0($slowdownFactor)).$toString()));
+    ovegcc_WebSocket_sendMessage$static($this.$webSocket, $playerCommand);
+}
+function ovegcc_Communicator_lambda$new$0($this, $e) {
+    $this.$sendDebugCommand(jl_Double_parseDouble($rt_str($this.$slowdownInput.value)));
 }
 var otjde_EventTarget = $rt_classWithoutFields(0);
 var otjde_GamepadEventTarget = $rt_classWithoutFields(0);
@@ -1191,7 +1271,7 @@ function ovegc_GameCanvas_drawTileMap($this, $tileMap) {
             $tile = $rt_nullCheck($tile);
             var$11 = $tile.$getTileType();
             ovegs_TileType_$callClinit();
-            $color = var$11 !== ovegs_TileType_GROUND ? $rt_s(2) : $rt_s(3);
+            $color = var$11 !== ovegs_TileType_GROUND ? $rt_s(3) : $rt_s(4);
             $this.$drawTile($tile.$getX(), $tile.$getY(), $tile.$getWidth(), $tile.$getHeight(), $color);
             var$4 = var$9 + 1 | 0;
         }
@@ -1205,7 +1285,7 @@ function ovegc_GameCanvas_drawCollision($this, $tileJson, $direction) {
         $y = $tileJson.y;
         $w = $tileJson.width;
         $h = $tileJson.height;
-        $this.$drawTile($x, $y, $w, $h, $rt_s(4));
+        $this.$drawTile($x, $y, $w, $h, $rt_s(5));
         ovegc_GameCanvas$1_$callClinit();
         var$7 = ovegc_GameCanvas$1_$SwitchMap$org$vaadin$erik$game$shared$Direction;
         $direction = $rt_nullCheck($direction);
@@ -1215,18 +1295,18 @@ function ovegc_GameCanvas_drawCollision($this, $tileJson, $direction) {
             case 1:
                 break;
             case 2:
-                $this.$drawTile($x, $y + $h - 5.0, $w, 5.0, $rt_s(5));
+                $this.$drawTile($x, $y + $h - 5.0, $w, 5.0, $rt_s(6));
                 break a;
             case 3:
-                $this.$drawTile($x, $y, 5.0, $h, $rt_s(5));
+                $this.$drawTile($x, $y, 5.0, $h, $rt_s(6));
                 break a;
             case 4:
-                $this.$drawTile($x + $w - 5.0, $y, 5.0, $h, $rt_s(5));
+                $this.$drawTile($x + $w - 5.0, $y, 5.0, $h, $rt_s(6));
                 break a;
             default:
                 break a;
         }
-        $this.$drawTile($x, $y, $w, 5.0, $rt_s(5));
+        $this.$drawTile($x, $y, $w, 5.0, $rt_s(6));
     }
 }
 function ovegc_GameCanvas_drawTile($this, $x, $y, $w, $h, $color) {
@@ -1235,6 +1315,26 @@ function ovegc_GameCanvas_drawTile($this, $x, $y, $w, $h, $color) {
     var$7 = $rt_ustr($color);
     var$6.fillStyle = var$7;
     $this.$context.fillRect($x, $y, $w, $h);
+}
+var otjde_EventListener = $rt_classWithoutFields(0);
+function ovegcc_Communicator$_init_$lambda$_0_0() {
+    jl_Object.call(this);
+    this.$_01 = null;
+}
+function ovegcc_Communicator$_init_$lambda$_0_0__init_(var_0) {
+    var var_1 = new ovegcc_Communicator$_init_$lambda$_0_0();
+    ovegcc_Communicator$_init_$lambda$_0_0__init_0(var_1, var_0);
+    return var_1;
+}
+function ovegcc_Communicator$_init_$lambda$_0_0__init_0(var$0, var$1) {
+    jl_Object__init_0(var$0);
+    var$0.$_01 = var$1;
+}
+function ovegcc_Communicator$_init_$lambda$_0_0_handleEvent(var$0, var$1) {
+    ovegcc_Communicator_lambda$new$0($rt_nullCheck(var$0.$_01), var$1);
+}
+function ovegcc_Communicator$_init_$lambda$_0_0_handleEvent$exported$0(var$0, var$1) {
+    var$0.$handleEvent(var$1);
 }
 var jl_Iterable = $rt_classWithoutFields(0);
 var ju_Collection = $rt_classWithoutFields(0);
@@ -1288,7 +1388,7 @@ function ovegc_GameLoop$handleButtonPresses$lambda$_3_1_apply0(var$0, var$1) {
 }
 function ovegc_GameLoop$start$lambda$_1_0() {
     jl_Object.call(this);
-    this.$_01 = null;
+    this.$_02 = null;
 }
 function ovegc_GameLoop$start$lambda$_1_0__init_(var_0) {
     var var_1 = new ovegc_GameLoop$start$lambda$_1_0();
@@ -1297,10 +1397,10 @@ function ovegc_GameLoop$start$lambda$_1_0__init_(var_0) {
 }
 function ovegc_GameLoop$start$lambda$_1_0__init_0(var$0, var$1) {
     jl_Object__init_0(var$0);
-    var$0.$_01 = var$1;
+    var$0.$_02 = var$1;
 }
 function ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame(var$0, var$1) {
-    ovegc_GameLoop_loop($rt_nullCheck(var$0.$_01), var$1);
+    ovegc_GameLoop_loop($rt_nullCheck(var$0.$_02), var$1);
 }
 function ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame$exported$0(var$0, var$1) {
     var$0.$onAnimationFrame(var$1);
@@ -1356,13 +1456,13 @@ function jl_Enum_valueOf($enumType, $name) {
     $enumType = $rt_nullCheck($enumType);
     $constants = $enumType.$getEnumConstants();
     if ($constants === null)
-        $rt_throw(jl_IllegalArgumentException__init_($rt_s(6)));
+        $rt_throw(jl_IllegalArgumentException__init_0($rt_s(7)));
     var$4 = $constants.data;
     var$5 = var$4.length;
     var$6 = 0;
     while (true) {
         if (var$6 >= var$5)
-            $rt_throw(jl_IllegalArgumentException__init_($rt_nullCheck($rt_nullCheck($rt_nullCheck($rt_nullCheck($rt_nullCheck((jl_StringBuilder__init_()).$append($rt_s(7))).$append0($enumType)).$append($rt_s(8))).$append0($name)).$append($rt_s(9))).$toString()));
+            $rt_throw(jl_IllegalArgumentException__init_0($rt_nullCheck($rt_nullCheck($rt_nullCheck($rt_nullCheck($rt_nullCheck((jl_StringBuilder__init_()).$append($rt_s(8))).$append1($enumType)).$append($rt_s(9))).$append1($name)).$append($rt_s(10))).$toString()));
         var$7 = $rt_checkLowerBound(var$6);
         $constant = var$4[var$7];
         $constant = $rt_nullCheck($constant);
@@ -1404,10 +1504,10 @@ function ovegs_Direction__init_0($this, var$1, var$2, $sign) {
     $this.$sign = $sign;
 }
 function ovegs_Direction__clinit_() {
-    ovegs_Direction_UP = ovegs_Direction__init_($rt_s(10), 0, (-1.0));
-    ovegs_Direction_DOWN = ovegs_Direction__init_($rt_s(11), 1, 1.0);
-    ovegs_Direction_LEFT = ovegs_Direction__init_($rt_s(12), 2, (-1.0));
-    ovegs_Direction_RIGHT = ovegs_Direction__init_($rt_s(13), 3, 1.0);
+    ovegs_Direction_UP = ovegs_Direction__init_($rt_s(11), 0, (-1.0));
+    ovegs_Direction_DOWN = ovegs_Direction__init_($rt_s(12), 1, 1.0);
+    ovegs_Direction_LEFT = ovegs_Direction__init_($rt_s(13), 2, (-1.0));
+    ovegs_Direction_RIGHT = ovegs_Direction__init_($rt_s(14), 3, 1.0);
     ovegs_Direction_$VALUES = $rt_createArrayFromData(ovegs_Direction, [ovegs_Direction_UP, ovegs_Direction_DOWN, ovegs_Direction_LEFT, ovegs_Direction_RIGHT]);
 }
 var otjb_TimerHandler = $rt_classWithoutFields(0);
@@ -1440,7 +1540,7 @@ function jl_AbstractStringBuilder_insert($this, $index, $string) {
     var $i, var$4, var$5, var$6, var$7;
     if ($index >= 0 && $index <= $this.$length) {
         if ($string === null)
-            $string = $rt_s(14);
+            $string = $rt_s(15);
         else if ($string.$isEmpty())
             return $this;
         $this.$ensureCapacity($this.$length + $string.$length0() | 0);
@@ -1470,11 +1570,250 @@ function jl_AbstractStringBuilder_insert($this, $index, $string) {
     }
     $rt_throw(jl_StringIndexOutOfBoundsException__init_());
 }
-function jl_AbstractStringBuilder_append0($this, $obj) {
-    return $this.$insert0($this.$length, $obj);
+function jl_AbstractStringBuilder_append0($this, $value) {
+    return $this.$insert0($this.$length, $value);
 }
-function jl_AbstractStringBuilder_insert0($this, $index, $obj) {
-    return $this.$insert($index, $obj === null ? $rt_s(14) : $obj.$toString());
+function jl_AbstractStringBuilder_insert0($this, $target, $value) {
+    var var$3, var$4, var$5, $number, $mantissa, $exp, $negative, $intPart, $sz, $digits, $zeros, $pos, $i, $intDigit, var$17;
+    var$3 = $rt_compare($value, 0.0);
+    if (!var$3) {
+        jl_AbstractStringBuilder_insertSpace($this, $target, $target + 3 | 0);
+        var$4 = $this.$buffer;
+        var$3 = $target + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        $target = $rt_checkBounds($target, var$4);
+        var$4[$target] = 48;
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 46;
+        var$4 = $rt_nullCheck($this.$buffer).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 48;
+        return $this;
+    }
+    if (!var$3) {
+        jl_AbstractStringBuilder_insertSpace($this, $target, $target + 4 | 0);
+        var$4 = $this.$buffer;
+        var$3 = $target + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        $target = $rt_checkBounds($target, var$4);
+        var$4[$target] = 45;
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 48;
+        var$4 = $this.$buffer;
+        var$3 = var$5 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 46;
+        var$4 = $rt_nullCheck($this.$buffer).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 48;
+        return $this;
+    }
+    if (isNaN($value) ? 1 : 0) {
+        jl_AbstractStringBuilder_insertSpace($this, $target, $target + 3 | 0);
+        var$4 = $this.$buffer;
+        var$3 = $target + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        $target = $rt_checkBounds($target, var$4);
+        var$4[$target] = 78;
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 97;
+        var$4 = $rt_nullCheck($this.$buffer).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 78;
+        return $this;
+    }
+    if (!isFinite($value) ? 1 : 0) {
+        if (var$3 > 0) {
+            jl_AbstractStringBuilder_insertSpace($this, $target, $target + 8 | 0);
+            var$3 = $target;
+        } else {
+            jl_AbstractStringBuilder_insertSpace($this, $target, $target + 9 | 0);
+            var$4 = $this.$buffer;
+            var$3 = $target + 1 | 0;
+            var$4 = $rt_nullCheck(var$4).data;
+            $target = $rt_checkBounds($target, var$4);
+            var$4[$target] = 45;
+        }
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 73;
+        var$4 = $this.$buffer;
+        var$3 = var$5 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 110;
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 102;
+        var$4 = $this.$buffer;
+        var$3 = var$5 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 105;
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 110;
+        var$4 = $this.$buffer;
+        var$3 = var$5 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 105;
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 116;
+        var$4 = $rt_nullCheck($this.$buffer).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = 121;
+        return $this;
+    }
+    jl_AbstractStringBuilder$Constants_$callClinit();
+    $number = jl_AbstractStringBuilder$Constants_doubleAnalysisResult;
+    otcit_DoubleAnalyzer_analyze($value, $number);
+    $number = $rt_nullCheck($number);
+    $mantissa = $number.$mantissa;
+    $exp = $number.$exponent;
+    $negative = $number.$sign0;
+    $intPart = 1;
+    $sz = 1;
+    if ($negative)
+        $sz = 2;
+    $digits = 18;
+    $zeros = jl_AbstractStringBuilder_trailingDecimalZeros($mantissa);
+    if ($zeros > 0)
+        $digits = $digits - $zeros | 0;
+    if ($exp < 7 && $exp >= (-3)) {
+        if ($exp >= 0) {
+            $intPart = $exp + 1 | 0;
+            $digits = jl_Math_max($digits, $intPart + 1 | 0);
+            $exp = 0;
+        } else {
+            var$4 = jl_AbstractStringBuilder$Constants_longPowersOfTen;
+            var$3 =  -$exp;
+            var$4 = $rt_nullCheck(var$4).data;
+            $mantissa = Long_div($mantissa, var$4[$rt_checkBounds(var$3, var$4)]);
+            $digits = $digits - $exp | 0;
+            $exp = 0;
+        }
+    }
+    if ($exp) {
+        $sz = $sz + 2 | 0;
+        if (!($exp > (-10) && $exp < 10))
+            $sz = $sz + 1 | 0;
+        if (!($exp > (-100) && $exp < 100))
+            $sz = $sz + 1 | 0;
+        if ($exp < 0)
+            $sz = $sz + 1 | 0;
+    }
+    if ($exp && $digits == $intPart)
+        $digits = $digits + 1 | 0;
+    var$3 = $sz + $digits | 0;
+    jl_AbstractStringBuilder_insertSpace($this, $target, $target + var$3 | 0);
+    if (!$negative)
+        var$3 = $target;
+    else {
+        var$4 = $this.$buffer;
+        var$3 = $target + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        $target = $rt_checkBounds($target, var$4);
+        var$4[$target] = 45;
+    }
+    $pos = new Long(1569325056, 23283064);
+    $i = 0;
+    while ($i < $digits) {
+        if (Long_le($pos, Long_ZERO))
+            $intDigit = 0;
+        else {
+            $intDigit = Long_div($mantissa, $pos).lo;
+            $mantissa = Long_rem($mantissa, $pos);
+        }
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$17 = (48 + $intDigit | 0) & 65535;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = var$17;
+        $intPart = $intPart + (-1) | 0;
+        if ($intPart)
+            var$3 = var$5;
+        else {
+            var$4 = $this.$buffer;
+            var$3 = var$5 + 1 | 0;
+            var$4 = $rt_nullCheck(var$4).data;
+            var$4[$rt_checkBounds(var$5, var$4)] = 46;
+        }
+        $pos = Long_div($pos, Long_fromInt(10));
+        $i = $i + 1 | 0;
+    }
+    if ($exp) {
+        var$4 = $this.$buffer;
+        var$5 = var$3 + 1 | 0;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$3, var$4)] = 69;
+        if ($exp >= 0)
+            var$17 = var$5;
+        else {
+            $exp =  -$exp;
+            var$4 = $this.$buffer;
+            var$17 = var$5 + 1 | 0;
+            var$4 = $rt_nullCheck(var$4).data;
+            var$4[$rt_checkBounds(var$5, var$4)] = 45;
+        }
+        if ($exp >= 100) {
+            var$4 = $this.$buffer;
+            var$3 = var$17 + 1 | 0;
+            var$5 = (48 + ($exp / 100 | 0) | 0) & 65535;
+            var$4 = $rt_nullCheck(var$4).data;
+            var$4[$rt_checkBounds(var$17, var$4)] = var$5;
+            $exp = $exp % 100 | 0;
+            var$4 = $this.$buffer;
+            var$5 = var$3 + 1 | 0;
+            var$17 = (48 + ($exp / 10 | 0) | 0) & 65535;
+            var$4 = $rt_nullCheck(var$4).data;
+            var$4[$rt_checkBounds(var$3, var$4)] = var$17;
+        } else if ($exp < 10)
+            var$5 = var$17;
+        else {
+            var$4 = $this.$buffer;
+            var$5 = var$17 + 1 | 0;
+            var$3 = (48 + ($exp / 10 | 0) | 0) & 65535;
+            var$4 = $rt_nullCheck(var$4).data;
+            var$4[$rt_checkBounds(var$17, var$4)] = var$3;
+        }
+        var$4 = $this.$buffer;
+        var$3 = (48 + ($exp % 10 | 0) | 0) & 65535;
+        var$4 = $rt_nullCheck(var$4).data;
+        var$4[$rt_checkBounds(var$5, var$4)] = var$3;
+    }
+    return $this;
+}
+function jl_AbstractStringBuilder_trailingDecimalZeros($n) {
+    var $zeros, $result, $bit, $i, var$6;
+    $zeros = Long_fromInt(1);
+    $result = 0;
+    $bit = 16;
+    jl_AbstractStringBuilder$Constants_$callClinit();
+    $i = $rt_nullCheck(jl_AbstractStringBuilder$Constants_longLogPowersOfTen).data.length - 1 | 0;
+    while ($i >= 0) {
+        var$6 = $rt_nullCheck(jl_AbstractStringBuilder$Constants_longLogPowersOfTen).data;
+        $i = $rt_checkBounds($i, var$6);
+        if (Long_eq(Long_rem($n, Long_mul($zeros, var$6[$i])), Long_ZERO)) {
+            $result = $result | $bit;
+            var$6 = $rt_nullCheck(jl_AbstractStringBuilder$Constants_longLogPowersOfTen).data;
+            $i = $rt_checkUpperBound($i, var$6);
+            $zeros = Long_mul($zeros, var$6[$i]);
+        }
+        $bit = $bit >>> 1;
+        $i = $i + (-1) | 0;
+    }
+    return $result;
+}
+function jl_AbstractStringBuilder_append1($this, $obj) {
+    return $this.$insert1($this.$length, $obj);
+}
+function jl_AbstractStringBuilder_insert1($this, $index, $obj) {
+    return $this.$insert($index, $obj === null ? $rt_s(15) : $obj.$toString());
 }
 function jl_AbstractStringBuilder_ensureCapacity($this, $capacity) {
     var $newLength;
@@ -1485,6 +1824,24 @@ function jl_AbstractStringBuilder_ensureCapacity($this, $capacity) {
 }
 function jl_AbstractStringBuilder_toString($this) {
     return jl_String__init_0($this.$buffer, 0, $this.$length);
+}
+function jl_AbstractStringBuilder_insertSpace($this, $start, $end) {
+    var $sz, $i, var$5, var$6, var$7, var$8;
+    $sz = $this.$length - $start | 0;
+    $this.$ensureCapacity(($this.$length + $end | 0) - $start | 0);
+    $i = $sz - 1 | 0;
+    while ($i >= 0) {
+        var$5 = $this.$buffer;
+        var$6 = $end + $i | 0;
+        var$7 = $this.$buffer;
+        var$8 = $start + $i | 0;
+        var$7 = $rt_nullCheck(var$7).data;
+        var$8 = var$7[$rt_checkBounds(var$8, var$7)];
+        var$5 = $rt_nullCheck(var$5).data;
+        var$5[$rt_checkBounds(var$6, var$5)] = var$8;
+        $i = $i + (-1) | 0;
+    }
+    $this.$length = $this.$length + ($end - $start | 0) | 0;
 }
 var jl_Appendable = $rt_classWithoutFields(0);
 var jl_StringBuilder = $rt_classWithoutFields(jl_AbstractStringBuilder);
@@ -1500,15 +1857,23 @@ function jl_StringBuilder_append($this, $string) {
     jl_AbstractStringBuilder_append($this, $string);
     return $this;
 }
-function jl_StringBuilder_append0($this, $obj) {
-    jl_AbstractStringBuilder_append0($this, $obj);
+function jl_StringBuilder_append0($this, $value) {
+    jl_AbstractStringBuilder_append0($this, $value);
     return $this;
 }
-function jl_StringBuilder_insert($this, $index, $obj) {
-    jl_AbstractStringBuilder_insert0($this, $index, $obj);
+function jl_StringBuilder_append1($this, $obj) {
+    jl_AbstractStringBuilder_append1($this, $obj);
     return $this;
 }
-function jl_StringBuilder_insert0($this, $index, $string) {
+function jl_StringBuilder_insert($this, $target, $value) {
+    jl_AbstractStringBuilder_insert0($this, $target, $value);
+    return $this;
+}
+function jl_StringBuilder_insert0($this, $index, $obj) {
+    jl_AbstractStringBuilder_insert1($this, $index, $obj);
+    return $this;
+}
+function jl_StringBuilder_insert1($this, $index, $string) {
     jl_AbstractStringBuilder_insert($this, $index, $string);
     return $this;
 }
@@ -1518,11 +1883,14 @@ function jl_StringBuilder_toString($this) {
 function jl_StringBuilder_ensureCapacity($this, var$1) {
     jl_AbstractStringBuilder_ensureCapacity($this, var$1);
 }
-function jl_StringBuilder_insert1($this, var$1, var$2) {
-    return $this.$insert1(var$1, var$2);
-}
 function jl_StringBuilder_insert2($this, var$1, var$2) {
     return $this.$insert2(var$1, var$2);
+}
+function jl_StringBuilder_insert3($this, var$1, var$2) {
+    return $this.$insert3(var$1, var$2);
+}
+function jl_StringBuilder_insert4($this, var$1, var$2) {
+    return $this.$insert4(var$1, var$2);
 }
 var ju_ConcurrentModificationException = $rt_classWithoutFields(jl_RuntimeException);
 function ju_ConcurrentModificationException__init_() {
@@ -1534,6 +1902,10 @@ function ju_ConcurrentModificationException__init_0($this) {
     jl_RuntimeException__init_1($this);
 }
 var jlr_AnnotatedElement = $rt_classWithoutFields(0);
+var ovegccj_GameObjectJson = $rt_classWithoutFields();
+function ovegccj_GameObjectJson_isTile$static($this) {
+    return "tileType" in $this ? 1 : 0;
+}
 var ju_AbstractCollection = $rt_classWithoutFields();
 function ju_AbstractCollection__init_($this) {
     jl_Object__init_0($this);
@@ -1557,6 +1929,164 @@ function ju_HashMap$1__init_0($this, $this$0) {
 }
 function ju_HashMap$1_iterator($this) {
     return ju_HashMap$KeyIterator__init_($this.$this$0);
+}
+var jl_Double = $rt_classWithoutFields(jl_Number);
+var jl_Double_NaN = 0.0;
+var jl_Double_TYPE = null;
+function jl_Double_$callClinit() {
+    jl_Double_$callClinit = $rt_eraseClinit(jl_Double);
+    jl_Double__clinit_();
+}
+function jl_Double_parseDouble($string) {
+    var $start, $end, $negative, $c, $mantissa, $exp, $hasOneDigit, var$9, var$10, $negativeExp, $numExp, var$13;
+    jl_Double_$callClinit();
+    $string = $rt_nullCheck($string);
+    if ($string.$isEmpty())
+        $rt_throw(jl_NumberFormatException__init_());
+    $start = 0;
+    $end = $string.$length0();
+    while (true) {
+        if ($string.$charAt($start) > 32) {
+            while ($string.$charAt($end - 1 | 0) <= 32) {
+                $end = $end + (-1) | 0;
+            }
+            $negative = 0;
+            if ($string.$charAt($start) == 45) {
+                $start = $start + 1 | 0;
+                $negative = 1;
+            } else if ($string.$charAt($start) == 43)
+                $start = $start + 1 | 0;
+            if ($start == $end)
+                $rt_throw(jl_NumberFormatException__init_());
+            a: {
+                $c = $string.$charAt($start);
+                $mantissa = Long_ZERO;
+                $exp = 0;
+                $hasOneDigit = 0;
+                if ($c != 46) {
+                    $hasOneDigit = 1;
+                    if ($c >= 48 && $c <= 57) {
+                        b: {
+                            while ($start < $end) {
+                                if ($string.$charAt($start) != 48)
+                                    break b;
+                                $start = $start + 1 | 0;
+                            }
+                        }
+                        while ($start < $end) {
+                            var$9 = $string.$charAt($start);
+                            if (var$9 < 48)
+                                break a;
+                            if (var$9 > 57)
+                                break a;
+                            if (Long_toNumber($mantissa) >= 1.0E17)
+                                $exp = $exp + 1 | 0;
+                            else
+                                $mantissa = Long_add(Long_mul($mantissa, Long_fromInt(10)), Long_fromInt(var$9 - 48 | 0));
+                            $start = $start + 1 | 0;
+                        }
+                    } else
+                        $rt_throw(jl_NumberFormatException__init_());
+                }
+            }
+            if ($start < $end && $string.$charAt($start) == 46) {
+                $start = $start + 1 | 0;
+                c: {
+                    while (true) {
+                        if ($start >= $end)
+                            break c;
+                        var$10 = $string.$charAt($start);
+                        if (var$10 < 48)
+                            break c;
+                        if (var$10 > 57)
+                            break;
+                        if (Long_toNumber($mantissa) < 1.0E17) {
+                            $mantissa = Long_add(Long_mul($mantissa, Long_fromInt(10)), Long_fromInt(var$10 - 48 | 0));
+                            $exp = $exp + (-1) | 0;
+                        }
+                        $start = $start + 1 | 0;
+                        $hasOneDigit = 1;
+                    }
+                }
+                if (!$hasOneDigit)
+                    $rt_throw(jl_NumberFormatException__init_());
+            }
+            if ($start < $end) {
+                var$9 = $string.$charAt($start);
+                if (var$9 != 101 && var$9 != 69)
+                    $rt_throw(jl_NumberFormatException__init_());
+                var$9 = $start + 1 | 0;
+                $negativeExp = 0;
+                if (var$9 == $end)
+                    $rt_throw(jl_NumberFormatException__init_());
+                if ($string.$charAt(var$9) == 45) {
+                    var$9 = var$9 + 1 | 0;
+                    $negativeExp = 1;
+                } else if ($string.$charAt(var$9) == 43)
+                    var$9 = var$9 + 1 | 0;
+                $numExp = 0;
+                var$10 = 0;
+                d: {
+                    while (true) {
+                        if (var$9 >= $end)
+                            break d;
+                        var$13 = $string.$charAt(var$9);
+                        if (var$13 < 48)
+                            break d;
+                        if (var$13 > 57)
+                            break;
+                        $numExp = (10 * $numExp | 0) + (var$13 - 48 | 0) | 0;
+                        var$10 = 1;
+                        var$9 = var$9 + 1 | 0;
+                    }
+                }
+                if (!var$10)
+                    $rt_throw(jl_NumberFormatException__init_());
+                if ($negativeExp)
+                    $numExp =  -$numExp;
+                $exp = $exp + $numExp | 0;
+            }
+            e: {
+                var$9 = $rt_compare($exp, 308);
+                if (var$9 <= 0) {
+                    if (var$9)
+                        break e;
+                    if (Long_le($mantissa, new Long(2133831477, 4185580)))
+                        break e;
+                }
+                return $negative ? (-Infinity) : Infinity;
+            }
+            if ($negative)
+                $mantissa = Long_neg($mantissa);
+            return Long_toNumber($mantissa) * jl_Double_decimalExponent($exp);
+        }
+        $start = $start + 1 | 0;
+        if ($start == $end)
+            break;
+    }
+    $rt_throw(jl_NumberFormatException__init_());
+}
+function jl_Double_decimalExponent($n) {
+    var $d, $result;
+    jl_Double_$callClinit();
+    if ($n >= 0)
+        $d = 10.0;
+    else {
+        $d = 0.1;
+        $n =  -$n;
+    }
+    $result = 1.0;
+    while ($n) {
+        if ($n % 2 | 0)
+            $result = $result * $d;
+        $d = $d * $d;
+        $n = $n / 2 | 0;
+    }
+    return $result;
+}
+function jl_Double__clinit_() {
+    jl_Double_NaN = NaN;
+    jl_Double_TYPE = $rt_cls($rt_doublecls());
 }
 var jusi_SimpleStreamImpl = $rt_classWithoutFields();
 function jusi_SimpleStreamImpl__init_($this) {
@@ -1749,7 +2279,7 @@ function otjb_Window_addEventListener$exported$6(var$0, var$1, var$2, var$3) {
 var ovegcc_OnMessageHandler = $rt_classWithoutFields(0);
 function ovegc_GameClient$_init_$lambda$_1_0() {
     jl_Object.call(this);
-    this.$_02 = null;
+    this.$_03 = null;
 }
 function ovegc_GameClient$_init_$lambda$_1_0__init_(var_0) {
     var var_1 = new ovegc_GameClient$_init_$lambda$_1_0();
@@ -1758,10 +2288,10 @@ function ovegc_GameClient$_init_$lambda$_1_0__init_(var_0) {
 }
 function ovegc_GameClient$_init_$lambda$_1_0__init_0(var$0, var$1) {
     jl_Object__init_0(var$0);
-    var$0.$_02 = var$1;
+    var$0.$_03 = var$1;
 }
 function ovegc_GameClient$_init_$lambda$_1_0_onMessage(var$0, var$1) {
-    ovegc_GameClient_onMessageReceived($rt_nullCheck(var$0.$_02), var$1);
+    ovegc_GameClient_onMessageReceived($rt_nullCheck(var$0.$_03), var$1);
 }
 function ovegc_GameClient$_init_$lambda$_1_0_onMessage$exported$0(var$0, var$1) {
     var$0.$onMessage(var$1);
@@ -1916,7 +2446,7 @@ function jl_NegativeArraySizeException__init_0($this) {
 }
 function jusi_MappingStreamImpl$wrap$lambda$_1_0() {
     var a = this; jl_Object.call(a);
-    a.$_03 = null;
+    a.$_04 = null;
     a.$_1 = null;
 }
 function jusi_MappingStreamImpl$wrap$lambda$_1_0__init_(var_0, var_1) {
@@ -1926,11 +2456,11 @@ function jusi_MappingStreamImpl$wrap$lambda$_1_0__init_(var_0, var_1) {
 }
 function jusi_MappingStreamImpl$wrap$lambda$_1_0__init_0(var$0, var$1, var$2) {
     jl_Object__init_0(var$0);
-    var$0.$_03 = var$1;
+    var$0.$_04 = var$1;
     var$0.$_1 = var$2;
 }
 function jusi_MappingStreamImpl$wrap$lambda$_1_0_test(var$0, var$1) {
-    return jusi_MappingStreamImpl_lambda$wrap$0($rt_nullCheck(var$0.$_03), var$0.$_1, var$1);
+    return jusi_MappingStreamImpl_lambda$wrap$0($rt_nullCheck(var$0.$_04), var$0.$_1, var$1);
 }
 var ju_Map$Entry = $rt_classWithoutFields(0);
 var jl_IncompatibleClassChangeError = $rt_classWithoutFields(jl_LinkageError);
@@ -1950,6 +2480,32 @@ function jl_NoSuchMethodError__init_(var_0) {
 }
 function jl_NoSuchMethodError__init_0($this, $message) {
     jl_IncompatibleClassChangeError__init_0($this, $message);
+}
+var jl_IllegalArgumentException = $rt_classWithoutFields(jl_RuntimeException);
+function jl_IllegalArgumentException__init_() {
+    var var_0 = new jl_IllegalArgumentException();
+    jl_IllegalArgumentException__init_1(var_0);
+    return var_0;
+}
+function jl_IllegalArgumentException__init_0(var_0) {
+    var var_1 = new jl_IllegalArgumentException();
+    jl_IllegalArgumentException__init_2(var_1, var_0);
+    return var_1;
+}
+function jl_IllegalArgumentException__init_1($this) {
+    jl_RuntimeException__init_1($this);
+}
+function jl_IllegalArgumentException__init_2($this, $message) {
+    jl_RuntimeException__init_2($this, $message);
+}
+var jl_NumberFormatException = $rt_classWithoutFields(jl_IllegalArgumentException);
+function jl_NumberFormatException__init_() {
+    var var_0 = new jl_NumberFormatException();
+    jl_NumberFormatException__init_0(var_0);
+    return var_0;
+}
+function jl_NumberFormatException__init_0($this) {
+    jl_IllegalArgumentException__init_1($this);
 }
 var jl_ArrayIndexOutOfBoundsException = $rt_classWithoutFields(jl_IndexOutOfBoundsException);
 function jl_ArrayIndexOutOfBoundsException__init_() {
@@ -1982,8 +2538,8 @@ function ovegs_TileType__init_0($this, var$1, var$2) {
     jl_Enum__init_($this, var$1, var$2);
 }
 function ovegs_TileType__clinit_() {
-    ovegs_TileType_AIR = ovegs_TileType__init_($rt_s(15), 0);
-    ovegs_TileType_GROUND = ovegs_TileType__init_($rt_s(16), 1);
+    ovegs_TileType_AIR = ovegs_TileType__init_($rt_s(16), 0);
+    ovegs_TileType_GROUND = ovegs_TileType__init_($rt_s(17), 1);
     ovegs_TileType_$VALUES = $rt_createArrayFromData(ovegs_TileType, [ovegs_TileType_AIR, ovegs_TileType_GROUND]);
 }
 var jlr_Array = $rt_classWithoutFields();
@@ -1991,7 +2547,7 @@ function jlr_Array_newInstance($componentType, $length) {
     if ($componentType === null)
         $rt_throw(jl_NullPointerException__init_());
     if ($componentType === $rt_cls($rt_voidcls()))
-        $rt_throw(jl_IllegalArgumentException__init_0());
+        $rt_throw(jl_IllegalArgumentException__init_());
     if ($length < 0)
         $rt_throw(jl_NegativeArraySizeException__init_());
     return jlr_Array_newInstanceImpl($rt_nullCheck($componentType).$getPlatformClass(), $length);
@@ -2104,9 +2660,23 @@ function ju_HashMap$AbstractMapIterator_makeNext($this) {
         $this.$futureEntry = $rt_nullCheck($this.$futureEntry).$next0;
     }
 }
+function otcit_DoubleAnalyzer$Result() {
+    var a = this; jl_Object.call(a);
+    a.$mantissa = Long_ZERO;
+    a.$exponent = 0;
+    a.$sign0 = 0;
+}
+function otcit_DoubleAnalyzer$Result__init_() {
+    var var_0 = new otcit_DoubleAnalyzer$Result();
+    otcit_DoubleAnalyzer$Result__init_0(var_0);
+    return var_0;
+}
+function otcit_DoubleAnalyzer$Result__init_0($this) {
+    jl_Object__init_0($this);
+}
 function ovegcc_WebSocket$sendMessage$static$lambda$_7_0() {
     var a = this; jl_Object.call(a);
-    a.$_04 = null;
+    a.$_05 = null;
     a.$_10 = null;
 }
 function ovegcc_WebSocket$sendMessage$static$lambda$_7_0__init_(var_0, var_1) {
@@ -2116,11 +2686,11 @@ function ovegcc_WebSocket$sendMessage$static$lambda$_7_0__init_(var_0, var_1) {
 }
 function ovegcc_WebSocket$sendMessage$static$lambda$_7_0__init_0(var$0, var$1, var$2) {
     jl_Object__init_0(var$0);
-    var$0.$_04 = var$1;
+    var$0.$_05 = var$1;
     var$0.$_10 = var$2;
 }
 function ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer(var$0) {
-    ovegcc_WebSocket_lambda$sendMessage$0$static(var$0.$_04, var$0.$_10);
+    ovegcc_WebSocket_lambda$sendMessage$0$static(var$0.$_05, var$0.$_10);
 }
 function ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer$exported$0(var$0) {
     var$0.$onTimer();
@@ -2155,7 +2725,7 @@ var otci_IntegerUtil = $rt_classWithoutFields();
 function otci_IntegerUtil_toUnsignedLogRadixString($value, $radixLog2) {
     var $radix, $mask, $sz, $chars, $pos, $target, var$9, $target_0, var$11;
     if (!$value)
-        return $rt_s(17);
+        return $rt_s(18);
     $radix = 1 << $radixLog2;
     $mask = $radix - 1 | 0;
     $sz = (((32 - jl_Integer_numberOfLeadingZeros($value) | 0) + $radixLog2 | 0) - 1 | 0) / $radixLog2 | 0;
@@ -2209,7 +2779,7 @@ function otji_JS_functionAsObject(var$1, var$2) {
 }
 var ju_Objects = $rt_classWithoutFields();
 function ju_Objects_requireNonNull($obj) {
-    return ju_Objects_requireNonNull0($obj, $rt_s(18));
+    return ju_Objects_requireNonNull0($obj, $rt_s(19));
 }
 function ju_Objects_requireNonNull0($obj, $message) {
     if ($obj !== null)
@@ -2368,7 +2938,7 @@ function ovegc_GameClient_getPlayerUuid($this) {
     return $this.$playerUuid;
 }
 function ovegc_GameClient_onMessageReceived($this, $event) {
-    var $object, $snapshot, var$4, var$5, $i, $player, var$8, var$9, $j, $collision, var$12;
+    var $object, $snapshot, var$4, var$5, $i, $player, var$8, var$9, $j, $collision;
     $object = JSON.parse($rt_ustr($rt_str($event.responseBody)));
     if ("uuid" in $object ? 1 : 0) {
         $this.$playerUuid = $rt_str($object.uuid);
@@ -2387,12 +2957,10 @@ function ovegc_GameClient_onMessageReceived($this, $event) {
         var$9 = otjc_JSNumber_intValue$static($player.y);
         $rt_nullCheck(var$5).$drawPlayer(var$8, var$9);
         $j = 0;
-        while ($j < $player.tileCollisions.length) {
-            $collision = $player.tileCollisions[$j];
-            var$5 = $this.$gameCanvas;
-            var$4 = $collision.tile;
-            var$12 = ovegccj_TileCollisionJson_getFromDirection$static($collision);
-            $rt_nullCheck(var$5).$drawCollision(var$4, var$12);
+        while ($j < $player.collisions.length) {
+            $collision = $player.collisions[$j];
+            if (ovegccj_GameObjectJson_isTile$static($collision.target))
+                $rt_nullCheck($this.$gameCanvas).$drawCollision($collision.target, ovegccj_CollisionJson_getTargetCollisionSide$static($collision));
             $j = $j + 1 | 0;
         }
         $i = $i + 1 | 0;
@@ -2426,7 +2994,6 @@ function ju_HashMap$KeyIterator_next($this) {
     ju_HashMap$AbstractMapIterator_makeNext($this);
     return $rt_nullCheck($this.$currentEntry).$key;
 }
-var otjde_EventListener = $rt_classWithoutFields(0);
 function ovegc_GameLoop() {
     var a = this; jl_Object.call(a);
     a.$gameClient = null;
@@ -2473,17 +3040,17 @@ function ovegc_GameLoop_handleButtonPresses($this) {
             $keyCode = $rt_nullCheck($keyCode);
             switch ($keyCode.$hashCode()) {
                 case 251549619:
-                    if (!$keyCode.$equals($rt_s(19)))
+                    if (!$keyCode.$equals($rt_s(20)))
                         break a;
                     var$5 = 2;
                     break a;
                 case 930625636:
-                    if (!$keyCode.$equals($rt_s(20)))
+                    if (!$keyCode.$equals($rt_s(21)))
                         break a;
                     var$5 = 0;
                     break a;
                 case 977763216:
-                    if (!$keyCode.$equals($rt_s(21)))
+                    if (!$keyCode.$equals($rt_s(22)))
                         break a;
                     var$5 = 1;
                     break a;
@@ -2526,10 +3093,6 @@ function ovegc_GameLoop_lambda$handleButtonPresses$1($x$0) {
 function ovegc_GameLoop_lambda$handleButtonPresses$0($direction) {
     $direction = $rt_nullCheck($direction);
     return jl_Enum_ordinal($direction);
-}
-var ovegccj_TileCollisionJson = $rt_classWithoutFields();
-function ovegccj_TileCollisionJson_getFromDirection$static($this) {
-    return ovegs_Direction_valueOf($rt_str($this.fromDirection));
 }
 function ju_AbstractMap() {
     jl_Object.call(this);
@@ -2595,7 +3158,7 @@ function ju_HashMap__init_4($this, $capacity, $loadFactor) {
         ju_HashMap_computeThreshold($this);
         return;
     }
-    $rt_throw(jl_IllegalArgumentException__init_0());
+    $rt_throw(jl_IllegalArgumentException__init_());
 }
 function ju_HashMap_computeThreshold($this) {
     $this.$threshold = $rt_nullCheck($this.$elementData).data.length * $this.$loadFactor | 0;
@@ -2812,7 +3375,7 @@ function jusi_MappingStreamImpl_lambda$wrap$0($this, $consumer, $t) {
 }
 function ovegc_GameClient$start$lambda$_2_1() {
     jl_Object.call(this);
-    this.$_05 = null;
+    this.$_06 = null;
 }
 function ovegc_GameClient$start$lambda$_2_1__init_(var_0) {
     var var_1 = new ovegc_GameClient$start$lambda$_2_1();
@@ -2821,20 +3384,20 @@ function ovegc_GameClient$start$lambda$_2_1__init_(var_0) {
 }
 function ovegc_GameClient$start$lambda$_2_1__init_0(var$0, var$1) {
     jl_Object__init_0(var$0);
-    var$0.$_05 = var$1;
+    var$0.$_06 = var$1;
 }
 function ovegc_GameClient$start$lambda$_2_1_handleEvent(var$0, var$1) {
     ovegc_GameClient$start$lambda$_2_1_handleEvent0(var$0, var$1);
 }
 function ovegc_GameClient$start$lambda$_2_1_handleEvent0(var$0, var$1) {
-    ovegc_GameClient_lambda$start$1($rt_nullCheck(var$0.$_05), var$1);
+    ovegc_GameClient_lambda$start$1($rt_nullCheck(var$0.$_06), var$1);
 }
 function ovegc_GameClient$start$lambda$_2_1_handleEvent$exported$0(var$0, var$1) {
-    var$0.$handleEvent0(var$1);
+    var$0.$handleEvent(var$1);
 }
 function ovegc_GameClient$start$lambda$_2_0() {
     jl_Object.call(this);
-    this.$_06 = null;
+    this.$_07 = null;
 }
 function ovegc_GameClient$start$lambda$_2_0__init_(var_0) {
     var var_1 = new ovegc_GameClient$start$lambda$_2_0();
@@ -2843,16 +3406,16 @@ function ovegc_GameClient$start$lambda$_2_0__init_(var_0) {
 }
 function ovegc_GameClient$start$lambda$_2_0__init_0(var$0, var$1) {
     jl_Object__init_0(var$0);
-    var$0.$_06 = var$1;
+    var$0.$_07 = var$1;
 }
 function ovegc_GameClient$start$lambda$_2_0_handleEvent(var$0, var$1) {
     ovegc_GameClient$start$lambda$_2_0_handleEvent0(var$0, var$1);
 }
 function ovegc_GameClient$start$lambda$_2_0_handleEvent0(var$0, var$1) {
-    ovegc_GameClient_lambda$start$0($rt_nullCheck(var$0.$_06), var$1);
+    ovegc_GameClient_lambda$start$0($rt_nullCheck(var$0.$_07), var$1);
 }
 function ovegc_GameClient$start$lambda$_2_0_handleEvent$exported$0(var$0, var$1) {
-    var$0.$handleEvent0(var$1);
+    var$0.$handleEvent(var$1);
 }
 function ju_HashSet() {
     ju_AbstractSet.call(this);
@@ -2889,6 +3452,180 @@ function ju_HashSet_remove($this, $object) {
 }
 function ju_HashSet_size($this) {
     return $rt_nullCheck($this.$backingMap).$size();
+}
+var otcit_DoubleAnalyzer = $rt_classWithoutFields();
+var otcit_DoubleAnalyzer_mantissa10Table = null;
+var otcit_DoubleAnalyzer_exp10Table = null;
+function otcit_DoubleAnalyzer_$callClinit() {
+    otcit_DoubleAnalyzer_$callClinit = $rt_eraseClinit(otcit_DoubleAnalyzer);
+    otcit_DoubleAnalyzer__clinit_();
+}
+function otcit_DoubleAnalyzer_analyze($d, $result) {
+    var $bits, var$4, $mantissa, $exponent, $errorShift, var$8, $decExponent, var$10, $binExponentCorrection, $mantissaShift, var$13, $decMantissa, var$15, $error, $upError, $downError, $lowerPos, $upperPos;
+    otcit_DoubleAnalyzer_$callClinit();
+    $bits = $rt_doubleToLongBits($d);
+    var$4 = Long_eq(Long_and($bits, new Long(0, 2147483648)), Long_ZERO) ? 0 : 1;
+    $result = $rt_nullCheck($result);
+    $result.$sign0 = var$4;
+    $mantissa = Long_and($bits, new Long(4294967295, 1048575));
+    $exponent = Long_shr($bits, 52).lo & 2047;
+    if (Long_eq($mantissa, Long_ZERO) && !$exponent) {
+        $result.$mantissa = Long_ZERO;
+        $result.$exponent = 0;
+        return;
+    }
+    $errorShift = 0;
+    if ($exponent)
+        var$8 = Long_or($mantissa, new Long(0, 1048576));
+    else {
+        var$8 = Long_shl($mantissa, 1);
+        while (Long_eq(Long_and(var$8, new Long(0, 1048576)), Long_ZERO)) {
+            var$8 = Long_shl(var$8, 1);
+            $exponent = $exponent + (-1) | 0;
+            $errorShift = $errorShift + 1 | 0;
+        }
+    }
+    $decExponent = ju_Arrays_binarySearch(otcit_DoubleAnalyzer_exp10Table, $exponent);
+    if ($decExponent < 0)
+        $decExponent =  -$decExponent - 2 | 0;
+    var$10 = $rt_nullCheck(otcit_DoubleAnalyzer_exp10Table).data;
+    var$4 = $rt_checkBounds($decExponent, var$10);
+    $binExponentCorrection = $exponent - var$10[var$4] | 0;
+    $mantissaShift = 12 + $binExponentCorrection | 0;
+    var$10 = $rt_nullCheck(otcit_DoubleAnalyzer_mantissa10Table).data;
+    var$13 = $rt_checkUpperBound(var$4, var$10);
+    $decMantissa = otcit_DoubleAnalyzer_mulAndShiftRight(var$8, var$10[var$13], $mantissaShift);
+    if (Long_ge($decMantissa, new Long(2808348672, 232830643))) {
+        var$4 = var$13 + 1 | 0;
+        var$10 = $rt_nullCheck(otcit_DoubleAnalyzer_exp10Table).data;
+        var$15 = $rt_checkBounds(var$4, var$10);
+        var$4 = $exponent - var$10[var$15] | 0;
+        $mantissaShift = 12 + var$4 | 0;
+        var$10 = $rt_nullCheck(otcit_DoubleAnalyzer_mantissa10Table).data;
+        var$13 = $rt_checkUpperBound(var$15, var$10);
+        $decMantissa = otcit_DoubleAnalyzer_mulAndShiftRight(var$8, var$10[var$13], $mantissaShift);
+    }
+    var$10 = $rt_nullCheck(otcit_DoubleAnalyzer_mantissa10Table).data;
+    var$4 = $rt_checkBounds(var$13, var$10);
+    $error = Long_shru(var$10[var$4], (63 - $mantissaShift | 0) - $errorShift | 0);
+    $upError = Long_shr(Long_add($error, Long_fromInt(1)), 1);
+    $downError = Long_shr($error, 1);
+    if (Long_eq(var$8, new Long(0, 1048576)))
+        $downError = Long_shr($downError, 2);
+    $lowerPos = otcit_DoubleAnalyzer_findLowerDistanceToZero($decMantissa, $downError);
+    $upperPos = otcit_DoubleAnalyzer_findUpperDistanceToZero($decMantissa, $upError);
+    var$13 = Long_compare($lowerPos, $upperPos);
+    var$8 = var$13 > 0 ? Long_mul(Long_div($decMantissa, $lowerPos), $lowerPos) : var$13 < 0 ? Long_add(Long_mul(Long_div($decMantissa, $upperPos), $upperPos), $upperPos) : Long_mul(Long_div(Long_add($decMantissa, Long_div($upperPos, Long_fromInt(2))), $upperPos), $upperPos);
+    if (Long_ge(var$8, new Long(2808348672, 232830643))) {
+        var$4 = var$4 + 1 | 0;
+        var$8 = Long_div(var$8, Long_fromInt(10));
+    } else if (Long_lt(var$8, new Long(1569325056, 23283064))) {
+        var$4 = var$4 + (-1) | 0;
+        var$8 = Long_mul(var$8, Long_fromInt(10));
+    }
+    $result.$mantissa = var$8;
+    $result.$exponent = var$4 - 330 | 0;
+}
+function otcit_DoubleAnalyzer_findLowerDistanceToZero($mantissa, $error) {
+    var $pos, $mantissaRight;
+    otcit_DoubleAnalyzer_$callClinit();
+    $pos = Long_fromInt(10);
+    while (Long_le($pos, $error)) {
+        $pos = Long_mul($pos, Long_fromInt(10));
+    }
+    $mantissaRight = Long_rem($mantissa, $pos);
+    if (Long_ge($mantissaRight, Long_div($error, Long_fromInt(2))))
+        $pos = Long_div($pos, Long_fromInt(10));
+    return $pos;
+}
+function otcit_DoubleAnalyzer_findUpperDistanceToZero($mantissa, $error) {
+    var $pos, $mantissaRight;
+    otcit_DoubleAnalyzer_$callClinit();
+    $pos = Long_fromInt(1);
+    while (Long_le($pos, $error)) {
+        $pos = Long_mul($pos, Long_fromInt(10));
+    }
+    $mantissaRight = Long_rem($mantissa, $pos);
+    if (Long_gt(Long_sub($pos, $mantissaRight), Long_div($error, Long_fromInt(2))))
+        $pos = Long_div($pos, Long_fromInt(10));
+    return $pos;
+}
+function otcit_DoubleAnalyzer_mulAndShiftRight($a, $b, $shift) {
+    var $a1, $a2, $a3, $a4, $b1, $b2, $b3, $b4, $cm, $c0, $c1, $c2, $c3, $c, var$18;
+    otcit_DoubleAnalyzer_$callClinit();
+    $a1 = Long_and($a, Long_fromInt(65535));
+    $a2 = Long_and(Long_shru($a, 16), Long_fromInt(65535));
+    $a3 = Long_and(Long_shru($a, 32), Long_fromInt(65535));
+    $a4 = Long_and(Long_shru($a, 48), Long_fromInt(65535));
+    $b1 = Long_and($b, Long_fromInt(65535));
+    $b2 = Long_and(Long_shru($b, 16), Long_fromInt(65535));
+    $b3 = Long_and(Long_shru($b, 32), Long_fromInt(65535));
+    $b4 = Long_and(Long_shru($b, 48), Long_fromInt(65535));
+    $cm = Long_add(Long_add(Long_mul($b3, $a1), Long_mul($b2, $a2)), Long_mul($b1, $a3));
+    $c0 = Long_add(Long_add(Long_add(Long_mul($b4, $a1), Long_mul($b3, $a2)), Long_mul($b2, $a3)), Long_mul($b1, $a4));
+    $c1 = Long_add(Long_add(Long_mul($b4, $a2), Long_mul($b3, $a3)), Long_mul($b2, $a4));
+    $c2 = Long_add(Long_mul($b4, $a3), Long_mul($b3, $a4));
+    $c3 = Long_mul($b4, $a4);
+    $c = Long_add(Long_add(Long_shl($c3, 32 + $shift | 0), Long_shl($c2, 16 + $shift | 0)), Long_shl($c1, $shift));
+    var$18 = $shift > 16 ? Long_add($c, Long_shl($c0, $shift - 16 | 0)) : Long_add($c, Long_shru($c0, 16 - $shift | 0));
+    var$18 = Long_add(var$18, Long_shru($cm, 32 - $shift | 0));
+    return var$18;
+}
+function otcit_DoubleAnalyzer__clinit_() {
+    var $decimalMantissaOne, $exponent, $i, var$4, var$5, var$6, var$7, $maxMantissa, var$9, $shift, $shiftedOffPart;
+    otcit_DoubleAnalyzer_mantissa10Table = $rt_createLongArray(660);
+    otcit_DoubleAnalyzer_exp10Table = $rt_createIntArray(660);
+    $decimalMantissaOne = new Long(991952896, 1862645149);
+    $exponent = 1023;
+    $i = 0;
+    var$4 = $decimalMantissaOne;
+    while ($i < 330) {
+        var$5 = otcit_DoubleAnalyzer_mantissa10Table;
+        var$6 = $i + 330 | 0;
+        var$7 = jl_Long_divideUnsigned(var$4, Long_fromInt(80));
+        var$5 = $rt_nullCheck(var$5).data;
+        var$6 = $rt_checkBounds(var$6, var$5);
+        var$5[var$6] = var$7;
+        var$5 = $rt_nullCheck(otcit_DoubleAnalyzer_exp10Table).data;
+        var$5[$rt_checkUpperBound(var$6, var$5)] = $exponent;
+        var$4 = jl_Long_divideUnsigned(var$4, Long_fromInt(10));
+        var$7 = jl_Long_remainderUnsigned(var$4, Long_fromInt(10));
+        while (Long_le(var$4, $decimalMantissaOne) && Long_eq(Long_and(var$4, new Long(0, 2147483648)), Long_ZERO)) {
+            var$4 = Long_shl(var$4, 1);
+            $exponent = $exponent + 1 | 0;
+            var$7 = Long_shl(var$7, 1);
+        }
+        var$4 = Long_add(var$4, Long_div(var$7, Long_fromInt(10)));
+        $i = $i + 1 | 0;
+    }
+    $maxMantissa = new Long(3435973836, 214748364);
+    var$9 = 1023;
+    $i = 0;
+    while ($i < 330) {
+        $shift = 0;
+        var$4 = $decimalMantissaOne;
+        while (Long_gt(var$4, $maxMantissa)) {
+            var$4 = Long_shr(var$4, 1);
+            $shift = $shift + 1 | 0;
+            var$9 = var$9 + (-1) | 0;
+        }
+        var$7 = Long_mul(var$4, Long_fromInt(10));
+        if ($shift <= 0)
+            $decimalMantissaOne = var$7;
+        else {
+            $shiftedOffPart = Long_and($decimalMantissaOne, Long_fromInt((1 << $shift) - 1 | 0));
+            $decimalMantissaOne = Long_add(var$7, Long_shr(Long_mul($shiftedOffPart, Long_fromInt(10)), $shift));
+        }
+        var$5 = otcit_DoubleAnalyzer_mantissa10Table;
+        var$6 = (330 - $i | 0) - 1 | 0;
+        var$4 = jl_Long_divideUnsigned($decimalMantissaOne, Long_fromInt(80));
+        var$5 = $rt_nullCheck(var$5).data;
+        var$6 = $rt_checkBounds(var$6, var$5);
+        var$5[var$6] = var$4;
+        var$5 = $rt_nullCheck(otcit_DoubleAnalyzer_exp10Table).data;
+        var$5[$rt_checkUpperBound(var$6, var$5)] = var$9;
+        $i = $i + 1 | 0;
+    }
 }
 var otp_Platform = $rt_classWithoutFields();
 function otp_Platform_clone(var$1) {
@@ -2939,26 +3676,9 @@ function ju_NoSuchElementException__init_() {
 function ju_NoSuchElementException__init_0($this) {
     jl_RuntimeException__init_1($this);
 }
-var jl_IllegalArgumentException = $rt_classWithoutFields(jl_RuntimeException);
-function jl_IllegalArgumentException__init_0() {
-    var var_0 = new jl_IllegalArgumentException();
-    jl_IllegalArgumentException__init_1(var_0);
-    return var_0;
-}
-function jl_IllegalArgumentException__init_(var_0) {
-    var var_1 = new jl_IllegalArgumentException();
-    jl_IllegalArgumentException__init_2(var_1, var_0);
-    return var_1;
-}
-function jl_IllegalArgumentException__init_1($this) {
-    jl_RuntimeException__init_1($this);
-}
-function jl_IllegalArgumentException__init_2($this, $message) {
-    jl_RuntimeException__init_2($this, $message);
-}
 function jusi_SimpleStreamImpl$toArray$lambda$_19_0() {
     jl_Object.call(this);
-    this.$_07 = null;
+    this.$_08 = null;
 }
 function jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_(var_0) {
     var var_1 = new jusi_SimpleStreamImpl$toArray$lambda$_19_0();
@@ -2967,10 +3687,10 @@ function jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_(var_0) {
 }
 function jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_0(var$0, var$1) {
     jl_Object__init_0(var$0);
-    var$0.$_07 = var$1;
+    var$0.$_08 = var$1;
 }
 function jusi_SimpleStreamImpl$toArray$lambda$_19_0_test(var$0, var$1) {
-    return $rt_nullCheck(var$0.$_07).$add(var$1);
+    return $rt_nullCheck(var$0.$_08).$add(var$1);
 }
 function ovegs_Point() {
     var a = this; jl_Object.call(a);
@@ -2992,6 +3712,15 @@ function ovegs_Point_getX($this) {
 }
 function ovegs_Point_getY($this) {
     return $this.$y;
+}
+var otcit_FloatAnalyzer$Result = $rt_classWithoutFields();
+function otcit_FloatAnalyzer$Result__init_() {
+    var var_0 = new otcit_FloatAnalyzer$Result();
+    otcit_FloatAnalyzer$Result__init_0(var_0);
+    return var_0;
+}
+function otcit_FloatAnalyzer$Result__init_0($this) {
+    jl_Object__init_0($this);
 }
 function ovegct_TileMap() {
     jl_Object.call(this);
@@ -3044,6 +3773,10 @@ function jl_String$_clinit_$lambda$_82_0__init_() {
 function jl_String$_clinit_$lambda$_82_0__init_0(var$0) {
     jl_Object__init_0(var$0);
 }
+var ovegccj_CollisionJson = $rt_classWithoutFields();
+function ovegccj_CollisionJson_getTargetCollisionSide$static($this) {
+    return ovegs_Direction_valueOf($rt_str($this.targetCollisionSide));
+}
 function jl_Class() {
     var a = this; jl_Object.call(a);
     a.$name1 = null;
@@ -3071,7 +3804,7 @@ function jl_Class_getClass($cls) {
     return $result;
 }
 function jl_Class_toString($this) {
-    return $rt_nullCheck($rt_nullCheck((jl_StringBuilder__init_()).$append($this.$isInterface() ? $rt_s(22) : !$this.$isPrimitive() ? $rt_s(23) : $rt_s(18))).$append($this.$getName())).$toString();
+    return $rt_nullCheck($rt_nullCheck((jl_StringBuilder__init_()).$append($this.$isInterface() ? $rt_s(23) : !$this.$isPrimitive() ? $rt_s(24) : $rt_s(19))).$append($this.$getName())).$toString();
 }
 function jl_Class_getPlatformClass($this) {
     return $this.$platformClass;
@@ -3115,14 +3848,16 @@ jl_Number, 0, jl_Object, [ji_Serializable], 1, 3, 0, 0, 0,
 jl_Comparable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_Integer, 0, jl_Number, [jl_Comparable], 0, 3, 0, jl_Integer_$callClinit, 0,
 jl_CloneNotSupportedException, 0, jl_Exception, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_CloneNotSupportedException__init_0)],
-ovegc_GameLoop$loop$lambda$_2_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame$exported$0)],
-ovegc_GameLoop$loop$lambda$_2_1, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame$exported$0)],
+ovegc_GameLoop$loop$lambda$_2_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_19", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_0_onAnimationFrame$exported$0)],
+jl_AbstractStringBuilder$Constants, 0, jl_Object, [], 0, 0, 0, jl_AbstractStringBuilder$Constants_$callClinit, 0,
+ovegc_GameLoop$loop$lambda$_2_1, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_19", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$loop$lambda$_2_1_onAnimationFrame$exported$0)],
 jl_Character, 0, jl_Object, [jl_Comparable], 0, 3, 0, jl_Character_$callClinit, 0,
+jl_Long, 0, jl_Number, [jl_Comparable], 0, 3, 0, jl_Long_$callClinit, 0,
 ju_Map, 0, jl_Object, [], 3, 3, 0, 0, 0,
 otjc_JSArrayReader, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
 otjc_JSArray, 0, jl_Object, [otjc_JSArrayReader], 1, 3, 0, 0, ["$get$exported$0", $rt_wrapFunction1(otjc_JSArray_get$exported$0), "$getLength$exported$1", $rt_wrapFunction0(otjc_JSArray_getLength$exported$1)],
 otjc_JSNumber, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
-ovegcc_Communicator, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction1(ovegcc_Communicator__init_0), "$sendPlayerCommand", $rt_wrapFunction2(ovegcc_Communicator_sendPlayerCommand)],
+ovegcc_Communicator, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegcc_Communicator__init_0), "$sendPlayerCommand", $rt_wrapFunction2(ovegcc_Communicator_sendPlayerCommand), "$sendDebugCommand", $rt_wrapFunction1(ovegcc_Communicator_sendDebugCommand)],
 otjde_EventTarget, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
 otjde_GamepadEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 jl_CharSequence, 0, jl_Object, [], 3, 3, 0, 0, 0,
@@ -3130,6 +3865,8 @@ jl_Error, 0, jl_Throwable, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_Err
 jl_LinkageError, 0, jl_Error, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_LinkageError__init_0)],
 otjde_LoadEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 ovegc_GameCanvas, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegc_GameCanvas__init_0), "$clear", $rt_wrapFunction0(ovegc_GameCanvas_clear), "$drawPlayer", $rt_wrapFunction2(ovegc_GameCanvas_drawPlayer), "$drawTileMap", $rt_wrapFunction1(ovegc_GameCanvas_drawTileMap), "$drawCollision", $rt_wrapFunction2(ovegc_GameCanvas_drawCollision), "$drawTile", function(var_1, var_2, var_3, var_4, var_5) { ovegc_GameCanvas_drawTile(this, var_1, var_2, var_3, var_4, var_5); }],
+otjde_EventListener, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
+ovegcc_Communicator$_init_$lambda$_0_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_1", $rt_wrapFunction1(ovegcc_Communicator$_init_$lambda$_0_0__init_0), "$handleEvent", $rt_wrapFunction1(ovegcc_Communicator$_init_$lambda$_0_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ovegcc_Communicator$_init_$lambda$_0_0_handleEvent$exported$0)],
 jl_Iterable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ju_Collection, 0, jl_Object, [jl_Iterable], 3, 3, 0, 0, ["$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
 ju_Set, 0, jl_Object, [ju_Collection], 3, 3, 0, 0, ["$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
@@ -3138,95 +3875,100 @@ juf_Function, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ovegc_GameLoop$handleButtonPresses$lambda$_3_0, 0, jl_Object, [juf_Function], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegc_GameLoop$handleButtonPresses$lambda$_3_0__init_0), "$apply2", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_0_apply), "$apply", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_0_apply0)],
 juf_IntFunction, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ovegc_GameLoop$handleButtonPresses$lambda$_3_1, 0, jl_Object, [juf_IntFunction], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegc_GameLoop$handleButtonPresses$lambda$_3_1__init_0), "$apply1", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_1_apply), "$apply0", $rt_wrapFunction1(ovegc_GameLoop$handleButtonPresses$lambda$_3_1_apply0)],
-ovegc_GameLoop$start$lambda$_1_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame$exported$0)],
+ovegc_GameLoop$start$lambda$_1_0, 0, jl_Object, [otjb_AnimationFrameCallback], 0, 3, 0, 0, ["$_init_19", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0__init_0), "$onAnimationFrame", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame), "$onAnimationFrame$exported$0", $rt_wrapFunction1(ovegc_GameLoop$start$lambda$_1_0_onAnimationFrame$exported$0)],
 jl_AutoCloseable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jus_BaseStream, 0, jl_Object, [jl_AutoCloseable], 3, 3, 0, 0, 0,
 jus_Stream, 0, jl_Object, [jus_BaseStream], 3, 3, 0, 0, 0,
 ovegcc_WebSocket, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
-jl_Enum, 0, jl_Object, [jl_Comparable, ji_Serializable], 1, 3, 0, 0, ["$_init_4", $rt_wrapFunction2(jl_Enum__init_), "$name0", $rt_wrapFunction0(jl_Enum_name), "$ordinal", $rt_wrapFunction0(jl_Enum_ordinal), "$equals", $rt_wrapFunction1(jl_Enum_equals), "$hashCode", $rt_wrapFunction0(jl_Enum_hashCode)],
+jl_Enum, 0, jl_Object, [jl_Comparable, ji_Serializable], 1, 3, 0, 0, ["$_init_5", $rt_wrapFunction2(jl_Enum__init_), "$name0", $rt_wrapFunction0(jl_Enum_name), "$ordinal", $rt_wrapFunction0(jl_Enum_ordinal), "$equals", $rt_wrapFunction1(jl_Enum_equals), "$hashCode", $rt_wrapFunction0(jl_Enum_hashCode)],
 ovegs_Direction, "Direction", 6, jl_Enum, [], 12, 3, 0, ovegs_Direction_$callClinit, 0,
 otjb_TimerHandler, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_0), "$_init_6", $rt_wrapFunction1(jl_AbstractStringBuilder__init_2), "$append1", $rt_wrapFunction1(jl_AbstractStringBuilder_append), "$insert", $rt_wrapFunction2(jl_AbstractStringBuilder_insert), "$append2", $rt_wrapFunction1(jl_AbstractStringBuilder_append0), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert0), "$ensureCapacity", $rt_wrapFunction1(jl_AbstractStringBuilder_ensureCapacity),
-"$toString", $rt_wrapFunction0(jl_AbstractStringBuilder_toString)],
-jl_Appendable, 0, jl_Object, [], 3, 3, 0, 0, 0,
-jl_StringBuilder, 0, jl_AbstractStringBuilder, [jl_Appendable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_StringBuilder__init_0), "$append", $rt_wrapFunction1(jl_StringBuilder_append), "$append0", $rt_wrapFunction1(jl_StringBuilder_append0), "$insert1", $rt_wrapFunction2(jl_StringBuilder_insert), "$insert2", $rt_wrapFunction2(jl_StringBuilder_insert0), "$toString", $rt_wrapFunction0(jl_StringBuilder_toString), "$ensureCapacity", $rt_wrapFunction1(jl_StringBuilder_ensureCapacity), "$insert0", $rt_wrapFunction2(jl_StringBuilder_insert1),
-"$insert", $rt_wrapFunction2(jl_StringBuilder_insert2)],
+jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_0), "$_init_7", $rt_wrapFunction1(jl_AbstractStringBuilder__init_2), "$append2", $rt_wrapFunction1(jl_AbstractStringBuilder_append), "$insert", $rt_wrapFunction2(jl_AbstractStringBuilder_insert), "$append3", $rt_wrapFunction1(jl_AbstractStringBuilder_append0), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert0), "$append4", $rt_wrapFunction1(jl_AbstractStringBuilder_append1),
+"$insert1", $rt_wrapFunction2(jl_AbstractStringBuilder_insert1), "$ensureCapacity", $rt_wrapFunction1(jl_AbstractStringBuilder_ensureCapacity), "$toString", $rt_wrapFunction0(jl_AbstractStringBuilder_toString)],
+jl_Appendable, 0, jl_Object, [], 3, 3, 0, 0, 0]);
+$rt_metadata([jl_StringBuilder, 0, jl_AbstractStringBuilder, [jl_Appendable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_StringBuilder__init_0), "$append", $rt_wrapFunction1(jl_StringBuilder_append), "$append0", $rt_wrapFunction1(jl_StringBuilder_append0), "$append1", $rt_wrapFunction1(jl_StringBuilder_append1), "$insert3", $rt_wrapFunction2(jl_StringBuilder_insert), "$insert2", $rt_wrapFunction2(jl_StringBuilder_insert0), "$insert4", $rt_wrapFunction2(jl_StringBuilder_insert1), "$toString", $rt_wrapFunction0(jl_StringBuilder_toString),
+"$ensureCapacity", $rt_wrapFunction1(jl_StringBuilder_ensureCapacity), "$insert1", $rt_wrapFunction2(jl_StringBuilder_insert2), "$insert0", $rt_wrapFunction2(jl_StringBuilder_insert3), "$insert", $rt_wrapFunction2(jl_StringBuilder_insert4)],
 ju_ConcurrentModificationException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ConcurrentModificationException__init_0)],
 jlr_AnnotatedElement, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ju_AbstractCollection, 0, jl_Object, [ju_Collection], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractCollection__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)]]);
-$rt_metadata([ju_AbstractSet, 0, ju_AbstractCollection, [ju_Set], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractSet__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
-ju_HashMap$1, 0, ju_AbstractSet, [], 0, 0, 0, 0, ["$_init_8", $rt_wrapFunction1(ju_HashMap$1__init_0), "$iterator0", $rt_wrapFunction0(ju_HashMap$1_iterator)],
+ovegccj_GameObjectJson, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
+ju_AbstractCollection, 0, jl_Object, [ju_Collection], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractCollection__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
+ju_AbstractSet, 0, ju_AbstractCollection, [ju_Set], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractSet__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
+ju_HashMap$1, 0, ju_AbstractSet, [], 0, 0, 0, 0, ["$_init_9", $rt_wrapFunction1(ju_HashMap$1__init_0), "$iterator0", $rt_wrapFunction0(ju_HashMap$1_iterator)],
+jl_Double, 0, jl_Number, [jl_Comparable], 0, 3, 0, jl_Double_$callClinit, 0,
 jusi_SimpleStreamImpl, 0, jl_Object, [jus_Stream], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jusi_SimpleStreamImpl__init_), "$map", $rt_wrapFunction1(jusi_SimpleStreamImpl_map), "$toArray", $rt_wrapFunction1(jusi_SimpleStreamImpl_toArray)],
-jusi_WrappingStreamImpl, 0, jusi_SimpleStreamImpl, [], 1, 3, 0, 0, ["$_init_21", $rt_wrapFunction1(jusi_WrappingStreamImpl__init_), "$next", $rt_wrapFunction1(jusi_WrappingStreamImpl_next), "$estimateSize", $rt_wrapFunction0(jusi_WrappingStreamImpl_estimateSize)],
+jusi_WrappingStreamImpl, 0, jusi_SimpleStreamImpl, [], 1, 3, 0, 0, ["$_init_22", $rt_wrapFunction1(jusi_WrappingStreamImpl__init_), "$next", $rt_wrapFunction1(jusi_WrappingStreamImpl_next), "$estimateSize", $rt_wrapFunction0(jusi_WrappingStreamImpl_estimateSize)],
 otjde_FocusEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 otjde_MouseEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 otjde_KeyboardEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
 otjb_WindowEventTarget, 0, jl_Object, [otjde_EventTarget, otjde_FocusEventTarget, otjde_MouseEventTarget, otjde_KeyboardEventTarget, otjde_LoadEventTarget, otjde_GamepadEventTarget], 3, 3, 0, 0, 0,
 ovegct_TileMapService, 0, jl_Object, [], 1, 3, 0, 0, 0,
 ovegs_GameObject, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ovegs_Tile, 0, jl_Object, [ovegs_GameObject], 0, 3, 0, 0, ["$_init_23", $rt_wrapFunction2(ovegs_Tile__init_0), "$getTileType", $rt_wrapFunction0(ovegs_Tile_getTileType), "$getX", $rt_wrapFunction0(ovegs_Tile_getX), "$getY", $rt_wrapFunction0(ovegs_Tile_getY), "$getWidth", $rt_wrapFunction0(ovegs_Tile_getWidth), "$getHeight", $rt_wrapFunction0(ovegs_Tile_getHeight)],
+ovegs_Tile, 0, jl_Object, [ovegs_GameObject], 0, 3, 0, 0, ["$_init_24", $rt_wrapFunction2(ovegs_Tile__init_0), "$getTileType", $rt_wrapFunction0(ovegs_Tile_getTileType), "$getX", $rt_wrapFunction0(ovegs_Tile_getX), "$getY", $rt_wrapFunction0(ovegs_Tile_getY), "$getWidth", $rt_wrapFunction0(ovegs_Tile_getWidth), "$getHeight", $rt_wrapFunction0(ovegs_Tile_getHeight)],
 ju_List, 0, jl_Object, [ju_Collection], 3, 3, 0, 0, ["$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
 ju_AbstractList, 0, ju_AbstractCollection, [ju_List], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractList__init_), "$spliterator", $rt_wrapFunction0(ju_Collection_spliterator), "$stream", $rt_wrapFunction0(ju_Collection_stream)],
 jl_Cloneable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ju_RandomAccess, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ju_ArrayList, 0, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayList__init_0), "$_init_6", $rt_wrapFunction1(ju_ArrayList__init_2), "$ensureCapacity", $rt_wrapFunction1(ju_ArrayList_ensureCapacity), "$get0", $rt_wrapFunction1(ju_ArrayList_get), "$size", $rt_wrapFunction0(ju_ArrayList_size), "$add", $rt_wrapFunction1(ju_ArrayList_add)],
+ju_ArrayList, 0, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayList__init_0), "$_init_7", $rt_wrapFunction1(ju_ArrayList__init_2), "$ensureCapacity", $rt_wrapFunction1(ju_ArrayList_ensureCapacity), "$get0", $rt_wrapFunction1(ju_ArrayList_get), "$size", $rt_wrapFunction0(ju_ArrayList_size), "$add", $rt_wrapFunction1(ju_ArrayList_add)],
 otjb_StorageProvider, 0, jl_Object, [], 3, 3, 0, 0, 0,
 otjb_Window, 0, jl_Object, [otj_JSObject, otjb_WindowEventTarget, otjb_StorageProvider, otjc_JSArrayReader], 1, 3, 0, 0, ["$addEventListener$exported$0", $rt_wrapFunction2(otjb_Window_addEventListener$exported$0), "$removeEventListener$exported$1", $rt_wrapFunction2(otjb_Window_removeEventListener$exported$1), "$get$exported$2", $rt_wrapFunction1(otjb_Window_get$exported$2), "$removeEventListener$exported$3", $rt_wrapFunction3(otjb_Window_removeEventListener$exported$3), "$dispatchEvent$exported$4", $rt_wrapFunction1(otjb_Window_dispatchEvent$exported$4),
 "$getLength$exported$5", $rt_wrapFunction0(otjb_Window_getLength$exported$5), "$addEventListener$exported$6", $rt_wrapFunction3(otjb_Window_addEventListener$exported$6)],
 ovegcc_OnMessageHandler, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-ovegc_GameClient$_init_$lambda$_1_0, 0, jl_Object, [ovegcc_OnMessageHandler], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0__init_0), "$onMessage", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage), "$onMessage$exported$0", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage$exported$0)],
-jl_String, 0, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 0, 3, 0, jl_String_$callClinit, ["$_init_12", $rt_wrapFunction1(jl_String__init_1), "$_init_7", $rt_wrapFunction3(jl_String__init_2), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length0", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$toString", $rt_wrapFunction0(jl_String_toString), "$equals", $rt_wrapFunction1(jl_String_equals), "$hashCode", $rt_wrapFunction0(jl_String_hashCode)],
+ovegc_GameClient$_init_$lambda$_1_0, 0, jl_Object, [ovegcc_OnMessageHandler], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0__init_0), "$onMessage", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage), "$onMessage$exported$0", $rt_wrapFunction1(ovegc_GameClient$_init_$lambda$_1_0_onMessage$exported$0)],
+jl_String, 0, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 0, 3, 0, jl_String_$callClinit, ["$_init_13", $rt_wrapFunction1(jl_String__init_1), "$_init_8", $rt_wrapFunction3(jl_String__init_2), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length0", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$toString", $rt_wrapFunction0(jl_String_toString), "$equals", $rt_wrapFunction1(jl_String_equals), "$hashCode", $rt_wrapFunction0(jl_String_hashCode)],
 juf_Predicate, 0, jl_Object, [], 3, 3, 0, 0, 0,
-jusi_SimpleStreamImpl$ArrayFillingConsumer, 0, jl_Object, [juf_Predicate], 0, 0, 0, 0, ["$_init_10", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer_test)],
+jusi_SimpleStreamImpl$ArrayFillingConsumer, 0, jl_Object, [juf_Predicate], 0, 0, 0, 0, ["$_init_11", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$ArrayFillingConsumer_test)],
 jl_NegativeArraySizeException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NegativeArraySizeException__init_0)],
-jusi_MappingStreamImpl$wrap$lambda$_1_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_22", $rt_wrapFunction2(jusi_MappingStreamImpl$wrap$lambda$_1_0__init_0), "$test", $rt_wrapFunction1(jusi_MappingStreamImpl$wrap$lambda$_1_0_test)],
+jusi_MappingStreamImpl$wrap$lambda$_1_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_23", $rt_wrapFunction2(jusi_MappingStreamImpl$wrap$lambda$_1_0__init_0), "$test", $rt_wrapFunction1(jusi_MappingStreamImpl$wrap$lambda$_1_0_test)],
 ju_Map$Entry, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_IncompatibleClassChangeError, 0, jl_LinkageError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_IncompatibleClassChangeError__init_0)],
 jl_NoSuchMethodError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchMethodError__init_0)],
+jl_IllegalArgumentException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_IllegalArgumentException__init_1), "$_init_0", $rt_wrapFunction1(jl_IllegalArgumentException__init_2)],
+jl_NumberFormatException, 0, jl_IllegalArgumentException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NumberFormatException__init_0)],
 jl_ArrayIndexOutOfBoundsException, 0, jl_IndexOutOfBoundsException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_ArrayIndexOutOfBoundsException__init_0)],
 ovegs_TileType, 0, jl_Enum, [], 12, 3, 0, ovegs_TileType_$callClinit, 0,
 jlr_Array, 0, jl_Object, [], 4, 3, 0, 0, 0,
 juf_Consumer, 0, jl_Object, [], 3, 3, 0, 0, 0,
-jusi_StreamOverSpliterator$AdapterAction, 0, jl_Object, [juf_Consumer], 0, 0, 0, 0, ["$_init_13", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction__init_0), "$accept", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction_accept)],
-ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, 0, ["$_init_8", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_0), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
-ovegcc_WebSocket$sendMessage$static$lambda$_7_0, 0, jl_Object, [otjb_TimerHandler], 0, 3, 0, 0, ["$_init_3", $rt_wrapFunction2(ovegcc_WebSocket$sendMessage$static$lambda$_7_0__init_0), "$onTimer", $rt_wrapFunction0(ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer), "$onTimer$exported$0", $rt_wrapFunction0(ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer$exported$0)],
+jusi_StreamOverSpliterator$AdapterAction, 0, jl_Object, [juf_Consumer], 0, 0, 0, 0, ["$_init_14", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction__init_0), "$accept", $rt_wrapFunction1(jusi_StreamOverSpliterator$AdapterAction_accept)],
+ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, 0, ["$_init_9", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_0), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
+otcit_DoubleAnalyzer$Result, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(otcit_DoubleAnalyzer$Result__init_0)],
+ovegcc_WebSocket$sendMessage$static$lambda$_7_0, 0, jl_Object, [otjb_TimerHandler], 0, 3, 0, 0, ["$_init_4", $rt_wrapFunction2(ovegcc_WebSocket$sendMessage$static$lambda$_7_0__init_0), "$onTimer", $rt_wrapFunction0(ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer), "$onTimer$exported$0", $rt_wrapFunction0(ovegcc_WebSocket$sendMessage$static$lambda$_7_0_onTimer$exported$0)],
 jl_NullPointerException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NullPointerException__init_1), "$_init_", $rt_wrapFunction0(jl_NullPointerException__init_2)],
 jl_NoSuchFieldError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchFieldError__init_0)],
 otci_IntegerUtil, 0, jl_Object, [], 4, 3, 0, 0, 0,
 jl_Math, 0, jl_Object, [], 4, 3, 0, 0, 0,
 otjc_JSObjects, 0, jl_Object, [], 4, 3, 0, 0, 0,
-otji_JS, 0, jl_Object, [], 4, 0, 0, 0, 0,
-ju_Objects, 0, jl_Object, [], 4, 3, 0, 0, 0,
-jusi_StreamOverSpliterator, 0, jusi_SimpleStreamImpl, [], 0, 3, 0, 0, ["$_init_2", $rt_wrapFunction1(jusi_StreamOverSpliterator__init_0), "$next", $rt_wrapFunction1(jusi_StreamOverSpliterator_next), "$estimateSize", $rt_wrapFunction0(jusi_StreamOverSpliterator_estimateSize)],
-ju_MapEntry, 0, jl_Object, [ju_Map$Entry, jl_Cloneable], 0, 0, 0, 0, ["$_init_14", $rt_wrapFunction2(ju_MapEntry__init_0)],
-ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_20", $rt_wrapFunction2(ju_HashMap$HashEntry__init_0)],
+otji_JS, 0, jl_Object, [], 4, 0, 0, 0, 0]);
+$rt_metadata([ju_Objects, 0, jl_Object, [], 4, 3, 0, 0, 0,
+jusi_StreamOverSpliterator, 0, jusi_SimpleStreamImpl, [], 0, 3, 0, 0, ["$_init_3", $rt_wrapFunction1(jusi_StreamOverSpliterator__init_0), "$next", $rt_wrapFunction1(jusi_StreamOverSpliterator_next), "$estimateSize", $rt_wrapFunction0(jusi_StreamOverSpliterator_estimateSize)],
+ju_MapEntry, 0, jl_Object, [ju_Map$Entry, jl_Cloneable], 0, 0, 0, 0, ["$_init_15", $rt_wrapFunction2(ju_MapEntry__init_0)],
+ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_HashMap$HashEntry__init_0)],
 ovegc_GameCanvas$1, 0, jl_Object, [], 32, 0, 0, ovegc_GameCanvas$1_$callClinit, 0,
 jlr_Type, 0, jl_Object, [], 3, 3, 0, 0, 0,
 ju_Spliterator, 0, jl_Object, [], 3, 3, 0, 0, 0,
-jusi_SpliteratorOverCollection, 0, jl_Object, [ju_Spliterator], 0, 3, 0, 0, ["$_init_1", $rt_wrapFunction1(jusi_SpliteratorOverCollection__init_0), "$tryAdvance", $rt_wrapFunction1(jusi_SpliteratorOverCollection_tryAdvance), "$estimateSize0", $rt_wrapFunction0(jusi_SpliteratorOverCollection_estimateSize)],
-ovegc_GameClient, 0, jl_Object, [], 0, 3, 0, 0, ["$getPressedButtons", $rt_wrapFunction0(ovegc_GameClient_getPressedButtons), "$getPlayerUuid", $rt_wrapFunction0(ovegc_GameClient_getPlayerUuid)]]);
-$rt_metadata([ju_Iterator, 0, jl_Object, [], 3, 3, 0, 0, 0,
-ju_HashMap$KeyIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, 0, ["$_init_8", $rt_wrapFunction1(ju_HashMap$KeyIterator__init_0), "$next1", $rt_wrapFunction0(ju_HashMap$KeyIterator_next)],
-otjde_EventListener, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-ovegc_GameLoop, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction2(ovegc_GameLoop__init_0), "$start", $rt_wrapFunction0(ovegc_GameLoop_start)],
-ovegccj_TileCollisionJson, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
+jusi_SpliteratorOverCollection, 0, jl_Object, [ju_Spliterator], 0, 3, 0, 0, ["$_init_2", $rt_wrapFunction1(jusi_SpliteratorOverCollection__init_0), "$tryAdvance", $rt_wrapFunction1(jusi_SpliteratorOverCollection_tryAdvance), "$estimateSize0", $rt_wrapFunction0(jusi_SpliteratorOverCollection_estimateSize)],
+ovegc_GameClient, 0, jl_Object, [], 0, 3, 0, 0, ["$getPressedButtons", $rt_wrapFunction0(ovegc_GameClient_getPressedButtons), "$getPlayerUuid", $rt_wrapFunction0(ovegc_GameClient_getPlayerUuid)],
+ju_Iterator, 0, jl_Object, [], 3, 3, 0, 0, 0,
+ju_HashMap$KeyIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, 0, ["$_init_9", $rt_wrapFunction1(ju_HashMap$KeyIterator__init_0), "$next1", $rt_wrapFunction0(ju_HashMap$KeyIterator_next)],
+ovegc_GameLoop, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction2(ovegc_GameLoop__init_0), "$start", $rt_wrapFunction0(ovegc_GameLoop_start)],
 ju_AbstractMap, 0, jl_Object, [ju_Map], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractMap__init_)],
-ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_0), "$_init_6", $rt_wrapFunction1(ju_HashMap__init_2), "$_init_19", $rt_wrapFunction2(ju_HashMap__init_4), "$findNonNullKeyEntry", $rt_wrapFunction3(ju_HashMap_findNonNullKeyEntry), "$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$isEmpty", $rt_wrapFunction0(ju_HashMap_isEmpty), "$keySet", $rt_wrapFunction0(ju_HashMap_keySet),
+ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_0), "$_init_7", $rt_wrapFunction1(ju_HashMap__init_2), "$_init_20", $rt_wrapFunction2(ju_HashMap__init_4), "$findNonNullKeyEntry", $rt_wrapFunction3(ju_HashMap_findNonNullKeyEntry), "$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$isEmpty", $rt_wrapFunction0(ju_HashMap_isEmpty), "$keySet", $rt_wrapFunction0(ju_HashMap_keySet),
 "$put", $rt_wrapFunction2(ju_HashMap_put), "$putImpl", $rt_wrapFunction2(ju_HashMap_putImpl), "$createHashedEntry", $rt_wrapFunction3(ju_HashMap_createHashedEntry), "$rehash0", $rt_wrapFunction1(ju_HashMap_rehash), "$rehash", $rt_wrapFunction0(ju_HashMap_rehash0), "$remove0", $rt_wrapFunction1(ju_HashMap_remove), "$removeEntry", $rt_wrapFunction1(ju_HashMap_removeEntry), "$size", $rt_wrapFunction0(ju_HashMap_size)],
-jusi_MappingStreamImpl, 0, jusi_WrappingStreamImpl, [], 0, 3, 0, 0, ["$_init_9", $rt_wrapFunction2(jusi_MappingStreamImpl__init_0), "$wrap", $rt_wrapFunction1(jusi_MappingStreamImpl_wrap)],
-ovegc_GameClient$start$lambda$_2_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1__init_0), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent$exported$0)],
-ovegc_GameClient$start$lambda$_2_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0__init_0), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent$exported$0)],
-ju_HashSet, 0, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_0), "$_init_8", $rt_wrapFunction1(ju_HashSet__init_2), "$add", $rt_wrapFunction1(ju_HashSet_add), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator0", $rt_wrapFunction0(ju_HashSet_iterator), "$remove", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
+jusi_MappingStreamImpl, 0, jusi_WrappingStreamImpl, [], 0, 3, 0, 0, ["$_init_10", $rt_wrapFunction2(jusi_MappingStreamImpl__init_0), "$wrap", $rt_wrapFunction1(jusi_MappingStreamImpl_wrap)],
+ovegc_GameClient$start$lambda$_2_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1__init_0), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_1_handleEvent$exported$0)],
+ovegc_GameClient$start$lambda$_2_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_17", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0__init_0), "$handleEvent", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent), "$handleEvent0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent0), "$handleEvent$exported$0", $rt_wrapFunction1(ovegc_GameClient$start$lambda$_2_0_handleEvent$exported$0)],
+ju_HashSet, 0, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_0), "$_init_9", $rt_wrapFunction1(ju_HashSet__init_2), "$add", $rt_wrapFunction1(ju_HashSet_add), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator0", $rt_wrapFunction0(ju_HashSet_iterator), "$remove", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
+otcit_DoubleAnalyzer, 0, jl_Object, [], 4, 3, 0, otcit_DoubleAnalyzer_$callClinit, 0,
 otp_Platform, 0, jl_Object, [], 4, 3, 0, 0, 0,
 ovegc_Logger, 0, jl_Object, [], 0, 3, 0, 0, 0,
 jl_NoClassDefFoundError, 0, jl_LinkageError, [], 0, 3, 0, 0, 0,
 ju_NoSuchElementException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_NoSuchElementException__init_0)],
-jl_IllegalArgumentException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_IllegalArgumentException__init_1), "$_init_0", $rt_wrapFunction1(jl_IllegalArgumentException__init_2)],
-jusi_SimpleStreamImpl$toArray$lambda$_19_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_11", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0_test)],
-ovegs_Point, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_24", $rt_wrapFunction2(ovegs_Point__init_0), "$getX", $rt_wrapFunction0(ovegs_Point_getX), "$getY", $rt_wrapFunction0(ovegs_Point_getY)],
+jusi_SimpleStreamImpl$toArray$lambda$_19_0, 0, jl_Object, [juf_Predicate], 0, 3, 0, 0, ["$_init_12", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0__init_0), "$test", $rt_wrapFunction1(jusi_SimpleStreamImpl$toArray$lambda$_19_0_test)],
+ovegs_Point, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_25", $rt_wrapFunction2(ovegs_Point__init_0), "$getX", $rt_wrapFunction0(ovegs_Point_getX), "$getY", $rt_wrapFunction0(ovegs_Point_getY)],
+otcit_FloatAnalyzer$Result, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(otcit_FloatAnalyzer$Result__init_0)],
 ovegct_TileMap, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ovegct_TileMap__init_0), "$getTiles", $rt_wrapFunction0(ovegct_TileMap_getTiles)],
 ju_Comparator, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_String$_clinit_$lambda$_82_0, 0, jl_Object, [ju_Comparator], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_String$_clinit_$lambda$_82_0__init_0)],
+ovegccj_CollisionJson, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
 jl_Class, 0, jl_Object, [jlr_AnnotatedElement, jlr_Type], 0, 3, 0, 0, ["$toString", $rt_wrapFunction0(jl_Class_toString), "$getPlatformClass", $rt_wrapFunction0(jl_Class_getPlatformClass), "$getName", $rt_wrapFunction0(jl_Class_getName), "$isPrimitive", $rt_wrapFunction0(jl_Class_isPrimitive), "$isEnum0", $rt_wrapFunction0(jl_Class_isEnum), "$isInterface", $rt_wrapFunction0(jl_Class_isInterface), "$getComponentType", $rt_wrapFunction0(jl_Class_getComponentType), "$getEnumConstants", $rt_wrapFunction0(jl_Class_getEnumConstants)],
 otjj_JSON, 0, jl_Object, [], 4, 3, 0, 0, 0]);
 function $rt_array(cls, data) {
@@ -3260,7 +4002,7 @@ $rt_setCloneMethod($rt_array.prototype, function() {
     }
     return new $rt_array(this.type, dataCopy);
 });
-$rt_stringPool(["@", "game/command", "blue", "green", "red", "yellow", "Class does not represent enum", "Enum ", " does not have the ", "constant", "UP", "DOWN", "LEFT", "RIGHT", "null", "AIR", "GROUND", "0", "", "ArrowRight", "ArrowUp", "ArrowLeft", "interface ", "class "]);
+$rt_stringPool(["@", "game/command", "Sending message setting slowdownFactor to: ", "blue", "green", "red", "yellow", "Class does not represent enum", "Enum ", " does not have the ", "constant", "UP", "DOWN", "LEFT", "RIGHT", "null", "AIR", "GROUND", "0", "", "ArrowRight", "ArrowUp", "ArrowLeft", "interface ", "class "]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };
@@ -3271,6 +4013,522 @@ jl_Object.prototype.toString = function() {
 jl_Object.prototype.__teavm_class__ = function() {
     return $dbg_class(this);
 };
+function Long_eq(a, b) {
+    return a.hi === b.hi && a.lo === b.lo;
+}
+function Long_ne(a, b) {
+    return a.hi !== b.hi || a.lo !== b.lo;
+}
+function Long_gt(a, b) {
+    if (a.hi < b.hi) {
+        return false;
+    }
+    if (a.hi > b.hi) {
+        return true;
+    }
+    var x = a.lo >>> 1;
+    var y = b.lo >>> 1;
+    if (x !== y) {
+        return x > y;
+    }
+    return (a.lo & 1) > (b.lo & 1);
+}
+function Long_ge(a, b) {
+    if (a.hi < b.hi) {
+        return false;
+    }
+    if (a.hi > b.hi) {
+        return true;
+    }
+    var x = a.lo >>> 1;
+    var y = b.lo >>> 1;
+    if (x !== y) {
+        return x >= y;
+    }
+    return (a.lo & 1) >= (b.lo & 1);
+}
+function Long_lt(a, b) {
+    if (a.hi > b.hi) {
+        return false;
+    }
+    if (a.hi < b.hi) {
+        return true;
+    }
+    var x = a.lo >>> 1;
+    var y = b.lo >>> 1;
+    if (x !== y) {
+        return x < y;
+    }
+    return (a.lo & 1) < (b.lo & 1);
+}
+function Long_le(a, b) {
+    if (a.hi > b.hi) {
+        return false;
+    }
+    if (a.hi < b.hi) {
+        return true;
+    }
+    var x = a.lo >>> 1;
+    var y = b.lo >>> 1;
+    if (x !== y) {
+        return x <= y;
+    }
+    return (a.lo & 1) <= (b.lo & 1);
+}
+function Long_add(a, b) {
+    if (a.hi === a.lo >> 31 && b.hi === b.lo >> 31) {
+        return Long_fromNumber(a.lo + b.lo);
+    } else if (Math.abs(a.hi) < Long_MAX_NORMAL && Math.abs(b.hi) < Long_MAX_NORMAL) {
+        return Long_fromNumber(Long_toNumber(a) + Long_toNumber(b));
+    }
+    var a_lolo = a.lo & 0xFFFF;
+    var a_lohi = a.lo >>> 16;
+    var a_hilo = a.hi & 0xFFFF;
+    var a_hihi = a.hi >>> 16;
+    var b_lolo = b.lo & 0xFFFF;
+    var b_lohi = b.lo >>> 16;
+    var b_hilo = b.hi & 0xFFFF;
+    var b_hihi = b.hi >>> 16;
+    var lolo = a_lolo + b_lolo | 0;
+    var lohi = a_lohi + b_lohi + (lolo >> 16) | 0;
+    var hilo = a_hilo + b_hilo + (lohi >> 16) | 0;
+    var hihi = a_hihi + b_hihi + (hilo >> 16) | 0;
+    return new Long(lolo & 0xFFFF | (lohi & 0xFFFF) << 16, hilo & 0xFFFF | (hihi & 0xFFFF) << 16);
+}
+function Long_inc(a) {
+    var lo = a.lo + 1 | 0;
+    var hi = a.hi;
+    if (lo === 0) {
+        hi = hi + 1 | 0;
+    }
+    return new Long(lo, hi);
+}
+function Long_dec(a) {
+    var lo = a.lo - 1 | 0;
+    var hi = a.hi;
+    if (lo ===  -1) {
+        hi = hi - 1 | 0;
+    }
+    return new Long(lo, hi);
+}
+function Long_neg(a) {
+    return Long_inc(new Long(a.lo ^ 0xFFFFFFFF, a.hi ^ 0xFFFFFFFF));
+}
+function Long_sub(a, b) {
+    if (a.hi === a.lo >> 31 && b.hi === b.lo >> 31) {
+        return Long_fromNumber(a.lo - b.lo);
+    }
+    var a_lolo = a.lo & 0xFFFF;
+    var a_lohi = a.lo >>> 16;
+    var a_hilo = a.hi & 0xFFFF;
+    var a_hihi = a.hi >>> 16;
+    var b_lolo = b.lo & 0xFFFF;
+    var b_lohi = b.lo >>> 16;
+    var b_hilo = b.hi & 0xFFFF;
+    var b_hihi = b.hi >>> 16;
+    var lolo = a_lolo - b_lolo | 0;
+    var lohi = a_lohi - b_lohi + (lolo >> 16) | 0;
+    var hilo = a_hilo - b_hilo + (lohi >> 16) | 0;
+    var hihi = a_hihi - b_hihi + (hilo >> 16) | 0;
+    return new Long(lolo & 0xFFFF | (lohi & 0xFFFF) << 16, hilo & 0xFFFF | (hihi & 0xFFFF) << 16);
+}
+function Long_compare(a, b) {
+    var r = a.hi - b.hi;
+    if (r !== 0) {
+        return r;
+    }
+    r = (a.lo >>> 1) - (b.lo >>> 1);
+    if (r !== 0) {
+        return r;
+    }
+    return (a.lo & 1) - (b.lo & 1);
+}
+function Long_isPositive(a) {
+    return (a.hi & 0x80000000) === 0;
+}
+function Long_isNegative(a) {
+    return (a.hi & 0x80000000) !== 0;
+}
+function Long_mul(a, b) {
+    var positive = Long_isNegative(a) === Long_isNegative(b);
+    if (Long_isNegative(a)) {
+        a = Long_neg(a);
+    }
+    if (Long_isNegative(b)) {
+        b = Long_neg(b);
+    }
+    var a_lolo = a.lo & 0xFFFF;
+    var a_lohi = a.lo >>> 16;
+    var a_hilo = a.hi & 0xFFFF;
+    var a_hihi = a.hi >>> 16;
+    var b_lolo = b.lo & 0xFFFF;
+    var b_lohi = b.lo >>> 16;
+    var b_hilo = b.hi & 0xFFFF;
+    var b_hihi = b.hi >>> 16;
+    var lolo = 0;
+    var lohi = 0;
+    var hilo = 0;
+    var hihi = 0;
+    lolo = a_lolo * b_lolo | 0;
+    lohi = lolo >>> 16;
+    lohi = (lohi & 0xFFFF) + a_lohi * b_lolo | 0;
+    hilo = hilo + (lohi >>> 16) | 0;
+    lohi = (lohi & 0xFFFF) + a_lolo * b_lohi | 0;
+    hilo = hilo + (lohi >>> 16) | 0;
+    hihi = hilo >>> 16;
+    hilo = (hilo & 0xFFFF) + a_hilo * b_lolo | 0;
+    hihi = hihi + (hilo >>> 16) | 0;
+    hilo = (hilo & 0xFFFF) + a_lohi * b_lohi | 0;
+    hihi = hihi + (hilo >>> 16) | 0;
+    hilo = (hilo & 0xFFFF) + a_lolo * b_hilo | 0;
+    hihi = hihi + (hilo >>> 16) | 0;
+    hihi = hihi + a_hihi * b_lolo + a_hilo * b_lohi + a_lohi * b_hilo + a_lolo * b_hihi | 0;
+    var result = new Long(lolo & 0xFFFF | lohi << 16, hilo & 0xFFFF | hihi << 16);
+    return positive ? result : Long_neg(result);
+}
+function Long_div(a, b) {
+    if (Math.abs(a.hi) < Long_MAX_NORMAL && Math.abs(b.hi) < Long_MAX_NORMAL) {
+        return Long_fromNumber(Long_toNumber(a) / Long_toNumber(b));
+    }
+    return (Long_divRem(a, b))[0];
+}
+function Long_udiv(a, b) {
+    if (a.hi >= 0 && a.hi < Long_MAX_NORMAL && b.hi >= 0 && b.hi < Long_MAX_NORMAL) {
+        return Long_fromNumber(Long_toNumber(a) / Long_toNumber(b));
+    }
+    return (Long_udivRem(a, b))[0];
+}
+function Long_rem(a, b) {
+    if (Math.abs(a.hi) < Long_MAX_NORMAL && Math.abs(b.hi) < Long_MAX_NORMAL) {
+        return Long_fromNumber(Long_toNumber(a) % Long_toNumber(b));
+    }
+    return (Long_divRem(a, b))[1];
+}
+function Long_urem(a, b) {
+    if (a.hi >= 0 && a.hi < Long_MAX_NORMAL && b.hi >= 0 && b.hi < Long_MAX_NORMAL) {
+        return Long_fromNumber(Long_toNumber(a) / Long_toNumber(b));
+    }
+    return (Long_udivRem(a, b))[1];
+}
+function Long_divRem(a, b) {
+    if (b.lo === 0 && b.hi === 0) {
+        throw new Error("Division by zero");
+    }
+    var positive = Long_isNegative(a) === Long_isNegative(b);
+    if (Long_isNegative(a)) {
+        a = Long_neg(a);
+    }
+    if (Long_isNegative(b)) {
+        b = Long_neg(b);
+    }
+    a = new LongInt(a.lo, a.hi, 0);
+    b = new LongInt(b.lo, b.hi, 0);
+    var q = LongInt_div(a, b);
+    a = new Long(a.lo, a.hi);
+    q = new Long(q.lo, q.hi);
+    return positive ? [q, a] : [Long_neg(q), Long_neg(a)];
+}
+function Long_udivRem(a, b) {
+    if (b.lo === 0 && b.hi === 0) {
+        throw new Error("Division by zero");
+    }
+    a = new LongInt(a.lo, a.hi, 0);
+    b = new LongInt(b.lo, b.hi, 0);
+    var q = LongInt_div(a, b);
+    a = new Long(a.lo, a.hi);
+    q = new Long(q.lo, q.hi);
+    return [q, a];
+}
+function Long_shiftLeft16(a) {
+    return new Long(a.lo << 16, a.lo >>> 16 | a.hi << 16);
+}
+function Long_shiftRight16(a) {
+    return new Long(a.lo >>> 16 | a.hi << 16, a.hi >>> 16);
+}
+function Long_and(a, b) {
+    return new Long(a.lo & b.lo, a.hi & b.hi);
+}
+function Long_or(a, b) {
+    return new Long(a.lo | b.lo, a.hi | b.hi);
+}
+function Long_xor(a, b) {
+    return new Long(a.lo ^ b.lo, a.hi ^ b.hi);
+}
+function Long_shl(a, b) {
+    b &= 63;
+    if (b === 0) {
+        return a;
+    } else if (b < 32) {
+        return new Long(a.lo << b, a.lo >>> 32 - b | a.hi << b);
+    } else if (b === 32) {
+        return new Long(0, a.lo);
+    } else {
+        return new Long(0, a.lo << b - 32);
+    }
+}
+function Long_shr(a, b) {
+    b &= 63;
+    if (b === 0) {
+        return a;
+    } else if (b < 32) {
+        return new Long(a.lo >>> b | a.hi << 32 - b, a.hi >> b);
+    } else if (b === 32) {
+        return new Long(a.hi, a.hi >> 31);
+    } else {
+        return new Long(a.hi >> b - 32, a.hi >> 31);
+    }
+}
+function Long_shru(a, b) {
+    b &= 63;
+    if (b === 0) {
+        return a;
+    } else if (b < 32) {
+        return new Long(a.lo >>> b | a.hi << 32 - b, a.hi >>> b);
+    } else if (b === 32) {
+        return new Long(a.hi, 0);
+    } else {
+        return new Long(a.hi >>> b - 32, 0);
+    }
+}
+function Long_not(a) {
+    return new Long(~a.hi, ~a.lo);
+}
+function LongInt(lo, hi, sup) {
+    this.lo = lo;
+    this.hi = hi;
+    this.sup = sup;
+}
+function LongInt_mul(a, b) {
+    var a_lolo = (a.lo & 0xFFFF) * b | 0;
+    var a_lohi = (a.lo >>> 16) * b | 0;
+    var a_hilo = (a.hi & 0xFFFF) * b | 0;
+    var a_hihi = (a.hi >>> 16) * b | 0;
+    var sup = a.sup * b | 0;
+    a_lohi = a_lohi + (a_lolo >>> 16) | 0;
+    a_hilo = a_hilo + (a_lohi >>> 16) | 0;
+    a_hihi = a_hihi + (a_hilo >>> 16) | 0;
+    sup = sup + (a_hihi >>> 16) | 0;
+    a.lo = a_lolo & 0xFFFF | a_lohi << 16;
+    a.hi = a_hilo & 0xFFFF | a_hihi << 16;
+    a.sup = sup & 0xFFFF;
+}
+function LongInt_sub(a, b) {
+    var a_lolo = a.lo & 0xFFFF;
+    var a_lohi = a.lo >>> 16;
+    var a_hilo = a.hi & 0xFFFF;
+    var a_hihi = a.hi >>> 16;
+    var b_lolo = b.lo & 0xFFFF;
+    var b_lohi = b.lo >>> 16;
+    var b_hilo = b.hi & 0xFFFF;
+    var b_hihi = b.hi >>> 16;
+    a_lolo = a_lolo - b_lolo | 0;
+    a_lohi = a_lohi - b_lohi + (a_lolo >> 16) | 0;
+    a_hilo = a_hilo - b_hilo + (a_lohi >> 16) | 0;
+    a_hihi = a_hihi - b_hihi + (a_hilo >> 16) | 0;
+    var sup = a.sup - b.sup + (a_hihi >> 16) | 0;
+    a.lo = a_lolo & 0xFFFF | a_lohi << 16;
+    a.hi = a_hilo & 0xFFFF | a_hihi << 16;
+    a.sup = sup;
+}
+function LongInt_add(a, b) {
+    var a_lolo = a.lo & 0xFFFF;
+    var a_lohi = a.lo >>> 16;
+    var a_hilo = a.hi & 0xFFFF;
+    var a_hihi = a.hi >>> 16;
+    var b_lolo = b.lo & 0xFFFF;
+    var b_lohi = b.lo >>> 16;
+    var b_hilo = b.hi & 0xFFFF;
+    var b_hihi = b.hi >>> 16;
+    a_lolo = a_lolo + b_lolo | 0;
+    a_lohi = a_lohi + b_lohi + (a_lolo >> 16) | 0;
+    a_hilo = a_hilo + b_hilo + (a_lohi >> 16) | 0;
+    a_hihi = a_hihi + b_hihi + (a_hilo >> 16) | 0;
+    var sup = a.sup + b.sup + (a_hihi >> 16) | 0;
+    a.lo = a_lolo & 0xFFFF | a_lohi << 16;
+    a.hi = a_hilo & 0xFFFF | a_hihi << 16;
+    a.sup = sup;
+}
+function LongInt_inc(a) {
+    a.lo = a.lo + 1 | 0;
+    if (a.lo === 0) {
+        a.hi = a.hi + 1 | 0;
+        if (a.hi === 0) {
+            a.sup = a.sup + 1 & 0xFFFF;
+        }
+    }
+}
+function LongInt_dec(a) {
+    a.lo = a.lo - 1 | 0;
+    if (a.lo ===  -1) {
+        a.hi = a.hi - 1 | 0;
+        if (a.hi ===  -1) {
+            a.sup = a.sup - 1 & 0xFFFF;
+        }
+    }
+}
+function LongInt_ucompare(a, b) {
+    var r = a.sup - b.sup;
+    if (r !== 0) {
+        return r;
+    }
+    r = (a.hi >>> 1) - (b.hi >>> 1);
+    if (r !== 0) {
+        return r;
+    }
+    r = (a.hi & 1) - (b.hi & 1);
+    if (r !== 0) {
+        return r;
+    }
+    r = (a.lo >>> 1) - (b.lo >>> 1);
+    if (r !== 0) {
+        return r;
+    }
+    return (a.lo & 1) - (b.lo & 1);
+}
+function LongInt_numOfLeadingZeroBits(a) {
+    var n = 0;
+    var d = 16;
+    while (d > 0) {
+        if (a >>> d !== 0) {
+            a >>>= d;
+            n = n + d | 0;
+        }
+        d = d / 2 | 0;
+    }
+    return 31 - n;
+}
+function LongInt_shl(a, b) {
+    if (b === 0) {
+        return;
+    }
+    if (b < 32) {
+        a.sup = (a.hi >>> 32 - b | a.sup << b) & 0xFFFF;
+        a.hi = a.lo >>> 32 - b | a.hi << b;
+        a.lo <<= b;
+    } else if (b === 32) {
+        a.sup = a.hi & 0xFFFF;
+        a.hi = a.lo;
+        a.lo = 0;
+    } else if (b < 64) {
+        a.sup = (a.lo >>> 64 - b | a.hi << b - 32) & 0xFFFF;
+        a.hi = a.lo << b;
+        a.lo = 0;
+    } else if (b === 64) {
+        a.sup = a.lo & 0xFFFF;
+        a.hi = 0;
+        a.lo = 0;
+    } else {
+        a.sup = a.lo << b - 64 & 0xFFFF;
+        a.hi = 0;
+        a.lo = 0;
+    }
+}
+function LongInt_shr(a, b) {
+    if (b === 0) {
+        return;
+    }
+    if (b === 32) {
+        a.lo = a.hi;
+        a.hi = a.sup;
+        a.sup = 0;
+    } else if (b < 32) {
+        a.lo = a.lo >>> b | a.hi << 32 - b;
+        a.hi = a.hi >>> b | a.sup << 32 - b;
+        a.sup >>>= b;
+    } else if (b === 64) {
+        a.lo = a.sup;
+        a.hi = 0;
+        a.sup = 0;
+    } else if (b < 64) {
+        a.lo = a.hi >>> b - 32 | a.sup << 64 - b;
+        a.hi = a.sup >>> b - 32;
+        a.sup = 0;
+    } else {
+        a.lo = a.sup >>> b - 64;
+        a.hi = 0;
+        a.sup = 0;
+    }
+}
+function LongInt_copy(a) {
+    return new LongInt(a.lo, a.hi, a.sup);
+}
+function LongInt_div(a, b) {
+    var bits = b.hi !== 0 ? LongInt_numOfLeadingZeroBits(b.hi) : LongInt_numOfLeadingZeroBits(b.lo) + 32;
+    var sz = 1 + (bits / 16 | 0);
+    var dividentBits = bits % 16;
+    LongInt_shl(b, bits);
+    LongInt_shl(a, dividentBits);
+    var q = new LongInt(0, 0, 0);
+    while (sz-- > 0) {
+        LongInt_shl(q, 16);
+        var digitA = (a.hi >>> 16) + 0x10000 * a.sup;
+        var digitB = b.hi >>> 16;
+        var digit = digitA / digitB | 0;
+        var t = LongInt_copy(b);
+        LongInt_mul(t, digit);
+        if (LongInt_ucompare(t, a) >= 0) {
+            while (LongInt_ucompare(t, a) > 0) {
+                LongInt_sub(t, b);
+                 --digit;
+            }
+        } else {
+            while (true) {
+                var nextT = LongInt_copy(t);
+                LongInt_add(nextT, b);
+                if (LongInt_ucompare(nextT, a) > 0) {
+                    break;
+                }
+                t = nextT;
+                ++digit;
+            }
+        }
+        LongInt_sub(a, t);
+        q.lo |= digit;
+        LongInt_shl(a, 16);
+    }
+    LongInt_shr(a, bits + 16);
+    return q;
+}
+var Long_add = Long_add;
+
+var Long_sub = Long_sub;
+
+var Long_mul = Long_mul;
+
+var Long_div = Long_div;
+
+var Long_rem = Long_rem;
+
+var Long_or = Long_or;
+
+var Long_and = Long_and;
+
+var Long_xor = Long_xor;
+
+var Long_shl = Long_shl;
+
+var Long_shr = Long_shr;
+
+var Long_shru = Long_shru;
+
+var Long_compare = Long_compare;
+
+var Long_eq = Long_eq;
+
+var Long_ne = Long_ne;
+
+var Long_lt = Long_lt;
+
+var Long_le = Long_le;
+
+var Long_gt = Long_gt;
+
+var Long_ge = Long_ge;
+
+var Long_not = Long_not;
+
+var Long_neg = Long_neg;
+
 function $rt_startThread(runner, callback) {
     var result;
     try {
@@ -3305,6 +4563,8 @@ main = $rt_mainStarter(ovegc_GameClient_main);
     c = otjc_JSArray.prototype;
     c.getLength = c.$getLength$exported$1;
     c.get = c.$get$exported$0;
+    c = ovegcc_Communicator$_init_$lambda$_0_0.prototype;
+    c.handleEvent = c.$handleEvent$exported$0;
     c = ovegc_GameLoop$start$lambda$_1_0.prototype;
     c.onAnimationFrame = c.$onAnimationFrame$exported$0;
     c = otjb_Window.prototype;
