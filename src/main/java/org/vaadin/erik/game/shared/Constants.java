@@ -12,4 +12,5 @@ public class Constants {
     public static final float EPSILON = 0.001f;
 
     public static final float MAX_VELOCITY = 500;
+    public static final float VERTICAL_MAX_VELOCITY = 1000;
 }

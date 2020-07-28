@@ -14,15 +14,18 @@ public class Collision {
     private final Direction sourceCollisionSide;
     private final Direction targetCollisionSide;
 
+    private final double collisionDelta;
+
     public Collision(GameObject source, GameObject target,
                      Point sourceCollisionPoint, Point targetCollisionPoint,
-                     Direction sourceCollisionSide, Direction targetCollisionSide) {
+                     Direction sourceCollisionSide, Direction targetCollisionSide, double collisionDelta) {
         this.source = source;
         this.target = target;
         this.sourceCollisionPoint = sourceCollisionPoint;
         this.targetCollisionPoint = targetCollisionPoint;
         this.sourceCollisionSide = sourceCollisionSide;
         this.targetCollisionSide = targetCollisionSide;
+        this.collisionDelta = collisionDelta;
     }
 
     public GameObject getSource() {
@@ -47,5 +50,9 @@ public class Collision {
 
     public Direction getTargetCollisionSide() {
         return targetCollisionSide;
+    }
+
+    public double getCollisionDelta() {
+        return collisionDelta;
     }
 }

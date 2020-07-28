@@ -27,7 +27,7 @@ public class GameMath {
 
         // If the objects were colliding in the previous frame as well, we'll just update it with
         // the side the objects are currently colliding on
-        if (previousCollision != null) {
+        if (previousCollision != null && source.getVelocity().getX() == 0 && source.getVelocity().getY() == 0) {
             sourceCollisionSide = getCurrentCollisionSide(source, target);
             targetCollisionSide = Direction.getOpposite(sourceCollisionSide);
 
@@ -35,8 +35,8 @@ public class GameMath {
                     source, target,
                     new Point(source.getX(), source.getY()),
                     new Point(target.getX(), target.getY()),
-                    sourceCollisionSide, targetCollisionSide
-            );
+                    sourceCollisionSide, targetCollisionSide,
+                    0);
         }
 
         // Get the direction in which the source is moving on each axis
@@ -56,17 +56,22 @@ public class GameMath {
         // The point (top left corner) at which the collision happened
         Point sourceCollisionPoint, targetCollisionPoint;
 
+        double sourceOverlapRight = source.getX() + source.getWidth() - target.getX();
+        double sourceOverlapLeft = target.getX() + target.getWidth() - source.getX();
         if (sourceXDir != Direction.NONE) {
-            double overlap = sourceXDir == Direction.RIGHT ?
-                    source.getX() + source.getWidth() - target.getX() :
-                    target.getX() + target.getWidth() - source.getX();
+            double overlap = sourceXDir == Direction.RIGHT ? sourceOverlapRight : sourceOverlapLeft;
             preCollisionDeltaX = overlap / separationVX;
+        } else if (sourceOverlapLeft < Constants.EPSILON || sourceOverlapRight < Constants.EPSILON) {
+            preCollisionDeltaX = 0;
         }
+
+        double sourceOverlapDown = source.getY() + source.getHeight() - target.getY();
+        double sourceOverlapUp = target.getY() + target.getHeight() - source.getY();
         if (sourceYDir != Direction.NONE) {
-            double overlap = sourceYDir == Direction.DOWN ?
-                    source.getY() + source.getHeight() - target.getY() :
-                    target.getY() + target.getHeight() - source.getY();
+            double overlap = sourceYDir == Direction.DOWN ? sourceOverlapDown : sourceOverlapUp;
             preCollisionDeltaY = overlap / separationVY;
+        } else if (sourceOverlapUp < Constants.EPSILON || sourceOverlapDown < Constants.EPSILON) {
+            preCollisionDeltaY = 0;
         }
         preCollisionDelta = Math.min(preCollisionDeltaX, preCollisionDeltaY);
 
@@ -112,8 +117,8 @@ public class GameMath {
         return new Collision(
                 source, target,
                 sourceCollisionPoint, targetCollisionPoint,
-                sourceCollisionSide, targetCollisionSide
-        );
+                sourceCollisionSide, targetCollisionSide,
+                preCollisionDelta);
     }
 
     private static Direction getCurrentCollisionSide(GameObject a, GameObject b) {

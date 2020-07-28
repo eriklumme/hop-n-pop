@@ -17,7 +17,7 @@ public class GameEngine {
 
     private static final float GRAVITY_ACCELERATION = 3000;
 
-    private static final float JUMP_VELOCITY = -800;
+    private static final float JUMP_VELOCITY = -1000;
 
     private static final float RUN_ACCELERATION = 3000;
 
@@ -109,10 +109,22 @@ public class GameEngine {
 
         player.setOnGround(false);
 
-        for (Collision collision: player.getCollisions()) {
+        Optional<Collision> firstCollision = player.getCollisions().stream()
+                .max(Comparator.comparing(Collision::getCollisionDelta));
+
+        firstCollision.ifPresent(collision-> {
+            if (collision.getSourceCollisionSide() == Direction.DOWN) {
+                player.setOnGround(true);
+            }
+            /*
+            if (Math.abs(player.getX() - collision.getSourceCollisionPoint().getX()) < Constants.EPSILON &&
+                    Math.abs(player.getY() - collision.getSourceCollisionPoint().getY()) < Constants.EPSILON) {
+                // Small collision, no need to correct
+                return;
+            }*/
+
             switch (collision.getSourceCollisionSide()) {
                 case DOWN:
-                    player.setOnGround(true);
                 case UP:
                     player.setVelocity(new Vector2D(player.getVelocity().getX(), 0));
                     if (Server.DEBUG_GAME_STATE) {
@@ -135,6 +147,6 @@ public class GameEngine {
                         collision.getSourceCollisionPoint().getY(),
                         player.getUUID());
             }
-        }
+        });
     }
 }

@@ -78,7 +78,7 @@ public class Player implements GameObject {
         double vy = velocity.getY();
         if (velocity.getY() > 0) {
             // Vertical max velocity only applies when falling down
-            vy = GameMath.signedLimited(velocity.getY(), Constants.MAX_VELOCITY);
+            vy = GameMath.signedLimited(velocity.getY(), Constants.VERTICAL_MAX_VELOCITY);
         }
         this.velocity = new Vector2D(vx, vy);
     }
