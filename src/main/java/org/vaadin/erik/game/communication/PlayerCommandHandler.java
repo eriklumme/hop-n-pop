@@ -10,10 +10,10 @@ import org.atmosphere.websocket.WebSocketHandlerAdapter;
 import org.vaadin.erik.game.server.GameSnapshotListener;
 import org.vaadin.erik.game.server.Server;
 import org.vaadin.erik.game.shared.Player;
-import org.vaadin.erik.game.entity.PlayerCommand;
 import org.vaadin.erik.game.shared.communication.GameSnapshot;
 import org.vaadin.erik.game.shared.communication.RegistrationMessage;
 import org.vaadin.erik.game.shared.data.Event;
+import org.vaadin.erik.game.shared.data.PlayerCommand;
 
 import java.io.IOException;
 import java.util.Collection;

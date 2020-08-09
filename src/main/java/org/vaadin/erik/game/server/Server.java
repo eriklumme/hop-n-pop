@@ -4,11 +4,11 @@ import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.vaadin.erik.game.entity.DebugMessage;
 import org.vaadin.erik.game.shared.Player;
-import org.vaadin.erik.game.entity.PlayerCommand;
 import org.vaadin.erik.game.shared.GameEngine;
+import org.vaadin.erik.game.shared.data.DebugMessage;
 import org.vaadin.erik.game.shared.data.Event;
+import org.vaadin.erik.game.shared.data.PlayerCommand;
 import org.vaadin.erik.game.ticker.Ticker;
 import org.vaadin.erik.game.ticker.TickerTask;
 
@@ -19,8 +19,6 @@ import java.util.*;
  */
 @Service
 public class Server implements TickerTask {
-
-    public static final boolean DEBUG_GAME_STATE = true;
 
     private static final Logger logger = LogManager.getLogger(Server.class);
 
