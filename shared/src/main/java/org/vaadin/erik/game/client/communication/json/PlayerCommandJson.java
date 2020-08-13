@@ -15,7 +15,4 @@ public interface PlayerCommandJson extends JSObject {
 
     @JSProperty
     void setOrder(int order);
-
-    @JSProperty
-    void setDebugMessage(DebugMessageJson debugMessage);
 }

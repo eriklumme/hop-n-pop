@@ -1,15 +1,16 @@
 import {css, customElement, html, LitElement} from 'lit-element';
+import './debug-panel';
 
 @customElement('main-view')
 export class MainView extends LitElement {
 
     static get styles() {
         return [
-            // CSSModule('lumo-typography lumo-styles'),
             css`
         :host {
           display: flex;
           flex-flow: column;
+          align-items: flex-start;
           height: 100%;
         }
       `,
@@ -18,8 +19,8 @@ export class MainView extends LitElement {
 
     render() {
         return html`
-      <canvas width="768" height="512" style="border: 1px solid red" id="canvas"></canvas>
-      <input type="number" id="slowdown" />
+          <canvas id="canvas" width="768" height="512" style="border: 1px solid red" id="canvas"></canvas>
+          <debug-panel></debug-panel>
     `;
     }
 
@@ -34,11 +35,8 @@ export class MainView extends LitElement {
     }
 
     protected firstUpdated(): void {
+        window.canvas = <HTMLCanvasElement> this.shadowRoot!.querySelector('#canvas');
         MainView.loadTileMap()
             .then(_ => window.main());
-    }
-
-    createRenderRoot() {
-        return this;
     }
 }

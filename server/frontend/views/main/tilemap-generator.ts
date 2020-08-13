@@ -12,11 +12,6 @@ const tileTypes: TileType[] = [
 @customElement('tilemap-generator')
 export class TilemapGenerator extends LitElement {
 
-    //private game: Game | undefined;
-
-    //@query("#canvas")
-    //private canvas: HTMLCanvasElement | undefined;
-
     @query("#board")
     private board: HTMLCanvasElement | undefined;
 

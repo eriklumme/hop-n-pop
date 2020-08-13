@@ -17,8 +17,6 @@ public class PlayerCommand {
 
     private Direction[] directions;
 
-    private DebugMessage debugMessage;
-
     /**
      * The unique identifier of the player
      */
@@ -44,9 +42,5 @@ public class PlayerCommand {
     @Override
     public String toString() {
         return String.format("%s [order=%d, directions=%s]", super.toString(), order, Arrays.toString(directions));
-    }
-
-    public DebugMessage getDebugMessage() {
-        return debugMessage;
     }
 }

@@ -12,4 +12,5 @@ interface Window {
     vaadinPush: any;
     main: any;
     tileMapData: any;
+    canvas: HTMLCanvasElement;
 }

@@ -1,23 +1,15 @@
 package org.vaadin.erik.game.client;
 
-import org.teavm.jso.browser.Window;
+import org.teavm.jso.JSBody;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
-import org.teavm.jso.dom.html.HTMLDocument;
 import org.vaadin.erik.game.client.communication.json.GameObjectJson;
-import org.vaadin.erik.game.client.communication.json.PointJson;
-import org.vaadin.erik.game.client.communication.json.TileJson;
 import org.vaadin.erik.game.client.tilemap.TileMap;
-import org.vaadin.erik.game.shared.Constants;
 import org.vaadin.erik.game.shared.Direction;
 import org.vaadin.erik.game.shared.Tile;
 import org.vaadin.erik.game.shared.TileType;
 
 public class GameCanvas {
-
-    private static final String CANVAS_ID = "canvas";
-
-    private final HTMLDocument document = Window.current().getDocument();
 
     private final HTMLCanvasElement canvas;
     private final CanvasRenderingContext2D context;
@@ -26,11 +18,14 @@ public class GameCanvas {
     private final int height;
 
     GameCanvas() {
-        canvas = (HTMLCanvasElement) document.getElementById(CANVAS_ID);
+        canvas = getCanvas();
         context = (CanvasRenderingContext2D) canvas.getContext("2d");
         width = canvas.getWidth();
         height = canvas.getHeight();
     }
+
+    @JSBody(script = "return window.canvas")
+    private static native HTMLCanvasElement getCanvas();
 
     public void clear() {
         context.clearRect(0, 0, width, height);
