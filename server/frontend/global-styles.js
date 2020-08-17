@@ -21,6 +21,11 @@ $_documentContainer.innerHTML = `
 #debug-panel .row .full-width {
     flex-grow: 1;
 }
+#debug-panel .tab-content {
+    display: none;
+    padding: var(--lumo-space-m);
+    flex-flow: column;
+}
 </style>
 `;
 

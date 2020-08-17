@@ -8,6 +8,7 @@ export class MainView extends LitElement {
         return [
             css`
         :host {
+            position: relative;
           display: flex;
           flex-flow: column;
           align-items: flex-start;
@@ -19,7 +20,8 @@ export class MainView extends LitElement {
 
     render() {
         return html`
-          <canvas id="canvas" width="768" height="512" style="border: 1px solid red" id="canvas"></canvas>
+          <canvas id="canvas" width="768" height="512" style="border: 1px solid red" ></canvas>
+          <canvas id="overlay" width="768" height="512" style="position: absolute; top: 1px; left: 1px"></canvas>
           <debug-panel></debug-panel>
     `;
     }
@@ -35,7 +37,8 @@ export class MainView extends LitElement {
     }
 
     protected firstUpdated(): void {
-        window.canvas = <HTMLCanvasElement> this.shadowRoot!.querySelector('#canvas');
+        window.canvas = <HTMLCanvasElement>this.shadowRoot!.querySelector('#canvas');
+        window.overlay = <HTMLCanvasElement>this.shadowRoot!.querySelector('#overlay');
         MainView.loadTileMap()
             .then(_ => window.main());
     }

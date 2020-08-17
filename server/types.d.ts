@@ -13,4 +13,5 @@ interface Window {
     main: any;
     tileMapData: any;
     canvas: HTMLCanvasElement;
+    overlay: HTMLCanvasElement;
 }

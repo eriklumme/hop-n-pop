@@ -7,6 +7,17 @@
 
 // @ts-ignore
 import client from './connect-client.default';
+import NodeData from './org/vaadin/erik/game/ai/NodeData';
+
+function _calculateAIPathing(): Promise<void> {
+  return client.call('DebugEndpoint', 'calculateAIPathing');
+}
+export {_calculateAIPathing as calculateAIPathing};
+
+function _getPathingData(): Promise<{ [key: string]: NodeData; }> {
+  return client.call('DebugEndpoint', 'getPathingData');
+}
+export {_getPathingData as getPathingData};
 
 function _setServerSlowDown(
   slowDownFactor: number

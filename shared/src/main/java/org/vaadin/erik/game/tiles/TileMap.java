@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,12 +69,7 @@ public class TileMap {
         return overlappingTiles;
     }
 
-    private static Collision getExistingCollision(Player player, Tile tile) {
-        for (Collision collision: player.getCollisions()) {
-            if (collision.getTarget() == tile) {
-                return collision;
-            }
-        }
-        return null;
+    public static Tile[][] getTiles() {
+        return tiles;
     }
 }
