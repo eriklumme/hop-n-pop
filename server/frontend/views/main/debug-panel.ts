@@ -10,7 +10,6 @@ import '@vaadin/vaadin-tabs';
 import '@vaadin/vaadin-tabs/vaadin-tab';
 
 import * as DebugEndpoint from '../../generated/DebugEndpoint';
-import NodeData from "../../generated/org/vaadin/erik/game/ai/NodeData";
 
 registerStyles('vaadin-dialog-overlay', css`
     [part="content"] { 
@@ -73,7 +72,7 @@ export class DebugPanel extends LitElement {
                 </div>
                 
                 <div class="tab-content">
-                    <vaadin-button>Spawn AI</vaadin-button>
+                    <vaadin-button @click=${this.spawnAI}>Spawn AI</vaadin-button>
                     <vaadin-button @click=${this.sendCalculateAIPathing}>Calculate AI pathing</vaadin-button>
                 </div>
             </vaadin-vertical-layout>
@@ -101,26 +100,10 @@ export class DebugPanel extends LitElement {
     }
 
     private sendCalculateAIPathing() {
-        DebugEndpoint.calculateAIPathing().then((_: any) => DebugPanel.printPathingData());
+        DebugEndpoint.calculateAIPathing().catch((e: Error) => console.error(e));
     }
 
-    private static printPathingData() {
-        const bSize = 32;
-        DebugEndpoint.getPathingData().then((data: { [key: string]: NodeData; }) => {
-            let ctx: CanvasRenderingContext2D = <CanvasRenderingContext2D> window.overlay.getContext("2d");
-
-            ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-            for(let key in data) {
-                let nodeData = data[key];
-                ctx.beginPath();
-                ctx.arc(
-                    nodeData.x * bSize + bSize / 2,
-                    nodeData.y * bSize + bSize / 2,
-                    bSize / 2,
-                0, 2 * Math.PI, false);
-                ctx.closePath();
-                ctx.fill();
-            }
-        });
+    private spawnAI() {
+        DebugEndpoint.spawnAI().catch((e: Error) => console.error(e));
     }
 }

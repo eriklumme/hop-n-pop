@@ -57,8 +57,8 @@ public class TileMap {
         int minXIndex = (int) player.getPosition().getX() / Constants.BLOCK_SIZE;
         int minYIndex = (int) player.getPosition().getY() / Constants.BLOCK_SIZE;
 
-        for (int y = minYIndex; y < Math.min(minYIndex + 2, tiles.length); y++) {
-            for (int x = minXIndex; x < Math.min(tiles[0].length, minXIndex + 2); x++) {
+        for (int y = Math.max(minYIndex, 0); y < Math.min(minYIndex + 2, tiles.length); y++) {
+            for (int x = Math.max(minXIndex, 0); x < Math.min(tiles[0].length, minXIndex + 2); x++) {
                 Tile tile = tiles[y][x];
                 if (tile.getTileType() == TileType.GROUND && GameMath.areIntersecting(player, tile)) {
                     overlappingTiles.add(tile);
