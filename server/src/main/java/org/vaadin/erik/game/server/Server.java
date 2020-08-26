@@ -3,8 +3,10 @@ package org.vaadin.erik.game.server;
 import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.vaadin.erik.game.ai.ServerAI;
+import org.vaadin.erik.game.ai.pathing.PathingManager;
 import org.vaadin.erik.game.shared.GameEngine;
 import org.vaadin.erik.game.shared.GameMath;
 import org.vaadin.erik.game.shared.Player;
@@ -21,19 +23,21 @@ import java.util.*;
  * The server keeps track of where players are
  */
 @Service
+@Profile("!debug")
 public class Server implements TickerTask {
 
     private static final Logger logger = LogManager.getLogger(Server.class);
 
-    private Map<String, Player> players = new HashMap<>();
-    private Map<Player, PlayerCommand> queuedCommands = new HashMap<>();
-    private Set<GameSnapshotListener> gameSnapshotListeners = new HashSet<>();
-    private List<ServerAI> serverAIS = new LinkedList<>();
+    protected final Map<String, Player> players = new HashMap<>();
+    protected final Map<Player, PlayerCommand> queuedCommands = new HashMap<>();
+    protected final List<ServerAI> serverAIS = new LinkedList<>();
+    protected final Ticker ticker;
 
-    private final Ticker ticker;
+    private final Set<GameSnapshotListener> gameSnapshotListeners = new HashSet<>();
 
     public Server() {
         ticker = new Ticker(this);
+        PathingManager.initialize();
         start();
     }
 
@@ -54,13 +58,6 @@ public class Server implements TickerTask {
         serverAI.setPosition(new Point(128, 0));
         players.put(serverAI.getUUID(), serverAI);
         serverAIS.add(serverAI);
-    }
-
-    public void despawnAIS() {
-        for (ServerAI serverAI: serverAIS) {
-            despawn(serverAI);
-        }
-        serverAIS.clear();
     }
 
     public void despawn(Player player) {
@@ -98,13 +95,5 @@ public class Server implements TickerTask {
     public Registration addGameSnapshotListener(GameSnapshotListener listener) {
         gameSnapshotListeners.add(listener);
         return () -> gameSnapshotListeners.remove(listener);
-    }
-
-    public void setSlowDownFactor(int slowDownFactor) {
-        ticker.setSlowdownFactor(slowDownFactor);
-    }
-
-    public void setFixedDelta(boolean fixedDelta) {
-        ticker.setFixedDelta(fixedDelta);
     }
 }

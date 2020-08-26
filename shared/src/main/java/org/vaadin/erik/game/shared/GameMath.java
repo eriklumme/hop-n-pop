@@ -123,10 +123,10 @@ public class GameMath {
                         collision.getTarget().getPosition().getX(),
                         collision.getTargetCollisionPoint().getY()));
             }
-        }
 
-        if (collision.getSource() instanceof Player) {
-            ((Player) collision.getSource()).setOnGround(collision.getSourceCollisionSide() == Direction.DOWN);
+            if (collision.getSource() instanceof Player) {
+                ((Player) collision.getSource()).setOnGround(collision.getSourceCollisionSide() == Direction.DOWN);
+            }
         }
 
         addIfPlayer(collision.getSource(), handledPlayers);
@@ -155,5 +155,10 @@ public class GameMath {
         double sign = Math.signum(value);
         double result = Math.min(Math.abs(value), limit);
         return sign * result;
+    }
+
+    public static double getDistanceBetween(Point a, Point b) {
+        return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) +
+                        Math.pow(a.getY() - b.getY(), 2));
     }
 }

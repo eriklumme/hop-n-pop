@@ -77,6 +77,8 @@ export class DebugPanel extends LitElement {
                     <vaadin-button @click=${this.spawnAI}>Spawn AI</vaadin-button>
                     <vaadin-button @click=${this.despawnAIS}>Despawn AIs</vaadin-button>
                     <vaadin-button @click=${this.sendCalculateAIPathing}>Calculate AI pathing</vaadin-button>
+                    <vaadin-button @click=${this.startRecording}>Start path recording</vaadin-button>
+                    <vaadin-button @click=${this.saveRecordings}>Save recordings to file</vaadin-button>
                 </div>
             </vaadin-vertical-layout>
         `, root)
@@ -108,6 +110,14 @@ export class DebugPanel extends LitElement {
 
     private sendCalculateAIPathing() {
         DebugEndpoint.calculateAIPathing().catch((e: Error) => console.error(e));
+    }
+
+    private startRecording() {
+        DebugEndpoint.recordMovementForAI().catch((e: Error) => console.error(e));
+    }
+
+    private saveRecordings() {
+        DebugEndpoint.saveRecordedData().catch((e: Error) => console.error(e));
     }
 
     private spawnAI() {

@@ -36,4 +36,13 @@ public enum Direction {
     public static Direction getVertical(double from, double to) {
         return from == to ? NONE : from < to ? DOWN : UP;
     }
+
+    public static int[] toIntArray(Direction[] directions) {
+        int[] intArray = new int[directions.length];
+        int i = 0;
+        for (Direction direction: directions) {
+            intArray[i++] = direction.ordinal();
+        }
+        return intArray;
+    }
 }

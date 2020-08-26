@@ -18,6 +18,21 @@ function _despawnAIS(): Promise<void> {
 }
 export {_despawnAIS as despawnAIS};
 
+/**
+ * Records the movement between two nodes, such that the AI can use it.    Starts recording when close enough to an existing node,  and stops recording when first coming enough to any other node.
+ *
+ *
+ */
+function _recordMovementForAI(): Promise<void> {
+  return client.call('DebugEndpoint', 'recordMovementForAI');
+}
+export {_recordMovementForAI as recordMovementForAI};
+
+function _saveRecordedData(): Promise<void> {
+  return client.call('DebugEndpoint', 'saveRecordedData');
+}
+export {_saveRecordedData as saveRecordedData};
+
 function _setFixedDelta(
   fixedDelta: boolean
 ): Promise<void> {

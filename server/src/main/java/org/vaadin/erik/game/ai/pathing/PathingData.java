@@ -1,36 +1,26 @@
 package org.vaadin.erik.game.ai.pathing;
 
-import org.vaadin.erik.game.ai.step.HorizontalStep;
+import org.vaadin.erik.game.ai.recording.RecordData;
+import org.vaadin.erik.game.ai.recording.RecordingManager;
+import org.vaadin.erik.game.ai.step.HorizontalStepFactory;
+import org.vaadin.erik.game.ai.step.RecordedStepFactory;
 import org.vaadin.erik.game.ai.step.Step;
-import org.vaadin.erik.game.shared.Constants;
-import org.vaadin.erik.game.shared.GameObject;
-import org.vaadin.erik.game.shared.Tile;
-import org.vaadin.erik.game.shared.TileType;
+import org.vaadin.erik.game.shared.*;
 import org.vaadin.erik.game.tiles.TileMap;
 
 import java.util.*;
 
 public class PathingData {
 
-    public static final Stack<Step> EMPTY_STACK = new Stack<>();
-
-    private static PathingData pathingData;
+    public enum SearchMode { EXACT, BELOW, BESIDE, ALL };
 
     private final Tile[][] tiles = TileMap.getTiles();
     private final Map<Tile, NodeData> tileToNodeData = new HashMap<>();
 
-    private PathingData() {
+    PathingData() {
     }
 
-    private Tile[][] getTiles() {
-        return tiles;
-    }
-
-    private Map<Tile, NodeData> getTileToNodeData() {
-        return tileToNodeData;
-    }
-
-    private void createNodeData() {
+    void initializeNodeData() {
         for (int y = 0; y < tiles.length; y++) {
             for (int x = 0; x < tiles[y].length; x++) {
                 Tile tile = tiles[y][x];
@@ -43,35 +33,57 @@ public class PathingData {
         }
     }
 
-    private void addHorizontalSteps() {
+    void addHorizontalSteps() {
         for (NodeData nodeData: tileToNodeData.values()) {
             NodeData neighbor;
             for (int i = -1; i <= 1; i += 2) {
-                neighbor = getClosestNode(nodeData.getIndexX() + i, nodeData.getIndexY());
+                neighbor = getClosestNode(nodeData.getIndexX() + i, nodeData.getIndexY(), SearchMode.BELOW);
                 if (neighbor != null) {
-                    nodeData.getSteps().add(new HorizontalStep(neighbor));
+                    nodeData.getSteps().add(new HorizontalStepFactory(neighbor));
                 }
             }
         }
     }
 
+    void addJumpSteps() {
+        for (NodeData nodeData: tileToNodeData.values()) {
+            RecordData recordData = RecordingManager.getRecordedPathFrom(nodeData.getIndexX(), nodeData.getIndexY());
+            if (recordData != null) {
+                nodeData.getSteps().add(new RecordedStepFactory(recordData));
+            }
+        }
+    }
+
     /**
-     * Gets the {@link NodeData} closest to the given position, or below the given position.
+     * Gets the {@link NodeData} closest to the given position, or below the given position if searchBelow is true.
      *
      * Returns null if none was found.
      */
-    public NodeData getClosestNode(GameObject gameObject) {
+    public NodeData getClosestNode(GameObject gameObject, SearchMode searchMode) {
         int x = (int) gameObject.getPosition().getX() / Constants.BLOCK_SIZE;
         int y = (int) gameObject.getPosition().getY() / Constants.BLOCK_SIZE;
-        return getClosestNode(x, y);
+        return getClosestNode(x, y, searchMode);
     }
 
-    private NodeData getClosestNode(int x, int y) {
-        if (x < 0 || x >= tiles[0].length) {
+    public NodeData getClosestNode(int x, int y, SearchMode searchMode) {
+        boolean searchBelow = searchMode == SearchMode.ALL || searchMode == SearchMode.BELOW;
+        NodeData nodeData = doGetClosestNode(x, y, searchBelow);
+
+        if (nodeData == null && (searchMode == SearchMode.ALL || searchMode == SearchMode.BESIDE)) {
+            nodeData = doGetClosestNode(x - 1, y, searchBelow);
+            if (nodeData == null) {
+                nodeData = doGetClosestNode(x + 1, y, searchBelow);
+            }
+        }
+        return nodeData;
+    }
+
+    private NodeData doGetClosestNode(int x, int y, boolean searchBelow) {
+        if (x < 0 || x >= tiles[0].length || y >= tiles.length) {
             return null;
         }
-        NodeData nodeData = null;
-        while (y < tiles.length && nodeData == null) {
+        NodeData nodeData;
+        do {
             Tile tile = tiles[y++][x];
             if (tile.getTileType() == TileType.GROUND) {
                 // NodeData will only exists for air tiles right above ground tiles.
@@ -80,22 +92,11 @@ public class PathingData {
             }
             nodeData = tileToNodeData.get(tile);
         }
+        while (y < tiles.length && nodeData == null && searchBelow);
         return nodeData;
     }
 
-    public Stack<Step> getSteps(NodeData from, NodeData to) {
-        return new PathCalculator(from, to).calculate();
+    public Stack<Step> getSteps(NodeData from, NodeData to, Player player) {
+        return new PathCalculator(from, to, player).calculate();
     }
-
-    public static void calculate() {
-        PathingData pathingData = new PathingData();
-        pathingData.createNodeData();
-        pathingData.addHorizontalSteps();
-        PathingData.pathingData = pathingData;
-    }
-
-    public static PathingData getPathingData() {
-        return pathingData;
-    }
-
 }

@@ -1,10 +1,12 @@
 package org.vaadin.erik.game.ai.pathing;
 
 import org.vaadin.erik.game.ai.step.Step;
+import org.vaadin.erik.game.ai.step.StepFactory;
+import org.vaadin.erik.game.shared.Player;
 
 import java.util.*;
 
-import static org.vaadin.erik.game.ai.pathing.PathingData.EMPTY_STACK;
+import static org.vaadin.erik.game.ai.pathing.PathingManager.EMPTY_STACK;
 
 /**
  * Calculates the shortest path between two nodes using A*
@@ -13,14 +15,16 @@ class PathCalculator {
 
     private final NodeData source;
     private final NodeData target;
+    private final Player player;
 
     private final Set<NodeData> closedNodes = new HashSet<>();
     private final Set<NodeData> openNodes = new HashSet<>();
     private final Map<NodeData, StepData> nodeStepData = new HashMap<>();
 
-    PathCalculator(NodeData source, NodeData target) {
+    PathCalculator(NodeData source, NodeData target, Player player) {
         this.source = source;
         this.target = target;
+        this.player = player;
     }
 
     public Stack<Step> calculate() {
@@ -35,9 +39,9 @@ class PathCalculator {
             }
             double currentG = nodeStepData.get(currentNode).getG();
 
-            for (Step step: currentNode.getSteps()) {
-                NodeData node = step.getTarget();
-                double nodeG = currentG + step.getWeight();
+            for (StepFactory stepFactory: currentNode.getSteps()) {
+                NodeData node = stepFactory.getTarget();
+                double nodeG = currentG + stepFactory.getWeight();
 
                 if (closedNodes.contains(node)) {
                     continue;
@@ -72,9 +76,9 @@ class PathCalculator {
     }
 
     private Step getStepToFrom(NodeData from, NodeData to) {
-        for (Step step: from.getSteps()) {
-            if (step.getTarget() == to) {
-                return step;
+        for (StepFactory stepFactory: from.getSteps()) {
+            if (stepFactory.getTarget() == to) {
+                return stepFactory.getInstance(player);
             }
         }
         throw new IllegalStateException("Could not find a step back from nodes for which a step forward was found.");

@@ -2,15 +2,18 @@ package org.vaadin.erik.game.ai;
 
 import org.vaadin.erik.game.ai.pathing.NodeData;
 import org.vaadin.erik.game.ai.pathing.PathingData;
+import org.vaadin.erik.game.ai.pathing.PathingManager;
+import org.vaadin.erik.game.ai.step.RecordedStepFactory;
 import org.vaadin.erik.game.ai.step.Step;
 import org.vaadin.erik.game.server.Server;
 import org.vaadin.erik.game.shared.Direction;
+import org.vaadin.erik.game.shared.GameMath;
 import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.shared.data.PlayerCommand;
 
 import java.util.*;
 
-import static org.vaadin.erik.game.ai.pathing.PathingData.EMPTY_STACK;
+import static org.vaadin.erik.game.ai.pathing.PathingManager.EMPTY_STACK;
 
 public class ServerAI extends Player {
 
@@ -35,31 +38,39 @@ public class ServerAI extends Player {
         }
 
         if (currentStep != null) {
-            if (currentStep.targetReached(this)) {
+            if (currentStep.targetReached()) {
                 currentStep = getNextStep();
             } else {
-                server.handleCommand(createPlayerCommand(currentStep.getCommand(this, delta)));
+                server.handleCommand(createPlayerCommand(currentStep.getCommand(delta)));
             }
         }
     }
 
     private void makeNewDecision(Collection<Player> players) {
-        PathingData pathingData = PathingData.getPathingData();
+        // if we are executing a recorded step, execute it to the end
+        if (currentStep != null && currentStep instanceof RecordedStepFactory.RecordStep) {
+            RecordedStepFactory.RecordStep recordStep = (RecordedStepFactory.RecordStep) currentStep;
+            if (!recordStep.targetReached()) {
+                return;
+            }
+        }
+
+        PathingData pathingData = PathingManager.getPathingData();
         if (pathingData == null) {
             return;
         }
 
         Player closestPlayer = getClosestPlayer(players);
         if (closestPlayer != null) {
-            NodeData currentClosest = pathingData.getClosestNode(this);
-            NodeData target = pathingData.getClosestNode(closestPlayer);
+            NodeData currentClosest = pathingData.getClosestNode(this, PathingData.SearchMode.BESIDE);
+            NodeData target = pathingData.getClosestNode(closestPlayer, PathingData.SearchMode.BESIDE);
 
             if (currentClosest == null || target == null) {
                 System.out.println("Failed to find node close to source and/or target " +
                         "{source=" + currentClosest + ", target=" + target + "}");
                 return;
             }
-            steps = pathingData.getSteps(currentClosest, target);
+            steps = pathingData.getSteps(currentClosest, target, this);
             currentStep = getNextStep();
         }
     }
@@ -76,10 +87,7 @@ public class ServerAI extends Player {
             if (player == this) {
                 continue;
             }
-            double distance = Math.sqrt(
-                    Math.pow(getPosition().getX() - player.getPosition().getX(), 2) +
-                    Math.pow(getPosition().getY() - player.getPosition().getY(), 2)
-            );
+            double distance = GameMath.getDistanceBetween(this.getPosition(), player.getPosition());
             if (distance < smallestDistance) {
                 smallestDistance = distance;
                 closestPlayer = player;

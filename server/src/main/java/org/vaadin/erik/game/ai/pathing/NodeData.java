@@ -1,7 +1,9 @@
 package org.vaadin.erik.game.ai.pathing;
 
 import org.vaadin.erik.game.ai.step.Step;
+import org.vaadin.erik.game.ai.step.StepFactory;
 import org.vaadin.erik.game.shared.Constants;
+import org.vaadin.erik.game.shared.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,7 @@ public class NodeData {
 
     private final int x;
     private final int y;
-    private final List<Step> steps = new ArrayList<>(2);
+    private final List<StepFactory> steps = new ArrayList<>(2);
 
     public NodeData(int x, int y) {
         this.x = x;
@@ -30,10 +32,14 @@ public class NodeData {
     }
 
     public int getY() {
-        return x * Constants.BLOCK_SIZE;
+        return y * Constants.BLOCK_SIZE;
     }
 
-    public List<Step> getSteps() {
+    public Point getPosition() {
+        return new Point(getX(), getY());
+    }
+
+    public List<StepFactory> getSteps() {
         return steps;
     }
 
