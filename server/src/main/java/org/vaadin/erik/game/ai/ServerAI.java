@@ -8,17 +8,18 @@ import org.vaadin.erik.game.shared.Direction;
 import org.vaadin.erik.game.shared.Player;
 import org.vaadin.erik.game.shared.data.PlayerCommand;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static org.vaadin.erik.game.ai.pathing.PathingData.EMPTY_STACK;
 
 public class ServerAI extends Player {
 
     private static final double SECONDS_BETWEEN_DECISIONS = 2;
     private final Server server;
 
-    private List<Step> steps = Collections.emptyList();
+    private Stack<Step> steps = EMPTY_STACK;
+    private Step currentStep = null;
+
     private double secondsSinceLastDecision = 0;
 
     public ServerAI(String color, Server server) {
@@ -33,12 +34,11 @@ public class ServerAI extends Player {
             makeNewDecision(players);
         }
 
-        if (!steps.isEmpty()) {
-            Step step = steps.get(0);
-            if (step.targetReached(this)) {
-                steps.remove(step);
+        if (currentStep != null) {
+            if (currentStep.targetReached(this)) {
+                currentStep = getNextStep();
             } else {
-                server.handleCommand(createPlayerCommand(step.getCommand(this, delta)));
+                server.handleCommand(createPlayerCommand(currentStep.getCommand(this, delta)));
             }
         }
     }
@@ -60,7 +60,12 @@ public class ServerAI extends Player {
                 return;
             }
             steps = pathingData.getSteps(currentClosest, target);
+            currentStep = getNextStep();
         }
+    }
+
+    private Step getNextStep() {
+        return steps.isEmpty() ? null : steps.pop();
     }
 
     private Player getClosestPlayer(Collection<Player> players) {

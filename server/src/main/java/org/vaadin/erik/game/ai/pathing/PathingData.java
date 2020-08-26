@@ -12,6 +12,8 @@ import java.util.*;
 
 public class PathingData {
 
+    public static final Stack<Step> EMPTY_STACK = new Stack<>();
+
     private static PathingData pathingData;
 
     private final Tile[][] tiles = TileMap.getTiles();
@@ -53,16 +55,6 @@ public class PathingData {
         }
     }
 
-    private NodeData dataAtIndex(int x, int y) {
-        if (y >= 0 && y < tiles.length) {
-            Tile[] tileRow = tiles[y];
-            if (x >= 0 && x < tileRow.length) {
-                return tileToNodeData.get(tileRow[x]);
-            }
-        }
-        return null;
-    }
-
     /**
      * Gets the {@link NodeData} closest to the given position, or below the given position.
      *
@@ -75,14 +67,23 @@ public class PathingData {
     }
 
     private NodeData getClosestNode(int x, int y) {
+        if (x < 0 || x >= tiles[0].length) {
+            return null;
+        }
         NodeData nodeData = null;
         while (y < tiles.length && nodeData == null) {
-            nodeData = dataAtIndex(x, y++);
+            Tile tile = tiles[y++][x];
+            if (tile.getTileType() == TileType.GROUND) {
+                // NodeData will only exists for air tiles right above ground tiles.
+                // If we hit ground, we return, to avoid finding NodeData below the ground that we can't access.
+                return null;
+            }
+            nodeData = tileToNodeData.get(tile);
         }
         return nodeData;
     }
 
-    public List<Step> getSteps(NodeData from, NodeData to) {
+    public Stack<Step> getSteps(NodeData from, NodeData to) {
         return new PathCalculator(from, to).calculate();
     }
 

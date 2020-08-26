@@ -4,6 +4,8 @@ import org.vaadin.erik.game.ai.step.Step;
 
 import java.util.*;
 
+import static org.vaadin.erik.game.ai.pathing.PathingData.EMPTY_STACK;
+
 /**
  * Calculates the shortest path between two nodes using A*
  */
@@ -21,7 +23,7 @@ class PathCalculator {
         this.target = target;
     }
 
-    public List<Step> calculate() {
+    public Stack<Step> calculate() {
         openNodes.add(source);
         nodeStepData.put(source, new StepData(null, 0, 0));
 
@@ -56,13 +58,13 @@ class PathCalculator {
         }
 
         if (currentNode != target) {
-            return Collections.emptyList();
+            return EMPTY_STACK;
         }
 
-        List<Step> steps = new ArrayList<>();
+        Stack<Step> steps = new Stack<>();
         StepData stepData = nodeStepData.get(currentNode);
         while (stepData.getParent() != null) {
-            steps.add(getStepToFrom(stepData.getParent(), currentNode));
+            steps.push(getStepToFrom(stepData.getParent(), currentNode));
             currentNode = stepData.getParent();
             stepData = nodeStepData.get(currentNode);
         }
