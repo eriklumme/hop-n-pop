@@ -4,6 +4,7 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.vaadin.erik.game.client.communication.json.GameObjectJson;
+import org.vaadin.erik.game.client.communication.json.PlayerJson;
 import org.vaadin.erik.game.client.tilemap.TileMap;
 import org.vaadin.erik.game.shared.Direction;
 import org.vaadin.erik.game.shared.Tile;
@@ -31,9 +32,12 @@ public class GameCanvas {
         context.clearRect(0, 0, width, height);
     }
 
-    public void drawPlayer(int x, int y) {
-        context.setFillStyle("black");
-        context.fillRect(x, y, 32, 32);
+    public void drawPlayer(PlayerJson playerJson) {
+        context.setFillStyle(playerJson.getColor());
+        context.fillRect(
+                playerJson.getPosition().getX(),
+                playerJson.getPosition().getY(),
+                32, 32);
     }
 
     public void drawTileMap(TileMap tileMap) {

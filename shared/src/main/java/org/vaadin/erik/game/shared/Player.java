@@ -9,6 +9,8 @@ import java.util.UUID;
 public class Player implements GameObject {
 
     private final String uuid;
+    private final String color;
+
     private Point previousPosition;
     private double x;
     private double y;
@@ -19,7 +21,8 @@ public class Player implements GameObject {
 
     private boolean isInGame = false;
 
-    public Player() {
+    public Player(String color) {
+        this.color = color;
         uuid = UUID.randomUUID().toString();
     }
 
@@ -109,5 +112,9 @@ public class Player implements GameObject {
 
     public void setInGame(boolean inGame) {
         isInGame = inGame;
+    }
+
+    public String getColor() {
+        return color;
     }
 }

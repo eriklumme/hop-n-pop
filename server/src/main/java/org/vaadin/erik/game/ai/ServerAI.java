@@ -21,8 +21,8 @@ public class ServerAI extends Player {
     private List<Step> steps = Collections.emptyList();
     private double secondsSinceLastDecision = 0;
 
-    public ServerAI(Server server) {
-        super();
+    public ServerAI(String color, Server server) {
+        super(color);
         this.server = server;
     }
 

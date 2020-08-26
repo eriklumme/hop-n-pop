@@ -43,14 +43,14 @@ public class Server implements TickerTask {
     }
 
     public Player spawn() {
-        Player player = new Player();
+        Player player = new Player("#FF00FF");
         player.setPosition(new Point(128, 0));
         players.put(player.getUUID(), player);
         return player;
     }
 
     public void spawnAI() {
-        ServerAI serverAI = new ServerAI(this);
+        ServerAI serverAI = new ServerAI("#FF0000", this);
         serverAI.setPosition(new Point(128, 0));
         players.put(serverAI.getUUID(), serverAI);
         serverAIS.add(serverAI);

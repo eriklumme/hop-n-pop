@@ -22,5 +22,5 @@ public interface PlayerJson extends JSObject {
     boolean isIsInGame();
 
     @JSProperty
-    JSArray<CollisionJson> getCollisions();
+    String getColor();
 }
