@@ -75,13 +75,6 @@ public class GameClient {
         for (int i = 0; i < snapshot.getPlayers().getLength(); i++) {
             PlayerJson player = snapshot.getPlayers().get(i);
             gameCanvas.drawPlayer((int) player.getPosition().getX(), (int) player.getPosition().getY());
-
-            for (int j = 0; j < player.getCollisions().getLength(); j++) {
-                CollisionJson collision = player.getCollisions().get(j);
-                if (collision.getTarget().isTile()) {
-                    gameCanvas.drawCollision(collision.getTarget(), collision.getTargetCollisionSide());
-                }
-            }
         }
     }
 }

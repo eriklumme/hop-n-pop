@@ -62,9 +62,6 @@ public class GameEngine {
 
         player.setOnGround(false);
 
-        // Check and correct for tile collision
-        //handleTileCollision(player);
-
         return events;
     }
 
@@ -83,7 +80,6 @@ public class GameEngine {
     }
 
     private static void handleDirection(Player player, Set<Direction> directions, double delta) {
-        // TODO: Costly transformation?
         for(Direction direction: directions) {
             switch (direction) {
                 case UP:
@@ -102,53 +98,9 @@ public class GameEngine {
 
     private static void updatePosition(Player player, double delta) {
         player.setPreviousPosition(new Point(player.getPosition().getX(), player.getPosition().getY()));
-        player.setX(player.getPosition().getX() + delta * player.getVelocity().getX());
-        player.setY(player.getPosition().getY() + delta * player.getVelocity().getY());
-    }
-
-    private static void handleTileCollision(Player player) {
-        //TileMap.updateCollisions(player);
-
-        player.setOnGround(false);
-
-        Optional<Collision> firstCollision = player.getCollisions().stream()
-                .max(Comparator.comparing(Collision::getCollisionDelta));
-
-        firstCollision.ifPresent(collision-> {
-            if (collision.getSourceCollisionSide() == Direction.DOWN) {
-                player.setOnGround(true);
-            }
-            /*
-            if (Math.abs(player.getX() - collision.getSourceCollisionPoint().getX()) < Constants.EPSILON &&
-                    Math.abs(player.getY() - collision.getSourceCollisionPoint().getY()) < Constants.EPSILON) {
-                // Small collision, no need to correct
-                return;
-            }*/
-
-            switch (collision.getSourceCollisionSide()) {
-                case DOWN:
-                case UP:
-                    player.setVelocity(new Vector2D(player.getVelocity().getX(), 0));
-                    if (DEBUG_GAME_STATE) {
-                        logger.info("Resetting y velocity for player {} due to collision", player.getUUID());
-                    }
-                    break;
-                case LEFT:
-                case RIGHT:
-                    player.setVelocity(new Vector2D(0, player.getVelocity().getY()));
-                    if (DEBUG_GAME_STATE) {
-                        logger.info("Resetting x velocity for player {} due to collision", player.getUUID());
-                    }
-                    break;
-            }
-            player.setX(collision.getSourceCollisionPoint().getX());
-            player.setY(collision.getSourceCollisionPoint().getY());
-            if (DEBUG_GAME_STATE) {
-                logger.info("Player collided, resetting to position {}x {}y for player {}",
-                        collision.getSourceCollisionPoint().getX(),
-                        collision.getSourceCollisionPoint().getY(),
-                        player.getUUID());
-            }
-        });
+        player.setPosition(new Point(
+                player.getPosition().getX() + delta * player.getVelocity().getX(),
+                player.getPosition().getY() + delta * player.getVelocity().getY()
+        ));
     }
 }

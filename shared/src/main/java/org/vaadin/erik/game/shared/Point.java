@@ -20,6 +20,10 @@ public class Point {
         return y;
     }
 
+    public double get(boolean horizontal) {
+        return horizontal ? getX() : getY();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

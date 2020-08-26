@@ -1,7 +1,7 @@
 package org.vaadin.erik.game.ai.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.vaadin.erik.game.ai.NodeData;
+import org.vaadin.erik.game.ai.pathing.NodeData;
 import org.vaadin.erik.game.shared.Direction;
 
 public abstract class AbstractStep implements Step {

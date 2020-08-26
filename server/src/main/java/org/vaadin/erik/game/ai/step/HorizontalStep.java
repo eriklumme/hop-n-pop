@@ -1,7 +1,6 @@
 package org.vaadin.erik.game.ai.step;
 
-import org.vaadin.erik.game.ai.NodeData;
-import org.vaadin.erik.game.shared.Constants;
+import org.vaadin.erik.game.ai.pathing.NodeData;
 import org.vaadin.erik.game.shared.Direction;
 import org.vaadin.erik.game.shared.Player;
 

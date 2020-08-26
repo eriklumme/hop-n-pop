@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.vaadin.erik.game.shared.communication.Vector2DSerializer;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 
 public class Player implements GameObject {
@@ -20,8 +18,6 @@ public class Player implements GameObject {
     private Vector2D velocity = Vector2D.ZERO;
 
     private boolean isInGame = false;
-
-    private Collection<Collision> collisions;
 
     public Player() {
         uuid = UUID.randomUUID().toString();
@@ -43,30 +39,24 @@ public class Player implements GameObject {
 
     @Override
     public void setPosition(Point position) {
-        x = position.getX();
-        y = position.getY();
+        double newX = position.getX();
+        double newY = position.getY();
+
+        double maxX = Constants.GAME_WIDTH - getWidth();
+        double maxY = Constants.GAME_HEIGHT - getHeight();
+        if (newX < 0 || newX > maxX) {
+            newX = newX < 0 ? 0 : maxX;
+        }
+        if (newY < 0 || newY > maxY) {
+            newY = newY < 0 ? 0 : maxY;
+        }
+
+        x = newX;
+        y = newY;
     }
 
     public void setPreviousPosition(Point previousPosition) {
         this.previousPosition = previousPosition;
-    }
-
-    public void setX(double x) {
-        double maxX = Constants.GAME_WIDTH - getWidth();
-        if (x < 0 || x > maxX) {
-            x = x < 0 ? 0 : maxX;
-            velocity = new Vector2D(0, velocity.getY());
-        }
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        double maxY = Constants.GAME_HEIGHT - getHeight();
-        if (y < 0 || y > maxY) {
-            y = y < 0 ? 0 : maxY;
-            velocity = new Vector2D(velocity.getX(), 0);
-        }
-        this.y = y;
     }
 
     @Override
@@ -104,14 +94,6 @@ public class Player implements GameObject {
 
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
-    }
-
-    public Collection<Collision> getCollisions() {
-        return collisions != null ? collisions : Collections.emptyList();
-    }
-
-    public void setCollisions(Collection<Collision> collisions) {
-        this.collisions = collisions;
     }
 
     /**

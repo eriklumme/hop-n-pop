@@ -2,7 +2,7 @@ package org.vaadin.erik.game.communication.endpoint;
 
 import com.vaadin.flow.server.connect.Endpoint;
 import com.vaadin.flow.server.connect.auth.AnonymousAllowed;
-import org.vaadin.erik.game.ai.PathingData;
+import org.vaadin.erik.game.ai.pathing.PathingData;
 import org.vaadin.erik.game.server.Server;
 
 import javax.validation.constraints.Positive;

@@ -1,4 +1,4 @@
-package org.vaadin.erik.game.ai;
+package org.vaadin.erik.game.ai.pathing;
 
 import org.vaadin.erik.game.ai.step.Step;
 import org.vaadin.erik.game.shared.Constants;
