@@ -8,6 +8,7 @@ import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout';
 import '@vaadin/vaadin-text-field/vaadin-integer-field';
 import '@vaadin/vaadin-tabs';
 import '@vaadin/vaadin-tabs/vaadin-tab';
+import '@vaadin/vaadin-checkbox';
 
 import * as DebugEndpoint from '../../generated/DebugEndpoint';
 
@@ -66,6 +67,7 @@ export class DebugPanel extends LitElement {
                             @change="${(e: any) => this.slowDownFactor = e.target.value}"></vaadin-integer-field>
                         <vaadin-button @click="${(_: any) => DebugPanel.sendSlowDown(this.slowDownFactor)}">Apply</vaadin-button>
                     </div>
+                    <vaadin-checkbox @change=${(e: any) => this.fixedDeltaChanged(e)}>Use fixed delta</vaadin-checkbox>
                     <div class="row" style="margin-top: auto">
                         <vaadin-button @click="${(_: any) => this.dialog.opened = false}" style="margin-left: auto">Close</vaadin-button>
                     </div>
@@ -73,6 +75,7 @@ export class DebugPanel extends LitElement {
                 
                 <div class="tab-content">
                     <vaadin-button @click=${this.spawnAI}>Spawn AI</vaadin-button>
+                    <vaadin-button @click=${this.despawnAIS}>Despawn AIs</vaadin-button>
                     <vaadin-button @click=${this.sendCalculateAIPathing}>Calculate AI pathing</vaadin-button>
                 </div>
             </vaadin-vertical-layout>
@@ -99,11 +102,19 @@ export class DebugPanel extends LitElement {
         }
     }
 
+    private fixedDeltaChanged(event: any) {
+        DebugEndpoint.setFixedDelta(event.target.checked).catch((e: Error) => console.error(e));
+    }
+
     private sendCalculateAIPathing() {
         DebugEndpoint.calculateAIPathing().catch((e: Error) => console.error(e));
     }
 
     private spawnAI() {
         DebugEndpoint.spawnAI().catch((e: Error) => console.error(e));
+    }
+
+    private despawnAIS() {
+        DebugEndpoint.despawnAIS().catch((e: Error) => console.error(e));
     }
 }

@@ -13,6 +13,18 @@ function _calculateAIPathing(): Promise<void> {
 }
 export {_calculateAIPathing as calculateAIPathing};
 
+function _despawnAIS(): Promise<void> {
+  return client.call('DebugEndpoint', 'despawnAIS');
+}
+export {_despawnAIS as despawnAIS};
+
+function _setFixedDelta(
+  fixedDelta: boolean
+): Promise<void> {
+  return client.call('DebugEndpoint', 'setFixedDelta', {fixedDelta});
+}
+export {_setFixedDelta as setFixedDelta};
+
 function _setServerSlowDown(
   slowDownFactor: number
 ): Promise<void> {

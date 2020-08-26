@@ -21,11 +21,19 @@ public class DebugEndpoint {
         server.setSlowDownFactor(slowDownFactor);
     }
 
+    public void setFixedDelta(boolean fixedDelta) {
+        server.setFixedDelta(fixedDelta);
+    }
+
     public void calculateAIPathing() {
         PathingData.calculate();
     }
 
     public void spawnAI() {
         server.spawnAI();
+    }
+
+    public void despawnAIS() {
+        server.despawnAIS();
     }
 }

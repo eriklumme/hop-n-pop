@@ -56,6 +56,13 @@ public class Server implements TickerTask {
         serverAIS.add(serverAI);
     }
 
+    public void despawnAIS() {
+        for (ServerAI serverAI: serverAIS) {
+            despawn(serverAI);
+        }
+        serverAIS.clear();
+    }
+
     public void despawn(Player player) {
         players.remove(player.getUUID());
     }
@@ -95,5 +102,9 @@ public class Server implements TickerTask {
 
     public void setSlowDownFactor(int slowDownFactor) {
         ticker.setSlowdownFactor(slowDownFactor);
+    }
+
+    public void setFixedDelta(boolean fixedDelta) {
+        ticker.setFixedDelta(fixedDelta);
     }
 }
