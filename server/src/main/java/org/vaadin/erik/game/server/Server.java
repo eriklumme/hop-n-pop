@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.vaadin.erik.game.ai.ServerAI;
 import org.vaadin.erik.game.ai.pathing.PathingManager;
-import org.vaadin.erik.game.shared.GameEngine;
-import org.vaadin.erik.game.shared.GameMath;
-import org.vaadin.erik.game.shared.Player;
-import org.vaadin.erik.game.shared.Point;
+import org.vaadin.erik.game.shared.*;
+import org.vaadin.erik.game.shared.data.Action;
 import org.vaadin.erik.game.shared.data.Event;
 import org.vaadin.erik.game.shared.data.PlayerCommand;
 import org.vaadin.erik.game.ticker.Ticker;
@@ -64,11 +62,15 @@ public class Server implements TickerTask {
         players.remove(player.getUUID());
     }
 
+    public void kill(Player killer, Player victim) {
+        killer.addPoint();
+        victim.setInGame(false);
+    }
+
     public void handleCommand(PlayerCommand playerCommand) {
         Player player = players.get(playerCommand.getUUID());
 
-        if (player == null) {
-            logger.warn("No player found with UUID [" + playerCommand.getUUID() + "]");
+        if (player == null || !player.isInGame()) {
             return;
         }
 
@@ -85,8 +87,13 @@ public class Server implements TickerTask {
             events.addAll(playerEvents);
         });
 
-        // TODO WIP
-        GameMath.handleCollisions(players.values(), TileMap::getOverlappingTiles);
+        Collection<Event> collisionEvents = CollisionHandler.handleCollisions(players.values(), TileMap::getOverlappingTiles);
+        for (Event event: collisionEvents) {
+            if (event.getAction() == Action.KILL) {
+                kill(event.getSource(), event.getTarget());
+            }
+        }
+        events.addAll(collisionEvents);
 
         gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players.values(), events));
         queuedCommands.clear();

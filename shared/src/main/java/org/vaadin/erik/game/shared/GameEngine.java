@@ -1,19 +1,13 @@
 package org.vaadin.erik.game.shared;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.vaadin.erik.game.shared.data.Action;
 import org.vaadin.erik.game.shared.data.Event;
 import org.vaadin.erik.game.shared.data.PlayerCommand;
-import org.vaadin.erik.game.tiles.TileMap;
 
 import java.util.*;
 
 public class GameEngine {
-    public static final boolean DEBUG_GAME_STATE = true;
-
-    private static final Logger logger = LogManager.getLogger(GameEngine.class);
 
     private static final float GRAVITY_ACCELERATION = 3000;
 
@@ -25,8 +19,6 @@ public class GameEngine {
 
     /**
      * Applies physics, which is more or less gravity, to the player.
-     *
-     * TODO: Split into two methods
      *
      * @param player    The player to update
      * @param delta     The time in milliseconds since the last update
@@ -60,6 +52,7 @@ public class GameEngine {
         // Update the player's position
         updatePosition(player, delta);
 
+        // Reset player state
         player.setOnGround(false);
 
         return events;

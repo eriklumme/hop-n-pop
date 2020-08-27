@@ -16,6 +16,8 @@ public class Player implements GameObject {
     private double y;
     private boolean onGround;
 
+    private int points;
+
     @JsonSerialize(using = Vector2DSerializer.class)
     private Vector2D velocity = Vector2D.ZERO;
 
@@ -116,5 +118,13 @@ public class Player implements GameObject {
 
     public String getColor() {
         return color;
+    }
+
+    public void addPoint() {
+        points++;
+    }
+
+    public int getPoints() {
+        return points;
     }
 }

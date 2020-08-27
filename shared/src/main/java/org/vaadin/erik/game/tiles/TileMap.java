@@ -60,7 +60,7 @@ public class TileMap {
         for (int y = Math.max(minYIndex, 0); y < Math.min(minYIndex + 2, tiles.length); y++) {
             for (int x = Math.max(minXIndex, 0); x < Math.min(tiles[0].length, minXIndex + 2); x++) {
                 Tile tile = tiles[y][x];
-                if (tile.getTileType() == TileType.GROUND && GameMath.areIntersecting(player, tile)) {
+                if (tile.getTileType() == TileType.GROUND && CollisionHandler.areIntersecting(player, tile)) {
                     overlappingTiles.add(tile);
                 }
             }
