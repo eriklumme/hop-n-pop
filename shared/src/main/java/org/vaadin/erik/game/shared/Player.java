@@ -49,10 +49,15 @@ public class Player implements GameObject {
 
         double maxX = Constants.GAME_WIDTH - getWidth();
         double maxY = Constants.GAME_HEIGHT - getHeight();
+
         if (newX < 0 || newX > maxX) {
             newX = newX < 0 ? 0 : maxX;
+            setVelocity(new Vector2D(0, getVelocity().getY()));
         }
         if (newY < 0 || newY > maxY) {
+            if (newY < 0) {
+                setVelocity(new Vector2D(getVelocity().getX(), 0));
+            }
             newY = newY < 0 ? 0 : maxY;
         }
 
