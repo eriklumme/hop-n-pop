@@ -16,6 +16,15 @@ public class CollisionHandler {
                 b.getPosition().getY() + b.getHeight() < a.getPosition().getY());
     }
 
+    private static void addTileCollisions(Collection<Player> players, Queue<Collision> orderedCollisions,
+                                          Function<Player, Collection<Tile>> tileCollisionProvider) {
+        for (Player player : players) {
+            for (Tile tile : tileCollisionProvider.apply(player)) {
+                orderedCollisions.add(getCollision(player, tile));
+            }
+        }
+    }
+
     private static void addPlayerCollisions(Collection<Player> players, Queue<Collision> orderedCollisions) {
         Set<Player> handledPlayers = new HashSet<>();
         for (Player player: players) {
@@ -40,11 +49,8 @@ public class CollisionHandler {
 
         for (int i = 0; i < 2; i++) {
             Queue<Collision> orderedCollisions = new PriorityQueue<>(Comparator.comparing(Collision::getCollisionDelta).reversed());
-            for (Player player : activePlayers) {
-                for (Tile tile : tileCollisionProvider.apply(player)) {
-                    orderedCollisions.add(getCollision(player, tile));
-                }
-            }
+
+            addTileCollisions(activePlayers, orderedCollisions, tileCollisionProvider);
             addPlayerCollisions(activePlayers, orderedCollisions);
 
             Set<Player> handledPlayers = new HashSet<>();

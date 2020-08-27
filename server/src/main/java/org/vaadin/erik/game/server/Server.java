@@ -46,7 +46,6 @@ public class Server implements TickerTask {
 
     public Player spawn() {
         Player player = new Player("#FF00FF");
-        player.setPosition(new Point(128, 0));
         players.put(player.getUUID(), player);
         return player;
     }
@@ -83,6 +82,15 @@ public class Server implements TickerTask {
 
         List<Event> events = new ArrayList<>();
         players.values().forEach(player -> {
+            if (!player.isInGame()) {
+                Point spawnPoint = getSpawnPoint(player, players.values());
+                if (spawnPoint != null) {
+                    player.setInGame(true);
+                    player.setPosition(spawnPoint);
+                    events.add(new Event(Action.SPAWN, player));
+                }
+            }
+
             List<Event> playerEvents = GameEngine.applyPhysics(player, queuedCommands.get(player), delta);
             events.addAll(playerEvents);
         });
@@ -102,5 +110,42 @@ public class Server implements TickerTask {
     public Registration addGameSnapshotListener(GameSnapshotListener listener) {
         gameSnapshotListeners.add(listener);
         return () -> gameSnapshotListeners.remove(listener);
+    }
+
+    private static final Point[] SPAWN_POINTS = new Point[]{
+            new Point(3, 0),
+            new Point(8, 0),
+            new Point(20, 0),
+            new Point(3, 8),
+            new Point(0, 10),
+            new Point(20, 10)
+    };
+
+    /**
+     * Hardcoded points and inefficient code because time.
+     *
+     * Tries to return a spawn point that is not currently intersecting with a player.
+     */
+    private static Point getSpawnPoint(Player forPlayer, Collection<Player> players) {
+        List<Point> spawnPoints = Arrays.asList(SPAWN_POINTS);
+        Collections.shuffle(spawnPoints);
+
+        for(Point point: spawnPoints) {
+            boolean found = true;
+            for(Player player: players) {
+                if (player == forPlayer) {
+                    continue;
+                }
+                Tile tile = TileMap.getTiles()[(int) point.getY()][(int) point.getX()];
+                if (CollisionHandler.areIntersecting(player, tile)) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                return new Point(Constants.BLOCK_SIZE * point.getX(), Constants.BLOCK_SIZE * point.getY());
+            }
+        }
+        return null;
     }
 }

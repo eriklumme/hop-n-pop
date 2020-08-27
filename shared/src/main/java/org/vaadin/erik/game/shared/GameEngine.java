@@ -4,6 +4,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.vaadin.erik.game.shared.data.Action;
 import org.vaadin.erik.game.shared.data.Event;
 import org.vaadin.erik.game.shared.data.PlayerCommand;
+import org.vaadin.erik.game.tiles.TileMap;
 
 import java.util.*;
 
@@ -34,11 +35,6 @@ public class GameEngine {
             nonDuplicateDirections = new HashSet<>(Arrays.asList(command.getDirections()));
         } else {
             nonDuplicateDirections = Collections.emptySet();
-        }
-
-        if (!player.isInGame()) {
-            player.setInGame(true);
-            events.add(new Event(Action.SPAWN, player));
         }
 
         // If the player is in the air, apply gravity

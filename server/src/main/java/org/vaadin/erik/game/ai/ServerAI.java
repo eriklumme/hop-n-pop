@@ -66,8 +66,6 @@ public class ServerAI extends Player {
             NodeData target = pathingData.getClosestNode(closestPlayer, PathingData.SearchMode.BESIDE);
 
             if (currentClosest == null || target == null) {
-                System.out.println("Failed to find node close to source and/or target " +
-                        "{source=" + currentClosest + ", target=" + target + "}");
                 return;
             }
             steps = pathingData.getSteps(currentClosest, target, this);
