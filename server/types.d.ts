@@ -14,4 +14,5 @@ interface Window {
     tileMapData: any;
     canvas: HTMLCanvasElement;
     overlay: HTMLCanvasElement;
+    spriteCodeToColor: (spriteCode: number) => string;
 }

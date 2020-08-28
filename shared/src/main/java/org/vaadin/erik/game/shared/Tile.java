@@ -7,14 +7,20 @@ public class Tile implements GameObject {
 
     private final Point position;
     private final TileType tileType;
+    private final int spriteCode;
 
-    public Tile(Point position, TileType tileType) {
+    public Tile(Point position, TileType tileType, int spriteCode) {
         this.position = position;
         this.tileType = tileType;
+        this.spriteCode = spriteCode;
     }
 
     public TileType getTileType() {
         return tileType;
+    }
+
+    public int getSpriteCode() {
+        return spriteCode;
     }
 
     @Override

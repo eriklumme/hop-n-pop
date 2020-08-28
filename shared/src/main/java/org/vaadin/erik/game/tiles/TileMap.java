@@ -37,10 +37,12 @@ public class TileMap {
             for (int rowIndex = 0; rowIndex < rows.length(); rowIndex++) {
                 JsonArray columns = rows.getArray(rowIndex);
                 for(int columnIndex = 0; columnIndex < columns.length(); columnIndex++) {
-                    TileType tileType = TileType.values()[(int) columns.getNumber(columnIndex)];
+                    JsonArray tileData = columns.getArray(columnIndex);
+                    TileType tileType = TileType.values()[(int) tileData.getNumber(0)];
+                    int spriteCode = (int) tileData.getNumber(1);
                     int x = columnIndex * Constants.BLOCK_SIZE;
                     int y = rowIndex * Constants.BLOCK_SIZE;
-                    tiles[rowIndex][columnIndex] = new Tile(new Point(x, y), tileType);
+                    tiles[rowIndex][columnIndex] = new Tile(new Point(x, y), tileType, spriteCode);
                 }
             }
 

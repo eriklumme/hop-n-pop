@@ -20,19 +20,30 @@ export class MainView extends LitElement {
 
     render() {
         return html`
-          <canvas id="canvas" width="768" height="512" style="border: 1px solid red" ></canvas>
-          <canvas id="overlay" width="768" height="512" style="position: absolute; top: 1px; left: 1px"></canvas>
+          <canvas id="canvas" width="1024" height="768" style="border: 1px solid red" ></canvas>
+          <canvas id="overlay" width="1024" height="768" style="position: absolute; top: 1px; left: 1px"></canvas>
           <debug-panel></debug-panel>
     `;
     }
 
-    private static async loadTileMap() {
+    public static async loadTileMap() {
         try {
             let response = await fetch("tilemap.json");
-            let data = await response.json();
-            window.tileMapData = data;
+            window.tileMapData = await response.json();
         } catch (e) {
             console.error("Error loading tile map: " + e);
+        }
+
+        // Used both by the tilemap-generator and the TeaVM code
+        window.spriteCodeToColor = (spriteCode: number): string => {
+            switch (spriteCode) {
+                case 0:
+                    return 'transparent';
+                case 1:
+                    return 'green';
+                default:
+                    return 'deeppink';
+            }
         }
     }
 

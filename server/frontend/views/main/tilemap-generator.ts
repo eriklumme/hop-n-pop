@@ -1,12 +1,13 @@
 import {css, customElement, html, LitElement, query, property} from 'lit-element';
 import '@vaadin/vaadin-button';
+import './main-view';
+import {MainView} from "./main-view";
 
-type TileType = { color: string, typeCode: number }
+type TileType = { typeCode: number, spriteCode: number }
 
 const tileTypes: TileType[] = [
-    { color: 'transparent', typeCode: 0 },
-    { color: 'green', typeCode: 1 },
-    { color: 'blue', typeCode: 2 }
+    { typeCode: 0, spriteCode: 0 },
+    { typeCode: 1, spriteCode: 1 }
 ];
 
 @customElement('tilemap-generator')
@@ -18,10 +19,12 @@ export class TilemapGenerator extends LitElement {
     @query("#palette")
     private palette: HTMLCanvasElement | undefined;
 
-    private readonly width: number = 24;
-    private readonly height: number = 16;
+    private readonly width: number = 32;
+    private readonly height: number = 24;
 
     private selectedTileType: TileType = tileTypes[0];
+
+    private mouseDown: boolean = false;
 
     static get styles() {
         return [css`
@@ -31,8 +34,8 @@ export class TilemapGenerator extends LitElement {
               overflow: auto;
             }
             #board {
-                width: 768px;
-                height: 512px;
+                width: 1024px;
+                height: 768px;
                 display: flex;
                 flex-flow: column;
                 margin: var(--lumo-space-m);
@@ -79,18 +82,31 @@ export class TilemapGenerator extends LitElement {
     `;
     }
 
-    protected firstUpdated(): void {
+    protected async firstUpdated(): Promise<void> {
+        await MainView.loadTileMap();
+
+        const wrapper = this.shadowRoot?.getElementById("wrapper");
+        wrapper?.addEventListener('mousedown', _ => this.mouseDown = true);
+        wrapper?.addEventListener('mouseup', _ => this.mouseDown = false);
+
         for (let h = 0; h < this.height; h++) {
             let row = document.createElement('div');
             row.classList.add('row');
             this.board!.appendChild(row);
 
             for (let w = 0; w < this.width; w++) {
-                let tile: Tile = <Tile> document.createElement('tilemap-tile');
-                tile.addEventListener('click', _ => {
-                    tile.tileType = this.selectedTileType;
+                const tile: Tile = <Tile> document.createElement('tilemap-tile');
+                const eventListener = (_: any) => tile.tileType = this.selectedTileType;
+                tile.addEventListener('click', eventListener);
+                tile.addEventListener('mouseenter', _ => {
+                    if (this.mouseDown) eventListener(null);
                 });
                 row.appendChild(tile);
+
+                const tileType: TileType | undefined = TilemapGenerator.loadTileTypeFromTileMap(w, h);
+                if (tileType) {
+                    tile.tileType = tileType;
+                }
             }
         }
 
@@ -106,23 +122,38 @@ export class TilemapGenerator extends LitElement {
                     .forEach(element => element.classList.remove('selected'));
                 selector.classList.add('selected');
             });
-            selector.style.backgroundColor = tileType.color;
+            selector.style.backgroundColor = window.spriteCodeToColor(tileType.spriteCode);
             this.palette!.appendChild(selector);
         });
     }
 
+    private static loadTileTypeFromTileMap(x: number, y: number): TileType | undefined {
+        if (x < 0 || y < 0) {
+            return undefined;
+        }
+        if (window.tileMapData && y < window.tileMapData.tiles.length) {
+            const row: number[][] = window.tileMapData.tiles[y];
+            if (row && x < row.length) {
+                const tile: number[] = row[x];
+                return { typeCode: tile[0], spriteCode: tile[1] };
+            }
+        }
+        return undefined;
+    }
+
     private export() {
-        let data: number[][] = [];
+        let data: number[][][] = [];
         this.shadowRoot?.querySelectorAll('.row').forEach(row => {
-            let rowData: number[] = [];
+            let rowData: number[][] = [];
             data.push(rowData);
 
-            row.querySelectorAll('tilemap-tile').forEach(tile => {
-                rowData.push((<Tile> tile).tileType.typeCode);
+            row.querySelectorAll('tilemap-tile').forEach(el => {
+                const tileType: TileType = (<Tile> el).tileType;
+                rowData.push([tileType.typeCode, tileType.spriteCode]);
             });
         });
 
-        console.warn("Export: \n" + JSON.stringify(data));
+        console.warn("Export: \n" + JSON.stringify({tiles: data}));
     }
 }
 
@@ -152,7 +183,7 @@ class Tile extends LitElement {
     set tileType(value: TileType) {
         const oldValue = this._tileType;
         this._tileType = value;
-        this.style.backgroundColor = value.color;
+        this.style.backgroundColor = window.spriteCodeToColor(value.spriteCode);
 
         this.requestUpdate('tileType', oldValue);
     }

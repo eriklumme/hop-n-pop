@@ -8,7 +8,6 @@ import org.vaadin.erik.game.client.communication.json.PlayerJson;
 import org.vaadin.erik.game.client.tilemap.TileMap;
 import org.vaadin.erik.game.shared.Direction;
 import org.vaadin.erik.game.shared.Tile;
-import org.vaadin.erik.game.shared.TileType;
 
 public class GameCanvas {
 
@@ -28,6 +27,9 @@ public class GameCanvas {
     @JSBody(script = "return window.canvas")
     private static native HTMLCanvasElement getCanvas();
 
+    @JSBody(params = "spriteCode", script = "return window.spriteCodeToColor(spriteCode)")
+    private static native String spriteCodeToColor(int spriteCode);
+
     public void clear() {
         context.clearRect(0, 0, width, height);
     }
@@ -43,7 +45,7 @@ public class GameCanvas {
     public void drawTileMap(TileMap tileMap) {
         for (Tile[] rowTiles : tileMap.getTiles()) {
             for (Tile tile : rowTiles) {
-                String color = tile.getTileType() == TileType.GROUND ? "green" : "blue";
+                String color = spriteCodeToColor(tile.getSpriteCode());
                 drawTile(tile.getPosition().getX(), tile.getPosition().getY(), tile.getWidth(), tile.getHeight(), color);
             }
         }

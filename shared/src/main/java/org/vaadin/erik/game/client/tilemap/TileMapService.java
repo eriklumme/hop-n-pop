@@ -7,5 +7,5 @@ import org.teavm.jso.core.JSNumber;
 public abstract class TileMapService {
 
     @JSBody(script = "return window.tileMapData.tiles;")
-    public static native JSArray<JSArray<JSNumber>> getTileMap();
+    public static native JSArray<JSArray<JSArray<JSNumber>>> getTileMap();
 }

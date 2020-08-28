@@ -72,6 +72,9 @@ public class RecordingManager {
     }
 
     public static RecordData getRecordedPathFrom(int x, int y) {
+        if (x < 0 || y < 0 || y >= recordDataMap.length || x >= recordDataMap[0].length) {
+            return null;
+        }
         return recordDataMap[y][x];
     }
 

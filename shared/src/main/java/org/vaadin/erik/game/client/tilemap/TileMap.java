@@ -13,17 +13,18 @@ public class TileMap {
     private Tile[][] tiles;
 
     public TileMap() {
-        JSArray<JSArray<JSNumber>> tileData = TileMapService.getTileMap();
+        JSArray<JSArray<JSArray<JSNumber>>> tileData = TileMapService.getTileMap();
 
         tiles = new Tile[tileData.getLength()][tileData.get(0).getLength()];
 
         for (int rowIndex = 0; rowIndex < tileData.getLength(); rowIndex++) {
-            JSArray<JSNumber> columns = tileData.get(rowIndex);
+            JSArray<JSArray<JSNumber>> columns = tileData.get(rowIndex);
             for(int columnIndex = 0; columnIndex < columns.getLength(); columnIndex++) {
-                TileType tileType = TileType.values()[columns.get(columnIndex).intValue()];
+                TileType tileType = TileType.values()[columns.get(columnIndex).get(0).intValue()];
+                int spriteCode = columns.get(columnIndex).get(1).intValue();
                 int x = columnIndex * Constants.BLOCK_SIZE;
                 int y = rowIndex * Constants.BLOCK_SIZE;
-                tiles[rowIndex][columnIndex] = new Tile(new Point(x, y), tileType);
+                tiles[rowIndex][columnIndex] = new Tile(new Point(x, y), tileType, spriteCode);
             }
         }
 
