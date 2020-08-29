@@ -14,7 +14,7 @@ import java.util.Map;
 public class DataRecorder {
 
     private static final double MAX_DISTANCE_TO_NODE = 5;
-    private static final double SAMPLE_TIME = 1000.0 / 10;
+    private static final double SAMPLE_TIME = 1000.0 / 20;
 
     private final Player player;
     private final PathingData pathingData;

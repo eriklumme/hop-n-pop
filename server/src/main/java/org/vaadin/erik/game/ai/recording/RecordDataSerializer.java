@@ -20,6 +20,9 @@ public class RecordDataSerializer extends StdSerializer<RecordData> {
 
     @Override
     public void serialize(RecordData value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        if (value == null || value.getStartNode() == null || value.getEndNode() == null) {
+            return;
+        }
         gen.writeStartObject();
         gen.writeNumberField("startX", value.getStartNode().getIndexX());
         gen.writeNumberField("startY", value.getStartNode().getIndexY());
