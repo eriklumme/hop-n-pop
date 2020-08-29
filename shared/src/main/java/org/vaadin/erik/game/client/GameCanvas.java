@@ -81,6 +81,11 @@ public class GameCanvas {
         context.setFillStyle(playerJson.getColor());
         context.fillRect(offsetX, offsetY, width, height);
 
+        if (currentPlayer) {
+            context.setFillStyle("yellow");
+            context.fillRect(offsetX, offsetY, 10, height);
+        }
+
         context.setFillStyle("black");
         context.fillText(String.valueOf(playerJson.getPoints()), offsetX + 16, offsetY + 16);
     }

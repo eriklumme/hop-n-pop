@@ -74,8 +74,9 @@ public class GameClient {
 
         for (int i = 0; i < snapshot.getPlayers().getLength(); i++) {
             PlayerJson player = snapshot.getPlayers().get(i);
+            boolean currentPlayer = playerUuid.equals(player.getUuid());
             gameCanvas.drawPlayer(player);
-            gameCanvas.drawScore(player, i, false);
+            gameCanvas.drawScore(player, i, currentPlayer);
         }
     }
 }
