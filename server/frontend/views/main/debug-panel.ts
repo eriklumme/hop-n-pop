@@ -10,7 +10,7 @@ import '@vaadin/vaadin-tabs';
 import '@vaadin/vaadin-tabs/vaadin-tab';
 import '@vaadin/vaadin-checkbox';
 
-import * as DebugEndpoint from '../../generated/DebugEndpoint';
+import * as ServerEndpoint from '../../generated/ServerEndpoint';
 
 registerStyles('vaadin-dialog-overlay', css`
     [part="content"] { 
@@ -100,31 +100,31 @@ export class DebugPanel extends LitElement {
 
     private static sendSlowDown(slowDownFactor: number) {
         if (slowDownFactor) {
-            DebugEndpoint.setServerSlowDown(slowDownFactor);
+            ServerEndpoint.setServerSlowDown(slowDownFactor);
         }
     }
 
     private fixedDeltaChanged(event: any) {
-        DebugEndpoint.setFixedDelta(event.target.checked).catch((e: Error) => console.error(e));
+        ServerEndpoint.setFixedDelta(event.target.checked).catch((e: Error) => console.error(e));
     }
 
     private sendCalculateAIPathing() {
-        DebugEndpoint.calculateAIPathing().catch((e: Error) => console.error(e));
+        ServerEndpoint.calculateAIPathing().catch((e: Error) => console.error(e));
     }
 
     private startRecording() {
-        DebugEndpoint.recordMovementForAI().catch((e: Error) => console.error(e));
+        ServerEndpoint.recordMovementForAI().catch((e: Error) => console.error(e));
     }
 
     private saveRecordings() {
-        DebugEndpoint.saveRecordedData().catch((e: Error) => console.error(e));
+        ServerEndpoint.saveRecordedData().catch((e: Error) => console.error(e));
     }
 
     private spawnAI() {
-        DebugEndpoint.spawnAI().catch((e: Error) => console.error(e));
+        ServerEndpoint.spawnAI().catch((e: Error) => console.error(e));
     }
 
     private despawnAIS() {
-        DebugEndpoint.despawnAIS().catch((e: Error) => console.error(e));
+        ServerEndpoint.despawnAIS().catch((e: Error) => console.error(e));
     }
 }

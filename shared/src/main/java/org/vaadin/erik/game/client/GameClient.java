@@ -1,5 +1,6 @@
 package org.vaadin.erik.game.client;
 
+import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSObjects;
@@ -8,6 +9,7 @@ import org.teavm.jso.json.JSON;
 import org.vaadin.erik.game.client.communication.Communicator;
 import org.vaadin.erik.game.client.communication.MessageEvent;
 import org.vaadin.erik.game.client.communication.json.*;
+import org.vaadin.erik.game.client.service.GameServiceImpl;
 import org.vaadin.erik.game.client.tilemap.TileMap;
 
 import java.util.HashSet;
@@ -30,22 +32,30 @@ public class GameClient {
 
     private String playerUuid;
 
-    private Set<String> pressedButtons = new HashSet<>();
+    private final Set<String> pressedButtons = new HashSet<>();
 
     private GameClient() {
         communicator = new Communicator(this::onMessageReceived);
         gameCanvas = new GameCanvas();
         tileMap = new TileMap();
+
+        export("GameService", new GameServiceImpl(this));
+    }
+
+    public void joinGame() {
+        communicator.joinGame();
     }
 
     private void start() {
         document.getBody().listenKeyDown(event -> {
-            Logger.warn("Keydown!");
-            pressedButtons.add(event.getCode());
+            if (playerUuid != null) {
+                pressedButtons.add(event.getCode());
+            }
         });
         document.getBody().listenKeyUp(event -> {
-            Logger.warn("Keyup!");
-            pressedButtons.remove(event.getCode());
+            if (playerUuid != null) {
+                pressedButtons.remove(event.getCode());
+            }
         });
 
         new GameLoop(this, communicator).start();
@@ -63,7 +73,12 @@ public class GameClient {
         JSObject object = JSON.parse(event.getResponseBody());
 
         if (JSObjects.hasProperty(object, "uuid")) {
-            playerUuid = ((RegistrationMessageJson) object).getUuid();
+            String uuid = ((RegistrationMessageJson) object).getUuid();
+            if (uuid == null) {
+                alert("Could not join the game at this time");
+            } else {
+                playerUuid = uuid;
+            }
             return;
         }
 
@@ -74,9 +89,15 @@ public class GameClient {
 
         for (int i = 0; i < snapshot.getPlayers().getLength(); i++) {
             PlayerJson player = snapshot.getPlayers().get(i);
-            boolean currentPlayer = playerUuid.equals(player.getUuid());
+            boolean currentPlayer = playerUuid != null && playerUuid.equals(player.getUuid());
             gameCanvas.drawPlayer(player);
             gameCanvas.drawScore(player, i, currentPlayer);
         }
     }
+
+    @JSBody(params = { "name", "service" }, script = "window[name] = service;")
+    private static native void export(String name, JSObject service);
+
+    @JSBody(params = "message", script = "window.alert(message);")
+    private static native void alert(String message);
 }

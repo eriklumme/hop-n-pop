@@ -32,7 +32,7 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
 
     private final Server server;
 
-    private Map<WebSocket, Player> socketToPlayer = new HashMap<>();
+    private final Map<WebSocket, Player> socketToPlayer = new HashMap<>();
 
     public PlayerCommandHandler(Server server) {
         this.server = server;
@@ -42,22 +42,39 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
     @Override
     public void onOpen(WebSocket webSocket) throws IOException {
         super.onOpen(webSocket);
-        Player player = server.spawn();
-        socketToPlayer.put(webSocket, player);
-
-        RegistrationMessage registrationMessage = new RegistrationMessage(player.getUUID());
-        String message = writeJson(registrationMessage);
-        webSocket.write(message);
+        socketToPlayer.put(webSocket, null);
     }
 
     @Override
     public void onTextMessage(WebSocket webSocket, String data) {
         try {
             PlayerCommand playerCommand = objectMapper.readValue(data, PlayerCommand.class);
+            Player player = socketToPlayer.get(webSocket);
+            if (player == null) {
+                handleJoinGameMessage(webSocket);
+                return;
+            }
+            if (!player.getUUID().equals(playerCommand.getUUID())) {
+                logger.warn("Ignoring received message with incorrect UUID");
+                return;
+            }
             server.handleCommand(playerCommand);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error parsing player command", e);
         }
+    }
+
+    private void handleJoinGameMessage(WebSocket webSocket) throws IOException {
+        Player player = server.spawn();
+        String uuid = null;
+        if (player != null) {
+            socketToPlayer.put(webSocket, player);
+            uuid = player.getUUID();
+        }
+
+        RegistrationMessage registrationMessage = new RegistrationMessage(uuid);
+        String message = writeJson(registrationMessage);
+        webSocket.write(message);
     }
 
     @Override
@@ -76,9 +93,6 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
 
     @Override
     public void onSnapshotPosted(Collection<Player> players, Collection<Event> events) {
-        if (players.isEmpty()) {
-            return;
-        }
         GameSnapshot gameSnapshot = new GameSnapshot(players, events);
         String message = null;
         try {

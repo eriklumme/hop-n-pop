@@ -42,9 +42,13 @@ public class Server implements TickerTask {
     public void start() {
         logger.info("Game server starting");
         ticker.start();
+        spawnAI();
     }
 
     public Player spawn() {
+        if (isFull()) {
+            return null;
+        }
         Player player = new Player("#FF00FF");
         players.put(player.getUUID(), player);
         return player;
@@ -78,12 +82,15 @@ public class Server implements TickerTask {
 
     @Override
     public void tick(double delta) {
-        serverAIS.forEach(serverAI -> serverAI.takeAction(players.values(), delta));
+        List<Player> players = new ArrayList<>(this.players.values());
+        List<ServerAI> serverAIS = new ArrayList<>(this.serverAIS);
+
+        serverAIS.forEach(serverAI -> serverAI.takeAction(players, delta));
 
         List<Event> events = new ArrayList<>();
-        players.values().forEach(player -> {
+        players.forEach(player -> {
             if (!player.isInGame()) {
-                Point spawnPoint = getSpawnPoint(player, players.values());
+                Point spawnPoint = getSpawnPoint(player, players);
                 if (spawnPoint != null) {
                     player.setInGame(true);
                     player.setPosition(spawnPoint);
@@ -95,7 +102,7 @@ public class Server implements TickerTask {
             events.addAll(playerEvents);
         });
 
-        Collection<Event> collisionEvents = CollisionHandler.handleCollisions(players.values(), TileMap::getOverlappingTiles);
+        Collection<Event> collisionEvents = CollisionHandler.handleCollisions(players, TileMap::getOverlappingTiles);
         for (Event event: collisionEvents) {
             if (event.getAction() == Action.KILL) {
                 kill(event.getSource(), event.getTarget());
@@ -103,7 +110,7 @@ public class Server implements TickerTask {
         }
         events.addAll(collisionEvents);
 
-        gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players.values(), events));
+        gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players, events));
         queuedCommands.clear();
     }
 
@@ -147,5 +154,9 @@ public class Server implements TickerTask {
             }
         }
         return null;
+    }
+
+    public boolean isFull() {
+        return players.size() >= Constants.MAX_PLAYERS;
     }
 }

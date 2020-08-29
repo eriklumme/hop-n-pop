@@ -8,49 +8,44 @@ import org.vaadin.erik.game.server.DebugServer;
 import org.vaadin.erik.game.server.Server;
 
 import javax.validation.constraints.Positive;
+import java.util.Optional;
 
 @Endpoint
 @AnonymousAllowed
-public class DebugEndpoint {
+public class ServerEndpoint {
 
-    private final DebugServer server;
+    private final Server server;
 
-    public DebugEndpoint(Server server) {
-        if (server instanceof DebugServer) {
-            this.server = (DebugServer) server;
-        } else {
-            this.server = null;
-        }
+    public ServerEndpoint(Server server) {
+        this.server = server;
+    }
+
+    private Optional<DebugServer> getDebugServer() {
+        return Optional.ofNullable(server instanceof DebugServer ? (DebugServer) server : null);
+    }
+
+    public ServerInfo getServerInfo() {
+        return new ServerInfo(server.isFull(), getDebugServer().isPresent());
     }
 
     public void setServerSlowDown(@Positive int slowDownFactor) {
-        if (server != null) {
-            server.setSlowDownFactor(slowDownFactor);
-        }
+        getDebugServer().ifPresent(debugServer -> debugServer.setSlowDownFactor(slowDownFactor));
     }
 
     public void setFixedDelta(boolean fixedDelta) {
-        if (server != null) {
-            server.setFixedDelta(fixedDelta);
-        }
+        getDebugServer().ifPresent(debugServer -> debugServer.setFixedDelta(fixedDelta));
     }
 
     public void calculateAIPathing() {
-        if (server != null) {
-            PathingManager.initialize();
-        }
+        getDebugServer().ifPresent(d -> PathingManager.initialize());
     }
 
     public void spawnAI() {
-        if (server != null) {
-            server.spawnAI();
-        }
+        getDebugServer().ifPresent(DebugServer::spawnAI);
     }
 
     public void despawnAIS() {
-        if (server != null) {
-            server.despawnAIS();
-        }
+        getDebugServer().ifPresent(DebugServer::despawnAIS);
     }
 
     /**
@@ -60,14 +55,10 @@ public class DebugEndpoint {
      * and stops recording when first coming enough to any other node.
      */
     public void recordMovementForAI() {
-        if (server != null) {
-            server.startRecording();
-        }
+        getDebugServer().ifPresent(DebugServer::startRecording);
     }
 
     public void saveRecordedData() {
-        if (server != null) {
-            RecordingManager.writeToFile();
-        }
+        getDebugServer().ifPresent(d -> RecordingManager.writeToFile());
     }
 }
