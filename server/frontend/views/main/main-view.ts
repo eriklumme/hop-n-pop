@@ -20,8 +20,9 @@ export class MainView extends LitElement {
 
     render() {
         return html`
-          <canvas id="canvas" width="1024" height="768" style="border: 1px solid red" ></canvas>
-          <canvas id="overlay" width="1024" height="768" style="position: absolute; top: 1px; left: 1px"></canvas>
+          <canvas id="background" width="1024" height="768" style="position: absolute; top: 1px; left: 1px" ></canvas>
+          <canvas id="canvas" width="1164" height="768" style="border: 1px solid red" ></canvas>
+          <canvas id="overlay" width="1164" height="768" style="position: absolute; top: 1px; left: 1px"></canvas>
           <debug-panel></debug-panel>
     `;
     }
@@ -48,6 +49,7 @@ export class MainView extends LitElement {
     }
 
     protected firstUpdated(): void {
+        window.background = <HTMLCanvasElement>this.shadowRoot!.querySelector('#background');
         window.canvas = <HTMLCanvasElement>this.shadowRoot!.querySelector('#canvas');
         window.overlay = <HTMLCanvasElement>this.shadowRoot!.querySelector('#overlay');
         MainView.loadTileMap()

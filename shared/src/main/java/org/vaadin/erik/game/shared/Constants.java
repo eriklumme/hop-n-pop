@@ -6,6 +6,8 @@ public class Constants {
     public static final int BLOCKS_HORIZONTAL = 32;
     public static final int BLOCKS_VERTICAL = 24;
 
+    public static final int MAX_PLAYERS = 8;
+
     public static final int GAME_WIDTH = BLOCK_SIZE * BLOCKS_HORIZONTAL;
     public static final int GAME_HEIGHT = BLOCK_SIZE * BLOCKS_VERTICAL;
 

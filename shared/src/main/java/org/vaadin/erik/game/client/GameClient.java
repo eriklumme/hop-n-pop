@@ -75,6 +75,7 @@ public class GameClient {
         for (int i = 0; i < snapshot.getPlayers().getLength(); i++) {
             PlayerJson player = snapshot.getPlayers().get(i);
             gameCanvas.drawPlayer(player);
+            gameCanvas.drawScore(player, i, false);
         }
     }
 }

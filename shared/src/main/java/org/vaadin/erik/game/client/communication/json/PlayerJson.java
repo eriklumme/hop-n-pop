@@ -23,4 +23,7 @@ public interface PlayerJson extends JSObject {
 
     @JSProperty
     String getColor();
+
+    @JSProperty
+    int getPoints();
 }
