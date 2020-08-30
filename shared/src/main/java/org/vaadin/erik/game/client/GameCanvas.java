@@ -28,9 +28,6 @@ public class GameCanvas {
 
         width = canvas.getWidth();
         height = canvas.getHeight();
-
-        context.setFont("30px Arial");
-        context.setTextBaseline("top");
     }
 
     @JSBody(script = "return window.canvas")
@@ -86,7 +83,41 @@ public class GameCanvas {
             context.fillRect(offsetX, offsetY, 10, height);
         }
 
-        context.setFillStyle("black");
+        setPlayerInfoFont();
         context.fillText(String.valueOf(playerJson.getPoints()), offsetX + 16, offsetY + 16);
+    }
+
+    public void drawEnding(PlayerJson winner, int countdown) {
+        int rectWidth = 260;
+        int rectHeight = 140;
+
+        int offsetX = (width - rectWidth) / 2;
+        int offsetY = (height - rectHeight) / 2;
+
+        context.setFillStyle("white");
+        context.fillRect(offsetX, offsetY, rectWidth, rectHeight);
+
+        setEndGameFont();
+
+        context.fillText("Winner: " + winner.getColor(),
+                offsetX + (rectWidth / 2.0),
+                offsetY + (rectHeight / 4.0));
+
+        context.fillText("Next round in " + countdown,
+                offsetX + (rectWidth / 2.0),
+                offsetY + (rectHeight / 4.0 * 3));
+    }
+
+    private void setPlayerInfoFont() {
+        context.setFillStyle("black");
+        context.setFont("30px Arial");
+        context.setTextBaseline("top");
+    }
+
+    private void setEndGameFont() {
+        context.setFillStyle("black");
+        context.setFont("30px Arial");
+        context.setTextBaseline("middle");
+        context.setTextAlign("center");
     }
 }

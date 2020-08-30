@@ -105,8 +105,7 @@ public class GameClient {
     }
 
     private void handleEndEvent(EventJson event) {
-        Logger.warn("Winner: " + event.getSource().getColor());
-        Logger.warn("Continuing in " + ((JSNumber) event.getData()).intValue());
+        gameCanvas.drawEnding(event.getSource(), ((JSNumber) event.getData()).intValue());
     }
 
     @JSBody(params = { "name", "service" }, script = "window[name] = service;")
