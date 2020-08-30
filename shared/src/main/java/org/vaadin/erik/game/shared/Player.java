@@ -10,6 +10,7 @@ public class Player implements GameObject {
 
     private final String uuid;
     private final String color;
+    private final String nickname;
 
     private Point previousPosition;
     private double x;
@@ -23,8 +24,9 @@ public class Player implements GameObject {
 
     private boolean inGame = false;
 
-    public Player(String color) {
+    public Player(String color, String nickname) {
         this.color = color;
+        this.nickname = nickname;
         uuid = UUID.randomUUID().toString();
     }
 
@@ -138,5 +140,9 @@ public class Player implements GameObject {
         points = 0;
         velocity = Vector2D.ZERO;
         previousPosition = null;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 }

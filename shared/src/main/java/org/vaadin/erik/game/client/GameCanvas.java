@@ -61,6 +61,10 @@ public class GameCanvas {
     }
 
     public void drawPlayer(PlayerJson playerJson) {
+        setPlayerNameFont();
+        context.fillText(playerJson.getNickname(),
+                playerJson.getPosition().getX() + 16,
+                playerJson.getPosition().getY() - 16);
         context.setFillStyle(playerJson.getColor());
         context.fillRect(
                 playerJson.getPosition().getX(),
@@ -84,11 +88,13 @@ public class GameCanvas {
         }
 
         setPlayerInfoFont();
-        context.fillText(String.valueOf(playerJson.getPoints()), offsetX + 16, offsetY + 16);
+        context.fillText(playerJson.getNickname(), offsetX + 24, offsetY + 16);
+        setPlayerScoreFont();
+        context.fillText(String.valueOf(playerJson.getPoints()), offsetX + 24, offsetY + 48);
     }
 
     public void drawEnding(PlayerJson winner, int countdown) {
-        int rectWidth = 260;
+        int rectWidth = 360;
         int rectHeight = 140;
 
         int offsetX = (width - rectWidth) / 2;
@@ -99,7 +105,7 @@ public class GameCanvas {
 
         setEndGameFont();
 
-        context.fillText("Winner: " + winner.getColor(),
+        context.fillText("Winner: " + winner.getNickname(),
                 offsetX + (rectWidth / 2.0),
                 offsetY + (rectHeight / 4.0));
 
@@ -108,15 +114,30 @@ public class GameCanvas {
                 offsetY + (rectHeight / 4.0 * 3));
     }
 
+    private void setPlayerNameFont() {
+        context.setFillStyle("white");
+        context.setFont("18px Arial");
+        context.setTextBaseline("middle");
+        context.setTextAlign("center");
+    }
+
     private void setPlayerInfoFont() {
+        context.setFillStyle("black");
+        context.setFont("24px Arial");
+        context.setTextBaseline("top");
+        context.setTextAlign("left");
+    }
+
+    private void setPlayerScoreFont() {
         context.setFillStyle("black");
         context.setFont("30px Arial");
         context.setTextBaseline("top");
+        context.setTextAlign("left");
     }
 
     private void setEndGameFont() {
         context.setFillStyle("black");
-        context.setFont("30px Arial");
+        context.setFont("24px Arial");
         context.setTextBaseline("middle");
         context.setTextAlign("center");
     }

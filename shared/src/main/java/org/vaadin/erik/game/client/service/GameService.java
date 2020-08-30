@@ -7,6 +7,6 @@ import org.teavm.jso.JSObject;
  */
 public interface GameService extends JSObject {
 
-    void joinGame();
+    void joinGame(String nickname);
 
 }

@@ -2,6 +2,7 @@ package org.vaadin.erik.game.communication;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atmosphere.config.service.WebSocketHandlerService;
@@ -51,7 +52,7 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
             PlayerCommand playerCommand = objectMapper.readValue(data, PlayerCommand.class);
             Player player = socketToPlayer.get(webSocket);
             if (player == null) {
-                handleJoinGameMessage(webSocket);
+                handleJoinGameMessage(webSocket, playerCommand.getNickname());
                 return;
             }
             if (!player.getUUID().equals(playerCommand.getUUID())) {
@@ -64,8 +65,11 @@ public class PlayerCommandHandler extends WebSocketHandlerAdapter implements Gam
         }
     }
 
-    private void handleJoinGameMessage(WebSocket webSocket) throws IOException {
-        Player player = server.spawn();
+    private void handleJoinGameMessage(WebSocket webSocket, String nickname) throws IOException {
+        if (nickname == null || nickname.length() < 2 || nickname.length() > 8) {
+            return;
+        }
+        Player player = server.spawn(nickname);
         String uuid = null;
         if (player != null) {
             socketToPlayer.put(webSocket, player);

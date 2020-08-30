@@ -1,10 +1,8 @@
 package org.vaadin.erik.game.shared;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.vaadin.erik.game.shared.data.Action;
 import org.vaadin.erik.game.shared.data.Event;
 import org.vaadin.erik.game.shared.data.PlayerCommand;
-import org.vaadin.erik.game.tiles.TileMap;
 
 import java.util.*;
 
@@ -16,7 +14,7 @@ public class GameEngine {
 
     private static final float RUN_ACCELERATION = 3000;
 
-    private static final float FRICTION_DECELERATION = RUN_ACCELERATION;
+    private static final float FRICTION_DECELERATION = 6000;
 
     /**
      * Applies physics, which is more or less gravity, to the player.
@@ -59,7 +57,7 @@ public class GameEngine {
             player.addVelocity(new Vector2D(0, delta * GRAVITY_ACCELERATION));
         }
 
-        // In our world, the ground friction and air resistance is the same
+        // In our world, the ground friction and horizontal air resistance is the same
         if (!directions.contains(Direction.LEFT) && !directions.contains(Direction.RIGHT)) {
             // Everyone knows friction doesn't apply if you're actively trying to move
             double sign = Math.signum(player.getVelocity().getX());

@@ -25,12 +25,13 @@ public class Communicator {
                 onMessageHandler);
     }
 
-    public void joinGame() {
+    public void joinGame(String nickname) {
         if (webSocket == null) {
             return;
         }
 
         PlayerCommandJson playerCommand = JSObjects.create();
+        playerCommand.setNickname(nickname);
         webSocket.sendMessage(playerCommand);
     }
 

@@ -5,7 +5,6 @@ import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSObjects;
 import org.teavm.jso.json.JSON;
-import org.vaadin.erik.game.client.Logger;
 
 /**
  * Utility class for operating on a WebSocket connection.

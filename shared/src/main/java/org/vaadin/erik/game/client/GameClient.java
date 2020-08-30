@@ -44,8 +44,8 @@ public class GameClient {
         export("GameService", new GameServiceImpl(this));
     }
 
-    public void joinGame() {
-        communicator.joinGame();
+    public void joinGame(String nickname) {
+        communicator.joinGame(nickname);
     }
 
     private void start() {

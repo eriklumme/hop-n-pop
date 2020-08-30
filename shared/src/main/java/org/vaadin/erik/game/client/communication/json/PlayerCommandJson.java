@@ -11,6 +11,9 @@ public interface PlayerCommandJson extends JSObject {
     void setUuid(String uuid);
 
     @JSProperty
+    void setNickname(String nickname);
+
+    @JSProperty
     void setDirections(JSArray<JSNumber> directions);
 
     @JSProperty

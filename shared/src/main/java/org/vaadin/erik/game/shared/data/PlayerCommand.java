@@ -13,6 +13,8 @@ import java.util.Arrays;
 public class PlayerCommand {
     private String uuid;
 
+    private String nickname;
+
     private long order;
 
     private Direction[] directions;
@@ -42,5 +44,9 @@ public class PlayerCommand {
     @Override
     public String toString() {
         return String.format("%s [order=%d, directions=%s]", super.toString(), order, Arrays.toString(directions));
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 }

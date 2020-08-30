@@ -16,5 +16,5 @@ interface Window {
     canvas: HTMLCanvasElement;
     overlay: HTMLCanvasElement;
     spriteCodeToColor: (spriteCode: number) => string;
-    GameService: { joinGame: () => void }
+    GameService: { joinGame: (nickname: string) => void }
 }

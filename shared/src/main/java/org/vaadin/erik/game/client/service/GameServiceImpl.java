@@ -11,7 +11,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void joinGame() {
-        gameClient.joinGame();
+    public void joinGame(String nickname) {
+        gameClient.joinGame(nickname);
     }
 }

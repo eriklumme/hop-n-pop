@@ -3,7 +3,6 @@ package org.vaadin.erik.game.server;
 import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.vaadin.erik.game.ai.ServerAI;
@@ -50,17 +49,17 @@ public class Server implements TickerTask {
         spawnAI();
     }
 
-    public Player spawn() {
+    public Player spawn(String nickname) {
         if (isFull()) {
             return null;
         }
-        Player player = new Player("#FF00FF");
+        Player player = new Player("#FF00FF", nickname);
         players.put(player.getUUID(), player);
         return player;
     }
 
     public void spawnAI() {
-        ServerAI serverAI = new ServerAI("#FF0000", this);
+        ServerAI serverAI = new ServerAI("#FF0000", "Abot", this);
         serverAI.setPosition(new Point(128, 0));
         players.put(serverAI.getUUID(), serverAI);
         serverAIS.add(serverAI);
