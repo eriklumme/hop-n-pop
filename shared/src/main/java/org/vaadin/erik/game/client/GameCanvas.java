@@ -4,6 +4,7 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.vaadin.erik.game.client.communication.json.PlayerJson;
+import org.vaadin.erik.game.client.tilemap.SpriteManager;
 import org.vaadin.erik.game.client.tilemap.TileMap;
 import org.vaadin.erik.game.shared.Constants;
 import org.vaadin.erik.game.shared.Tile;
@@ -66,10 +67,10 @@ public class GameCanvas {
                 playerJson.getPosition().getX() + 16,
                 playerJson.getPosition().getY() - 16);
         context.setFillStyle(playerJson.getColor());
-        context.fillRect(
+
+        context.drawImage(SpriteManager.getVaadin(),
                 playerJson.getPosition().getX(),
-                playerJson.getPosition().getY(),
-                32, 32);
+                playerJson.getPosition().getY());
     }
 
     public void drawScore(PlayerJson playerJson, int index, boolean currentPlayer) {
