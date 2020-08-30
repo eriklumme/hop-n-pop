@@ -88,6 +88,7 @@ public class GameClient {
 
         gameCanvas.clear();
         gameCanvas.drawTileMap(tileMap);
+        gameCanvas.drawScoreBackground();
 
         for (int i = 0; i < snapshot.getPlayers().getLength(); i++) {
             PlayerJson player = snapshot.getPlayers().get(i);

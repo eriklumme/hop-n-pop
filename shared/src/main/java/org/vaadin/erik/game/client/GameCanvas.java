@@ -1,6 +1,7 @@
 package org.vaadin.erik.game.client;
 
 import org.teavm.jso.JSBody;
+import org.teavm.jso.canvas.CanvasGradient;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
@@ -19,10 +20,10 @@ import java.util.List;
 public class GameCanvas {
 
     private final HTMLCanvasElement canvas;
-    private final HTMLCanvasElement overlay;
 
     private final CanvasRenderingContext2D context;
-    private final CanvasRenderingContext2D overlayContext;
+
+    private final CanvasGradient scoreGradient;
 
     private final int width;
     private final int height;
@@ -33,11 +34,15 @@ public class GameCanvas {
         canvas = getCanvas();
         context = (CanvasRenderingContext2D) canvas.getContext("2d");
 
-        overlay = getOverlay();
-        overlayContext = (CanvasRenderingContext2D) overlay.getContext("2d");
-
         width = canvas.getWidth();
         height = canvas.getHeight();
+
+        scoreGradient = context.createLinearGradient(0, 0, 0, height);
+        scoreGradient.addColorStop(0, "#3e3e3e");
+        scoreGradient.addColorStop(1, "#1f1f1f");
+
+        context.setTextBaseline("middle");
+        context.setTextAlign("center");
     }
 
     @JSBody(script = "return window.canvas")
@@ -85,6 +90,11 @@ public class GameCanvas {
                 Constants.BLOCK_SIZE);
     }
 
+    public void drawScoreBackground() {
+        context.setFillStyle(scoreGradient);
+        context.fillRect(Constants.GAME_WIDTH, 0, width, height);
+    }
+
     public void drawScore(PlayerJson playerJson, int index, boolean currentPlayer) {
         int height = Constants.GAME_HEIGHT / Constants.MAX_PLAYERS;
         int width = this.width - Constants.GAME_WIDTH;
@@ -92,33 +102,35 @@ public class GameCanvas {
         int offsetX = Constants.GAME_WIDTH;
         int offsetY = index * height;
 
-        context.setFillStyle("white");
+        setFillStyleDark();
         context.fillRect(offsetX, offsetY, width, height);
+        setFillStyleLight();
+        context.fillRect(offsetX, offsetY, width, 1);
 
         if (currentPlayer) {
-            context.setFillStyle("yellow");
+            setFillStyleLight();
             context.fillRect(offsetX, offsetY, 10, height);
         }
 
         setPlayerInfoFont();
-        context.fillText(playerJson.getNickname(), offsetX + 24, offsetY + 16);
+        context.fillText(playerJson.getNickname(), offsetX + (width / 2.0), offsetY + 32);
         setPlayerScoreFont();
-        context.fillText(String.valueOf(playerJson.getPoints()), offsetX + 24, offsetY + 48);
+        context.fillText(String.valueOf(playerJson.getPoints()), offsetX + (width / 2.0), offsetY + 64);
     }
 
     public void drawEnding(PlayerJson winner, int countdown) {
         int rectWidth = 360;
         int rectHeight = 140;
 
-        int offsetX = (width - rectWidth) / 2;
+        int offsetX = (Constants.GAME_WIDTH - rectWidth) / 2;
         int offsetY = (height - rectHeight) / 2;
 
-        context.setFillStyle("white");
+        setFillStyleDark();
         context.fillRect(offsetX, offsetY, rectWidth, rectHeight);
 
         setEndGameFont();
 
-        context.fillText("Winner: " + winner.getNickname(),
+        context.fillText("Winner is " + winner.getNickname(),
                 offsetX + (rectWidth / 2.0),
                 offsetY + (rectHeight / 4.0));
 
@@ -154,29 +166,29 @@ public class GameCanvas {
 
     private void setPlayerNameFont() {
         context.setFillStyle("white");
-        context.setFont("18px Arial");
-        context.setTextBaseline("middle");
-        context.setTextAlign("center");
+        context.setFont("18px Helvetica");
     }
 
     private void setPlayerInfoFont() {
-        context.setFillStyle("black");
-        context.setFont("24px Arial");
-        context.setTextBaseline("top");
-        context.setTextAlign("left");
+        setFillStyleLight();
+        context.setFont("18px Helvetica");
     }
 
     private void setPlayerScoreFont() {
-        context.setFillStyle("black");
-        context.setFont("30px Arial");
-        context.setTextBaseline("top");
-        context.setTextAlign("left");
+        setFillStyleLight();
+        context.setFont("24px Helvetica");
     }
 
     private void setEndGameFont() {
-        context.setFillStyle("black");
-        context.setFont("24px Arial");
-        context.setTextBaseline("middle");
-        context.setTextAlign("center");
+        setFillStyleLight();
+        context.setFont("24px Helvetica");
+    }
+
+    private void setFillStyleLight() {
+        context.setFillStyle("rgba(255, 255, 255, 0.8)");
+    }
+
+    private void setFillStyleDark() {
+        context.setFillStyle("rgba(0, 0, 0, 0.5)");
     }
 }

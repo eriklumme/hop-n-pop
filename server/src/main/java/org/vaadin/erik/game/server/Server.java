@@ -3,7 +3,6 @@ package org.vaadin.erik.game.server;
 import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.omg.CORBA.TIMEOUT;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.vaadin.erik.game.ai.ServerAI;
@@ -178,12 +177,15 @@ public class Server implements TickerTask {
     }
 
     private static final Point[] SPAWN_POINTS = new Point[]{
-            new Point(3, 0),
-            new Point(8, 0),
-            new Point(20, 0),
-            new Point(3, 8),
-            new Point(0, 10),
-            new Point(20, 10)
+            new Point(5, 1),
+            new Point(8, 6),
+            new Point(1, 11),
+            new Point(25, 1),
+            new Point(31, 11),
+            new Point(21, 16),
+            new Point(30, 18),
+            new Point(16, 22),
+            new Point(10, 20)
     };
 
     /**
