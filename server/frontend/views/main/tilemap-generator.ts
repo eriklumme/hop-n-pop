@@ -6,9 +6,26 @@ import {MainView} from "./main-view";
 type TileType = { typeCode: number, spriteCode: number }
 
 const tileTypes: TileType[] = [
-    { typeCode: 0, spriteCode: 0 },
-    { typeCode: 1, spriteCode: 1 }
+    { typeCode: 0, spriteCode: 0x42 },
+    { typeCode: 0, spriteCode: 0x40 },
+    { typeCode: 0, spriteCode: 0x41 },
+    { typeCode: 1, spriteCode: 0x00 },
+    { typeCode: 1, spriteCode: 0x01 },
+    { typeCode: 1, spriteCode: 0x02 },
+    { typeCode: 1, spriteCode: 0x03 },
+    { typeCode: 1, spriteCode: 0x10 },
+    { typeCode: 1, spriteCode: 0x11 },
+    { typeCode: 1, spriteCode: 0x20 },
+    { typeCode: 1, spriteCode: 0x21 },
+    { typeCode: 1, spriteCode: 0x22 },
+    { typeCode: 1, spriteCode: 0x23 },
+    { typeCode: 1, spriteCode: 0x30 },
+    { typeCode: 1, spriteCode: 0x31 },
+    { typeCode: 1, spriteCode: 0x32 },
 ];
+
+const spriteSheet: HTMLImageElement = document.createElement("img");
+spriteSheet.src = "img/tiles.png";
 
 @customElement('tilemap-generator')
 export class TilemapGenerator extends LitElement {
@@ -54,8 +71,9 @@ export class TilemapGenerator extends LitElement {
                 margin: var(--lumo-space-s);
             }
             .palette-tile {
-                width: 20px;
-                height: 20px;
+                width: 32px;
+                height: 32px;
+                overflow: hidden;
                 border: 1px solid black;
                 margin: var(--lumo-space-xs);
             }
@@ -122,7 +140,7 @@ export class TilemapGenerator extends LitElement {
                     .forEach(element => element.classList.remove('selected'));
                 selector.classList.add('selected');
             });
-            selector.style.backgroundColor = window.spriteCodeToColor(tileType.spriteCode);
+            selector.style.background = Tile.getBackground(tileType);
             this.palette!.appendChild(selector);
         });
     }
@@ -183,8 +201,13 @@ class Tile extends LitElement {
     set tileType(value: TileType) {
         const oldValue = this._tileType;
         this._tileType = value;
-        this.style.backgroundColor = window.spriteCodeToColor(value.spriteCode);
-
+        this.style.background = Tile.getBackground(value);
         this.requestUpdate('tileType', oldValue);
+    }
+
+    public static getBackground(tileType: TileType): string {
+        const offsetX = tileType.spriteCode & 0xf;
+        const offsetY = (tileType.spriteCode >> 4) & 0xf;
+        return `url(img/tiles.png) ${offsetX * -32}px ${offsetY * -32}px`;
     }
 }

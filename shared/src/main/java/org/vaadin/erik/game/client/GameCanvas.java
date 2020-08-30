@@ -50,8 +50,9 @@ public class GameCanvas {
     public void drawTileMap(TileMap tileMap) {
         for (Tile[] rowTiles : tileMap.getTiles()) {
             for (Tile tile : rowTiles) {
-                String color = spriteCodeToColor(tile.getSpriteCode());
-                drawTile(tile.getPosition().getX(), tile.getPosition().getY(), tile.getWidth(), tile.getHeight(), color);
+                //String color = spriteCodeToColor(tile.getSpriteCode());
+                //drawTile(tile.getPosition().getX(), tile.getPosition().getY(), tile.getWidth(), tile.getHeight(), color);
+                SpriteManager.drawTile(context, tile);
             }
         }
     }
