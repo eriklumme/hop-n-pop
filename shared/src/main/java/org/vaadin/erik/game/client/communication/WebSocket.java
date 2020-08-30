@@ -35,7 +35,6 @@ public abstract class WebSocket implements JSObject {
         String messageString = JSON.stringify(message);
         Window.setTimeout(() -> {
             push(messageString);
-            Logger.warn("Message sent from TeaVM...");
         }, SIMULATED_PING / 2);
     }
 

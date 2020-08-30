@@ -103,7 +103,6 @@ public class ServerAI extends Player {
 
             @Override
             public Direction[] getDirections() {
-                System.out.println("Walking directions " + Arrays.toString(directions));
                 return directions;
             }
         };

@@ -27,8 +27,6 @@ public class TileMap {
                 tiles[rowIndex][columnIndex] = new Tile(new Point(x, y), tileType, spriteCode);
             }
         }
-
-        Logger.warn("Successfully created an array!");
     }
 
     public Tile[][] getTiles() {
