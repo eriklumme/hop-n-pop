@@ -6,7 +6,7 @@ import org.vaadin.erik.game.shared.data.Event;
 import java.util.Collection;
 
 /**
- * The standard type of message that is broadcast to all users.
+ * The standard type of message that is sent to all users.
  */
 public class GameSnapshot {
 

@@ -20,4 +20,8 @@ public class GameMath {
         return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) +
                         Math.pow(a.getY() - b.getY(), 2));
     }
+
+    public static long nanosToMs(long nanos) {
+        return nanos / 1000000;
+    }
 }

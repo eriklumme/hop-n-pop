@@ -3,6 +3,7 @@ package org.vaadin.erik.game.server;
 import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.vaadin.erik.game.ai.ServerAI;
@@ -32,6 +33,10 @@ public class Server implements TickerTask {
     protected final Ticker ticker;
 
     private final Set<GameSnapshotListener> gameSnapshotListeners = new HashSet<>();
+
+    private boolean ended;
+    private Player winner;
+    private long gameEndMs;
 
     public Server() {
         ticker = new Ticker(this);
@@ -68,6 +73,18 @@ public class Server implements TickerTask {
     public void kill(Player killer, Player victim) {
         killer.addPoint();
         victim.setInGame(false);
+
+        if (killer.getPoints() >= Constants.WIN_POINTS) {
+            endGame(killer);
+        }
+    }
+
+    private void endGame(Player winner) {
+        this.winner = winner;
+        gameEndMs = GameMath.nanosToMs(System.nanoTime());
+        ended = true;
+
+        new ArrayList<>(players.values()).forEach(Player::reset);
     }
 
     public void handleCommand(PlayerCommand playerCommand) {
@@ -84,31 +101,41 @@ public class Server implements TickerTask {
     public void tick(double delta) {
         List<Player> players = new ArrayList<>(this.players.values());
         List<ServerAI> serverAIS = new ArrayList<>(this.serverAIS);
-
-        serverAIS.forEach(serverAI -> serverAI.takeAction(players, delta));
-
         List<Event> events = new ArrayList<>();
-        players.forEach(player -> {
-            if (!player.isInGame()) {
-                Point spawnPoint = getSpawnPoint(player, players);
-                if (spawnPoint != null) {
-                    player.setInGame(true);
-                    player.setPosition(spawnPoint);
-                    events.add(new Event(Action.SPAWN, player));
+
+        if (!ended) {
+            serverAIS.forEach(serverAI -> serverAI.takeAction(players, delta));
+
+            players.forEach(player -> {
+                if (!player.isInGame()) {
+                    Point spawnPoint = getSpawnPoint(player, players);
+                    if (spawnPoint != null) {
+                        player.setInGame(true);
+                        player.setPosition(spawnPoint);
+                        events.add(new Event(Action.SPAWN, player));
+                    }
+                }
+
+                List<Event> playerEvents = GameEngine.applyPhysics(player, queuedCommands.get(player), delta);
+                events.addAll(playerEvents);
+            });
+
+            Collection<Event> collisionEvents = CollisionHandler.handleCollisions(players, TileMap::getOverlappingTiles);
+            for (Event event: collisionEvents) {
+                if (event.getAction() == Action.KILL) {
+                    kill(event.getSource(), event.getTarget());
                 }
             }
+            events.addAll(collisionEvents);
+        } else {
+            double secondsElapsed = (GameMath.nanosToMs(System.nanoTime()) - gameEndMs) / 1000.0;
+            double countdownSeconds = Constants.SECONDS_BETWEEN_ROUNDS - secondsElapsed;
+            events.add(new Event(Action.END, winner, null, countdownSeconds));
 
-            List<Event> playerEvents = GameEngine.applyPhysics(player, queuedCommands.get(player), delta);
-            events.addAll(playerEvents);
-        });
-
-        Collection<Event> collisionEvents = CollisionHandler.handleCollisions(players, TileMap::getOverlappingTiles);
-        for (Event event: collisionEvents) {
-            if (event.getAction() == Action.KILL) {
-                kill(event.getSource(), event.getTarget());
+            if (countdownSeconds <= 0) {
+                ended = false;
             }
         }
-        events.addAll(collisionEvents);
 
         gameSnapshotListeners.forEach(listener -> listener.onSnapshotPosted(players, events));
         queuedCommands.clear();

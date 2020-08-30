@@ -15,6 +15,9 @@ public abstract class EventJson implements JSObject {
     @JSProperty
     public abstract PlayerJson getTarget();
 
+    @JSProperty
+    public abstract JSObject getData();
+
     public Action getAction() {
         return Action.valueOf(getActionName());
     }

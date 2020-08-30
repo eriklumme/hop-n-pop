@@ -1,5 +1,5 @@
 package org.vaadin.erik.game.shared.data;
 
 public enum Action {
-    SPAWN, KILL;
+    SPAWN, KILL, END
 }

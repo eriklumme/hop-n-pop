@@ -21,7 +21,7 @@ public class Player implements GameObject {
     @JsonSerialize(using = Vector2DSerializer.class)
     private Vector2D velocity = Vector2D.ZERO;
 
-    private boolean isInGame = false;
+    private boolean inGame = false;
 
     public Player(String color) {
         this.color = color;
@@ -114,11 +114,11 @@ public class Player implements GameObject {
      * - The player was killed, and will spawn on the next tick
      */
     public boolean isInGame() {
-        return isInGame;
+        return inGame;
     }
 
     public void setInGame(boolean inGame) {
-        isInGame = inGame;
+        this.inGame = inGame;
     }
 
     public String getColor() {
@@ -131,5 +131,12 @@ public class Player implements GameObject {
 
     public int getPoints() {
         return points;
+    }
+
+    public void reset() {
+        inGame = false;
+        points = 0;
+        velocity = Vector2D.ZERO;
+        previousPosition = null;
     }
 }

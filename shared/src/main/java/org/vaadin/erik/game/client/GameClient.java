@@ -3,6 +3,7 @@ package org.vaadin.erik.game.client;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSNumber;
 import org.teavm.jso.core.JSObjects;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.json.JSON;
@@ -11,6 +12,7 @@ import org.vaadin.erik.game.client.communication.MessageEvent;
 import org.vaadin.erik.game.client.communication.json.*;
 import org.vaadin.erik.game.client.service.GameServiceImpl;
 import org.vaadin.erik.game.client.tilemap.TileMap;
+import org.vaadin.erik.game.shared.data.Action;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -69,8 +71,8 @@ public class GameClient {
         return playerUuid;
     }
 
-    private void onMessageReceived(MessageEvent event) {
-        JSObject object = JSON.parse(event.getResponseBody());
+    private void onMessageReceived(MessageEvent messageEvent) {
+        JSObject object = JSON.parse(messageEvent.getResponseBody());
 
         if (JSObjects.hasProperty(object, "uuid")) {
             String uuid = ((RegistrationMessageJson) object).getUuid();
@@ -82,7 +84,7 @@ public class GameClient {
             return;
         }
 
-        GameSnapshotJson snapshot = (GameSnapshotJson) JSON.parse(event.getResponseBody());
+        GameSnapshotJson snapshot = (GameSnapshotJson) JSON.parse(messageEvent.getResponseBody());
 
         gameCanvas.clear();
         gameCanvas.drawTileMap(tileMap);
@@ -93,6 +95,18 @@ public class GameClient {
             gameCanvas.drawPlayer(player);
             gameCanvas.drawScore(player, i, currentPlayer);
         }
+
+        for (int i = 0; i < snapshot.getEvents().getLength(); i++) {
+            EventJson event = snapshot.getEvents().get(i);
+            if (event.getAction() == Action.END) {
+                handleEndEvent(event);
+            }
+        }
+    }
+
+    private void handleEndEvent(EventJson event) {
+        Logger.warn("Winner: " + event.getSource().getColor());
+        Logger.warn("Continuing in " + ((JSNumber) event.getData()).intValue());
     }
 
     @JSBody(params = { "name", "service" }, script = "window[name] = service;")
