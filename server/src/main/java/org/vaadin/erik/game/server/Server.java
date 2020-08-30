@@ -3,6 +3,7 @@ package org.vaadin.erik.game.server;
 import com.vaadin.flow.shared.Registration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.omg.CORBA.TIMEOUT;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.vaadin.erik.game.ai.ServerAI;
@@ -24,6 +25,8 @@ import java.util.*;
 @Profile("!debug")
 public class Server implements TickerTask {
 
+    private static final long INACTIVE_TIMEOUT_MS = 30000;
+
     private static final Logger logger = LogManager.getLogger(Server.class);
 
     protected final Map<String, Player> players = new HashMap<>();
@@ -33,6 +36,7 @@ public class Server implements TickerTask {
 
     private final Set<GameSnapshotListener> gameSnapshotListeners = new HashSet<>();
     private final Set<Integer> usedIcons = new HashSet<>();
+    private final Map<Player, Long> lastCommandReceivedMs = new WeakHashMap<>();
 
     private boolean ended;
     private Player winner;
@@ -57,6 +61,7 @@ public class Server implements TickerTask {
             }
             Player player = new Player(getIcon(), nickname);
             players.put(player.getUUID(), player);
+            lastCommandReceivedMs.put(player, GameMath.nanosToMs(System.nanoTime()));
             return player;
         }
     }
@@ -84,6 +89,7 @@ public class Server implements TickerTask {
 
     public void despawn(Player player) {
         players.remove(player.getUUID());
+        usedIcons.remove(player.getIcon());
     }
 
     public void kill(Player killer, Player victim) {
@@ -110,6 +116,7 @@ public class Server implements TickerTask {
             return;
         }
 
+        lastCommandReceivedMs.put(player, GameMath.nanosToMs(System.nanoTime()));
         queuedCommands.put(player, playerCommand);
     }
 
@@ -118,6 +125,8 @@ public class Server implements TickerTask {
         List<Player> players = new ArrayList<>(this.players.values());
         List<ServerAI> serverAIS = new ArrayList<>(this.serverAIS);
         List<Event> events = new ArrayList<>();
+
+        long systemTimeMs = GameMath.nanosToMs(System.nanoTime());
 
         if (!ended) {
             serverAIS.forEach(serverAI -> serverAI.takeAction(players, delta));
@@ -134,6 +143,12 @@ public class Server implements TickerTask {
 
                 List<Event> playerEvents = GameEngine.applyPhysics(player, queuedCommands.get(player), delta);
                 events.addAll(playerEvents);
+
+                // Remove inactive players
+                Long lastCommandMs = lastCommandReceivedMs.get(player);
+                if (!(player instanceof ServerAI) && lastCommandMs != null && (systemTimeMs - lastCommandMs) > INACTIVE_TIMEOUT_MS) {
+                    despawn(player);
+                }
             });
 
             Collection<Event> collisionEvents = CollisionHandler.handleCollisions(players, TileMap::getOverlappingTiles);
