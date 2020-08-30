@@ -1,10 +1,10 @@
+// @ts-nocheck
+
 import ServerInfo from './ServerInfo';
 
-// @ts-ignore
-import {ObjectModel,StringModel,NumberModel,ArrayModel,BooleanModel,Required} from '@vaadin/form';
+import {ObjectModel,StringModel,NumberModel,ArrayModel,BooleanModel,Required,ModelType,_getPropertyModel} from '@vaadin/form';
 
-// @ts-ignore
-import {Email,Null,NotNull,NotEmpty,NotBlank,AssertTrue,AssertFalse,Negative,NegativeOrZero,Positive,PositiveOrZero,Size,Past,PastOrPresent,Future,FutureOrPresent,Digits,Min,Max,Pattern,DecimalMin,DecimalMax} from '@vaadin/form';
+import {Email,Null,NotNull,NotEmpty,NotBlank,AssertTrue,AssertFalse,Negative,NegativeOrZero,Positive,PositiveOrZero,Size,Past,Future,Digits,Min,Max,Pattern,DecimalMin,DecimalMax} from '@vaadin/form';
 
 /**
  * This module is generated from org.vaadin.erik.game.communication.endpoint.ServerInfo.
@@ -12,6 +12,12 @@ import {Email,Null,NotNull,NotEmpty,NotBlank,AssertTrue,AssertFalse,Negative,Neg
  */
 export default class ServerInfoModel<T extends ServerInfo = ServerInfo> extends ObjectModel<T> { 
   static createEmptyValue: () => ServerInfo;
-  public readonly debugEnabled = new BooleanModel(this, 'debugEnabled');
-  public readonly full = new BooleanModel(this, 'full');
+
+  get debugEnabled(): BooleanModel {
+    return this[_getPropertyModel]('debugEnabled', BooleanModel, [false]);
+  }
+
+  get full(): BooleanModel {
+    return this[_getPropertyModel]('full', BooleanModel, [false]);
+  }
 }

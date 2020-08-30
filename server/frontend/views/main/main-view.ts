@@ -28,6 +28,7 @@ export class MainView extends LitElement {
         }
         #canvas {
           background: linear-gradient(0deg, #c53c1d, #1f346d);
+          max-height: 100%;
         }
       `,
         ];
@@ -41,7 +42,7 @@ export class MainView extends LitElement {
             <vaadin-button @click=${this.joinGame} disabled id="joinButton">Join game</vaadin-button>
             <debug-panel></debug-panel>
           </vaadin-horizontal-layout>
-          <div style="position: relative; padding: 0 var(--lumo-space-l)">
+          <div style="position: relative; padding: 0 var(--lumo-space-l); overflow: hidden;">
             <canvas id="canvas" width="1164" height="768" style="border: 1px solid black" ></canvas>
           </div>
     `;

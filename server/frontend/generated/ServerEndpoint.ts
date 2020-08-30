@@ -1,7 +1,7 @@
 /**
  * This module is generated from ServerEndpoint.java
  * All changes to this file are overridden. Please consider to make changes in the corresponding Java file if necessary.
- * @see {@link file://C:\projects\hop-n-pop\server\src\main\java\org\vaadin\erik\game\communication\endpoint\ServerEndpoint.java}
+ * @see {@link file:///Users/eriklumme/projects/2020/hop-n-pop/server/src/main/java/org/vaadin/erik/game/communication/endpoint/ServerEndpoint.java}
  * @module ServerEndpoint
  */
 
@@ -25,7 +25,7 @@ function _getServerInfo(): Promise<ServerInfo> {
 export {_getServerInfo as getServerInfo};
 
 /**
- * Records the movement between two nodes, such that the AI can use it.    Starts recording when close enough to an existing node,  and stops recording when first coming enough to any other node.
+ * Records the movement between two nodes, such that the AI can use it.  Starts recording when close enough to an existing node, and stops recording when first coming enough to any other node.
  *
  *
  */
