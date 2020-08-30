@@ -14,7 +14,7 @@ import org.teavm.jso.json.JSON;
  */
 public abstract class WebSocket implements JSObject {
 
-    private static final int SIMULATED_PING = 200;
+    private static final int SIMULATED_PING = 0;
 
     static WebSocket connect(String url, OnMessageHandler onMessageHandler) {
         Request request = JSObjects.create();

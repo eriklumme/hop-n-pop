@@ -24,7 +24,7 @@ import java.util.*;
 @Profile("!debug")
 public class Server implements TickerTask {
 
-    private static final long INACTIVE_TIMEOUT_MS = 300000;
+    private static final long INACTIVE_TIMEOUT_MS = 30000;
 
     private static final Logger logger = LogManager.getLogger(Server.class);
 

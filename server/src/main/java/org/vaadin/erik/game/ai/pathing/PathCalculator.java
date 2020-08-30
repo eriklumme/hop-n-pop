@@ -34,7 +34,7 @@ class PathCalculator {
         NodeData currentNode = null;
         while (!openNodes.isEmpty()) {
             currentNode = getAndRemoveSmallest();
-            if (currentNode == target) {
+            if (isTargetNode(currentNode)) {
                 break;
             }
             double currentG = nodeStepData.get(currentNode).getG();
@@ -61,7 +61,7 @@ class PathCalculator {
             }
         }
 
-        if (currentNode != target) {
+        if (!isTargetNode(currentNode)) {
             return EMPTY_STACK;
         }
 
@@ -103,5 +103,11 @@ class PathCalculator {
     private double getHeuristicCost(NodeData from) {
         return Math.pow(from.getX() - target.getX(), 2) +
                 Math.pow(from.getY() - target.getY(), 2);
+    }
+
+    private boolean isTargetNode(NodeData node) {
+        return node != null &&
+                node.getIndexX() == target.getIndexX() &&
+                node.getIndexY() == target.getIndexY();
     }
 }

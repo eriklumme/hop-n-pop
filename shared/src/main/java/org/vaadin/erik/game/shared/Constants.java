@@ -14,6 +14,6 @@ public class Constants {
     public static final float MAX_VELOCITY = 500;
     public static final float VERTICAL_MAX_VELOCITY = 1000;
 
-    public static final int WIN_POINTS = 2;
+    public static final int WIN_POINTS = 10;
     public static final int SECONDS_BETWEEN_ROUNDS = 10;
 }

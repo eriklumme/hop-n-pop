@@ -36,14 +36,13 @@ export class MainView extends LitElement {
     render() {
         return html`
           <vaadin-horizontal-layout style="align-items: baseline" theme="spacing">
+            <h2 style="margin-left: var(--lumo-space-xl)">Hop 'n Pop</h2>
             <vaadin-text-field label="Nickname" minlength="2" maxlength="8" required id="nicknameField"></vaadin-text-field>
             <vaadin-button @click=${this.joinGame} disabled id="joinButton">Join game</vaadin-button>
             <debug-panel></debug-panel>
           </vaadin-horizontal-layout>
-          <div style="position: relative">
-            <canvas id="background" width="1024" height="768" style="position: absolute; top: 1px; left: 1px" ></canvas>
-            <canvas id="canvas" width="1164" height="768" style="border: 1px solid red" ></canvas>
-            <canvas id="overlay" width="1164" height="768" style="position: absolute; top: 1px; left: 1px"></canvas>
+          <div style="position: relative; padding: 0 var(--lumo-space-l)">
+            <canvas id="canvas" width="1164" height="768" style="border: 1px solid black" ></canvas>
           </div>
     `;
     }
@@ -55,24 +54,10 @@ export class MainView extends LitElement {
         } catch (e) {
             console.error("Error loading tile map: " + e);
         }
-
-        // Used both by the tilemap-generator and the TeaVM code
-        window.spriteCodeToColor = (spriteCode: number): string => {
-            switch (spriteCode) {
-                case 0:
-                    return 'transparent';
-                case 1:
-                    return 'green';
-                default:
-                    return 'deeppink';
-            }
-        }
     }
 
     protected firstUpdated(): void {
-        window.background = <HTMLCanvasElement>this.shadowRoot!.querySelector('#background');
         window.canvas = <HTMLCanvasElement>this.shadowRoot!.querySelector('#canvas');
-        window.overlay = <HTMLCanvasElement>this.shadowRoot!.querySelector('#overlay');
 
         const that = this;
         (function getServerInfo() {

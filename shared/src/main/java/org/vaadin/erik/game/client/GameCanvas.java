@@ -48,15 +48,6 @@ public class GameCanvas {
     @JSBody(script = "return window.canvas")
     private static native HTMLCanvasElement getCanvas();
 
-    @JSBody(script = "return window.background")
-    private static native HTMLCanvasElement getBackground();
-
-    @JSBody(script = "return window.overlay")
-    private static native HTMLCanvasElement getOverlay();
-
-    @JSBody(params = "spriteCode", script = "return window.spriteCodeToColor(spriteCode)")
-    private static native String spriteCodeToColor(int spriteCode);
-
     public void clear() {
         context.clearRect(0, 0, width, height);
     }

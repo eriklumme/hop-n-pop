@@ -1,6 +1,5 @@
 package org.vaadin.erik.game.ai.pathing;
 
-import org.vaadin.erik.game.ai.step.Step;
 import org.vaadin.erik.game.ai.step.StepFactory;
 import org.vaadin.erik.game.shared.Constants;
 import org.vaadin.erik.game.shared.Point;

@@ -12,9 +12,6 @@ interface Window {
     vaadinPush: any;
     main: any;
     tileMapData: any;
-    background: HTMLCanvasElement;
     canvas: HTMLCanvasElement;
-    overlay: HTMLCanvasElement;
-    spriteCodeToColor: (spriteCode: number) => string;
     GameService: { joinGame: (nickname: string) => void }
 }
