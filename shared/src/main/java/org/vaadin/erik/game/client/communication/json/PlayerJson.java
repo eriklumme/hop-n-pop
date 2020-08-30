@@ -21,7 +21,7 @@ public interface PlayerJson extends JSObject {
     boolean isIsInGame();
 
     @JSProperty
-    String getColor();
+    int getIcon();
 
     @JSProperty
     String getNickname();

@@ -20,11 +20,14 @@ export class MainView extends LitElement {
         return [
             css`
         :host {
-            position: relative;
+          position: relative;
           display: flex;
           flex-flow: column;
           align-items: flex-start;
           height: 100%;
+        }
+        #canvas {
+          background: linear-gradient(0deg, #c53c1d, #1f346d);
         }
       `,
         ];

@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Player implements GameObject {
 
     private final String uuid;
-    private final String color;
+    private final int icon;
     private final String nickname;
 
     private Point previousPosition;
@@ -24,8 +24,8 @@ public class Player implements GameObject {
 
     private boolean inGame = false;
 
-    public Player(String color, String nickname) {
-        this.color = color;
+    public Player(int icon, String nickname) {
+        this.icon = icon;
         this.nickname = nickname;
         uuid = UUID.randomUUID().toString();
     }
@@ -123,8 +123,8 @@ public class Player implements GameObject {
         this.inGame = inGame;
     }
 
-    public String getColor() {
-        return color;
+    public int getIcon() {
+        return icon;
     }
 
     public void addPoint() {

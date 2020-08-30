@@ -32,6 +32,7 @@ public class Server implements TickerTask {
     protected final Ticker ticker;
 
     private final Set<GameSnapshotListener> gameSnapshotListeners = new HashSet<>();
+    private final Set<Integer> usedIcons = new HashSet<>();
 
     private boolean ended;
     private Player winner;
@@ -50,19 +51,35 @@ public class Server implements TickerTask {
     }
 
     public Player spawn(String nickname) {
-        if (isFull()) {
-            return null;
+        synchronized (players) {
+            if (isFull()) {
+                return null;
+            }
+            Player player = new Player(getIcon(), nickname);
+            players.put(player.getUUID(), player);
+            return player;
         }
-        Player player = new Player("#FF00FF", nickname);
-        players.put(player.getUUID(), player);
-        return player;
     }
 
     public void spawnAI() {
-        ServerAI serverAI = new ServerAI("#FF0000", "Abot", this);
-        serverAI.setPosition(new Point(128, 0));
-        players.put(serverAI.getUUID(), serverAI);
-        serverAIS.add(serverAI);
+        synchronized (players) {
+            ServerAI serverAI = new ServerAI(getIcon(), "Abot", this);
+            serverAI.setPosition(new Point(128, 0));
+            players.put(serverAI.getUUID(), serverAI);
+            serverAIS.add(serverAI);
+        }
+    }
+
+    private int getIcon() {
+        int selectedIcon = 0;
+        for (int icon = 0; icon < 8; icon++) {
+            if (!usedIcons.contains(icon)) {
+                selectedIcon = icon;
+                usedIcons.add(selectedIcon);
+                break;
+            }
+        }
+        return selectedIcon;
     }
 
     public void despawn(Player player) {

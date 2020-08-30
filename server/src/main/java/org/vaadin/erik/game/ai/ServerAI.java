@@ -25,8 +25,8 @@ public class ServerAI extends Player {
 
     private double secondsSinceLastDecision = 0;
 
-    public ServerAI(String color, String nickname, Server server) {
-        super(color, nickname);
+    public ServerAI(int icon, String nickname, Server server) {
+        super(icon, nickname);
         this.server = server;
     }
 

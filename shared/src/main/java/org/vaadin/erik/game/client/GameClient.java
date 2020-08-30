@@ -60,7 +60,7 @@ public class GameClient {
             }
         });
 
-        new GameLoop(this, communicator).start();
+        new GameLoop(this, gameCanvas, communicator).start();
     }
 
     Set<String> getPressedButtons() {
@@ -102,6 +102,8 @@ public class GameClient {
                 handleEndEvent(event);
             }
         }
+
+        gameCanvas.addEventAnimations(snapshot.getEvents());
     }
 
     private void handleEndEvent(EventJson event) {

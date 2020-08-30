@@ -3,8 +3,9 @@ package org.vaadin.erik.game.client.tilemap;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLImageElement;
-import org.vaadin.erik.game.client.communication.json.TileJson;
+import org.vaadin.erik.game.client.communication.json.PointJson;
 import org.vaadin.erik.game.shared.Constants;
+import org.vaadin.erik.game.shared.Point;
 import org.vaadin.erik.game.shared.Tile;
 
 public class SpriteManager {
@@ -12,6 +13,8 @@ public class SpriteManager {
 
     private static final HTMLImageElement VAADIN = createImage("vaadin.png");
     private static final HTMLImageElement TILES = createImage("tiles.png");
+    private static final HTMLImageElement SPAWN = createImage("spawn.png");
+    private static final HTMLImageElement DEATH = createImage("death.png");
 
     private static HTMLImageElement createImage(String src) {
         HTMLImageElement image = (HTMLImageElement) Window.current().getDocument().createElement("img");
@@ -35,5 +38,13 @@ public class SpriteManager {
                 tile.getPosition().getY(),
                 Constants.BLOCK_SIZE,
                 Constants.BLOCK_SIZE);
+    }
+
+    public static Animation createSpawnAnimation(PointJson position) {
+        return new Animation(SPAWN, position, 11);
+    }
+
+    public static Animation createDeathAnimation(PointJson position) {
+        return new Animation(DEATH, position, 7);
     }
 }

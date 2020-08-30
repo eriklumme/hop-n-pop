@@ -20,13 +20,15 @@ public class GameLoop {
     private static final double MIN_MS_PER_FRAME = 1000.0/MAX_FPS;
 
     private final GameClient gameClient;
+    private final GameCanvas gameCanvas;
     private final Communicator communicator;
 
     private double lastTimeStamp;
     private long requestId;
 
-    public GameLoop(GameClient gameClient, Communicator communicator) {
+    public GameLoop(GameClient gameClient, GameCanvas gameCanvas, Communicator communicator) {
         this.gameClient = gameClient;
+        this.gameCanvas = gameCanvas;
         this.communicator = communicator;
     }
 
@@ -43,6 +45,8 @@ public class GameLoop {
             return;
         }
         lastTimeStamp = timestamp;
+
+        gameCanvas.drawAnimations(elapsedTime / 1000);
 
         handleButtonPresses();
 

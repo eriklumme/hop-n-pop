@@ -2,12 +2,19 @@ package org.vaadin.erik.game.client;
 
 import org.teavm.jso.JSBody;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
+import org.teavm.jso.core.JSArray;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
+import org.vaadin.erik.game.client.communication.json.EventJson;
 import org.vaadin.erik.game.client.communication.json.PlayerJson;
+import org.vaadin.erik.game.client.tilemap.Animation;
 import org.vaadin.erik.game.client.tilemap.SpriteManager;
 import org.vaadin.erik.game.client.tilemap.TileMap;
 import org.vaadin.erik.game.shared.Constants;
 import org.vaadin.erik.game.shared.Tile;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GameCanvas {
 
@@ -19,6 +26,8 @@ public class GameCanvas {
 
     private final int width;
     private final int height;
+
+    private List<Animation> animations = new LinkedList<>();
 
     GameCanvas() {
         canvas = getCanvas();
@@ -50,16 +59,9 @@ public class GameCanvas {
     public void drawTileMap(TileMap tileMap) {
         for (Tile[] rowTiles : tileMap.getTiles()) {
             for (Tile tile : rowTiles) {
-                //String color = spriteCodeToColor(tile.getSpriteCode());
-                //drawTile(tile.getPosition().getX(), tile.getPosition().getY(), tile.getWidth(), tile.getHeight(), color);
                 SpriteManager.drawTile(context, tile);
             }
         }
-    }
-
-    public void drawTile(double x, double y, double w, double h, String color) {
-        context.setFillStyle(color);
-        context.fillRect(x, y, w, h);
     }
 
     public void drawPlayer(PlayerJson playerJson) {
@@ -67,11 +69,20 @@ public class GameCanvas {
         context.fillText(playerJson.getNickname(),
                 playerJson.getPosition().getX() + 16,
                 playerJson.getPosition().getY() - 16);
-        context.setFillStyle(playerJson.getColor());
+
+        int icon = playerJson.getIcon();
+        int offsetX = icon % 4;
+        int offsetY = icon / 4;
 
         context.drawImage(SpriteManager.getVaadin(),
+                offsetX * Constants.BLOCK_SIZE,
+                offsetY * Constants.BLOCK_SIZE,
+                Constants.BLOCK_SIZE,
+                Constants.BLOCK_SIZE,
                 playerJson.getPosition().getX(),
-                playerJson.getPosition().getY());
+                playerJson.getPosition().getY(),
+                Constants.BLOCK_SIZE,
+                Constants.BLOCK_SIZE);
     }
 
     public void drawScore(PlayerJson playerJson, int index, boolean currentPlayer) {
@@ -81,7 +92,7 @@ public class GameCanvas {
         int offsetX = Constants.GAME_WIDTH;
         int offsetY = index * height;
 
-        context.setFillStyle(playerJson.getColor());
+        context.setFillStyle("white");
         context.fillRect(offsetX, offsetY, width, height);
 
         if (currentPlayer) {
@@ -114,6 +125,31 @@ public class GameCanvas {
         context.fillText("Next round in " + countdown,
                 offsetX + (rectWidth / 2.0),
                 offsetY + (rectHeight / 4.0 * 3));
+    }
+
+    public void addEventAnimations(JSArray<EventJson> events) {
+        for (int i = 0; i < events.getLength(); i++) {
+            EventJson event = events.get(i);
+            switch (event.getAction()) {
+                case KILL:
+                    animations.add(SpriteManager.createDeathAnimation(event.getTarget().getPosition()));
+                    break;
+                case SPAWN:
+                    animations.add(SpriteManager.createSpawnAnimation(event.getSource().getPosition()));
+                    break;
+            }
+        }
+    }
+
+    public void drawAnimations(double delta) {
+        Iterator<Animation> iterator = animations.iterator();
+        while (iterator.hasNext()) {
+            Animation animation = iterator.next();
+            animation.drawFrame(context, delta);
+            if (animation.hasCompleted()) {
+                iterator.remove();
+            }
+        }
     }
 
     private void setPlayerNameFont() {
