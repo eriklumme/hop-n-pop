@@ -16,6 +16,9 @@ export class MainView extends LitElement {
     @query("#nicknameField")
     private nicknameField: any;
 
+    @query("#debugPanel")
+    private debugPanel: any;
+
     static get styles() {
         return [
             css`
@@ -30,6 +33,9 @@ export class MainView extends LitElement {
           background: linear-gradient(0deg, #c53c1d, #1f346d);
           max-height: 100%;
         }
+        #debugPanel {
+            display: none;
+        }
       `,
         ];
     }
@@ -40,7 +46,7 @@ export class MainView extends LitElement {
             <h2 style="margin-left: var(--lumo-space-xl)">Hop 'n Pop</h2>
             <vaadin-text-field label="Nickname" minlength="2" maxlength="8" required id="nicknameField"></vaadin-text-field>
             <vaadin-button @click=${this.joinGame} disabled id="joinButton">Join game</vaadin-button>
-            <debug-panel></debug-panel>
+            <debug-panel id="debugPanel"></debug-panel>
           </vaadin-horizontal-layout>
           <div style="position: relative; padding: 0 var(--lumo-space-l); overflow: hidden;">
             <canvas id="canvas" width="1164" height="768" style="border: 1px solid black" ></canvas>
@@ -65,6 +71,9 @@ export class MainView extends LitElement {
             ServerEndpoint.getServerInfo()
                 .then(result => {
                     that.joinButton.disabled = that.hasJoined || result.full;
+                    if (result.debugEnabled) {
+                        that.debugPanel.style.display = 'block';
+                    }
                 })
                 .catch(e => console.error(e));
             setTimeout(getServerInfo, 5000);
